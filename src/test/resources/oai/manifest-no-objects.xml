@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<mets:mets xmlns:mets="http://www.loc.gov/METS/" xmlns="http://i.still.have.a.lot.to.do/ok" xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <mets:fileSec USE="storage/preservation">
+    <mets:fileGrp>
+        <mets:file ID="metadata" MIMETYPE="text/xml">
+            <mets:FLocat LOCTYPE="URL" xlink:href="file://./metadata.xml"/>
+        </mets:file>
+    </mets:fileGrp>
+  </mets:fileSec>
+</mets:mets>

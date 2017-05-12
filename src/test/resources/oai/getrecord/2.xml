@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2017-02-28T14:07:51Z</responseDate><request identifier="ru:oai:repository.ubn.ru.nl:2066/161841" metadataPrefix="nl_didl_norm" verb="GetRecord">http://oai.gharvester.dans.knaw.nl:8000/oaioai</request><GetRecord><record><header><identifier>ru:oai:repository.ubn.ru.nl:2066/161841</identifier><datestamp>2017-01-18T01:00:31Z</datestamp><setSpec>ru</setSpec><setSpec>ru:col_2066_119638</setSpec><setSpec>ru:com_2066_13798</setSpec><setSpec>ru:col_2066_13799</setSpec><setSpec>ru:col_2066_30204</setSpec><setSpec>ru:com_2066_119633</setSpec><setSpec>ru:col_2066_119644</setSpec></header><metadata><didl:DIDL xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS" xmlns:dii="urn:mpeg:mpeg21:2002:01-DII-NS" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mpeg:mpeg21:2002:02-DIDL-NS      http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didl.xsd     urn:mpeg:mpeg21:2002:01-DII-NS      http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dii/dii.xsd">
+  <didl:Item>
+    <didl:Descriptor>
+      <didl:Statement mimeType="application/xml">
+        <dii:Identifier>urn:nbn:nl:ui:22-2066/161841</dii:Identifier>
+      </didl:Statement>
+    </didl:Descriptor>
+    <didl:Descriptor>
+      <didl:Statement mimeType="application/xml">
+        <dcterms:modified>2017-01-17T02:05:05.871Z</dcterms:modified>
+      </didl:Statement>
+    </didl:Descriptor>
+    <didl:Component>
+      <didl:Resource mimeType="application/xml" ref="http://repository.ubn.ru.nl/handle/2066/161841"/>
+    </didl:Component>
+    <didl:Item>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <rdf:type rdf:resource="info:eu-repo/semantics/descriptiveMetadata"/>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Component>
+        <didl:Resource mimeType="application/xml">
+          <mods:mods xmlns:mods="http://www.loc.gov/mods/v3" version="3.6" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-6.xsd">
+  <mods:name type="personal" ID="n161841_aut_en_US_1">
+    <mods:namePart type="family">He</mods:namePart>
+    <mods:namePart type="given">Z.F.</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:name type="personal" ID="n161841_aut_en_US_2">
+    <mods:namePart type="family">Cai</mods:namePart>
+    <mods:namePart type="given">C.Y.</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:name type="personal" ID="n161841_aut_en_US_3">
+    <mods:namePart type="family">Wang</mods:namePart>
+    <mods:namePart type="given">J.Q.</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:name type="personal" ID="n161841_aut_en_US_4">
+    <mods:namePart type="family">Xu</mods:namePart>
+    <mods:namePart type="given">X.H.</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:name type="personal" ID="n161841_aut_en_US_5">
+    <mods:namePart type="family">Zheng</mods:namePart>
+    <mods:namePart type="given">P.</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:name type="personal" ID="n161841_aut_en_US_6">
+    <mods:namePart type="family">Jetten</mods:namePart>
+    <mods:namePart type="given">M.S.M.</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+    </mods:role>
+    <mods:nameIdentifier type="dai-nl" typeURI="info:eu-repo/dai/nl">089738217</mods:nameIdentifier>
+  </mods:name>
+  <mods:name type="personal" ID="n161841_aut_en_US_7">
+    <mods:namePart type="family">Hu</mods:namePart>
+    <mods:namePart type="given">B.L.</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:titleInfo>
+    <mods:title>A novel denitrifying methanotroph of the NC10 phylum and its microcolony</mods:title>
+  </mods:titleInfo>
+  <mods:genre>info:eu-repo/semantics/article</mods:genre>
+  <mods:typeOfResource>text</mods:typeOfResource>
+  <mods:originInfo>
+    <mods:dateIssued encoding="w3cdtf">2016</mods:dateIssued>
+  </mods:originInfo>
+  <mods:relatedItem type="host">
+    <mods:titleInfo>
+      <mods:title>Scientific Reports</mods:title>
+    </mods:titleInfo>
+    <mods:originInfo>
+      <mods:publisher/>
+      <mods:dateIssued encoding="iso8601">2016</mods:dateIssued>
+    </mods:originInfo>
+    <mods:identifier type="uri">URN:ISSN:2045-2322</mods:identifier>
+    <mods:part>
+      <mods:detail type="volume">
+        <mods:number>6</mods:number>
+      </mods:detail>
+      <mods:extent unit="page">
+        <mods:start>10</mods:start>
+        <mods:end>20</mods:end>
+      </mods:extent>
+    </mods:part>
+  </mods:relatedItem>
+</mods:mods>
+        </didl:Resource>
+      </didl:Component>
+    </didl:Item>
+    <didl:Item>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <rdf:type rdf:resource="info:eu-repo/semantics/objectFile"/>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <dcterms:accessRights>http://purl.org/eprint/accessRights/OpenAccess</dcterms:accessRights>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <dcterms:modified>2017-01-17T02:05:05.871Z</dcterms:modified>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <dc:description>publisher's version</dc:description>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Component>
+        <didl:Resource mimeType="text/plain" ref="http://localhost:18081/resource-mock/sample-2.txt"/>
+      </didl:Component>
+    </didl:Item>
+    <didl:Item>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <rdf:type rdf:resource="info:eu-repo/semantics/humanStartPage"/>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Component>
+        <didl:Resource ref="http://repository.ubn.ru.nl/handle/2066/161841" mimeType="text/html"/>
+      </didl:Component>
+    </didl:Item>
+  </didl:Item>
+</didl:DIDL>
+</metadata><about><provenance xmlns="http://www.openarchives.org/OAI/2.0/provenance"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/provenance
+                      http://www.openarchives.org/OAI/2.0/provenance.xsd">
+
+<originDescription harvestDate="2017-01-18T02:00:31Z" altered="true">
+  <baseURL>http://repository.ubn.ru.nl/dspace-oai/request</baseURL>
+  <identifier>oai:repository.ubn.ru.nl:2066/161841</identifier>
+  <datestamp>2017-01-17T02:05:05Z</datestamp>
+  <metadataNamespace>http://www.loc.gov/mods/v3</metadataNamespace>
+</originDescription>
+</provenance>
+</about></record></GetRecord></OAI-PMH>

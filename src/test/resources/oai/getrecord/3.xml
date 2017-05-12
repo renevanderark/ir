@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2017-02-28T14:08:20Z</responseDate><request identifier="ru:oai:repository.ubn.ru.nl:2066/161830" metadataPrefix="nl_didl_norm" verb="GetRecord">http://oai.gharvester.dans.knaw.nl:8000/oaioai</request><GetRecord><record><header><identifier>ru:oai:repository.ubn.ru.nl:2066/161830</identifier><datestamp>2017-01-18T01:00:31Z</datestamp><setSpec>ru</setSpec><setSpec>ru:col_2066_119638</setSpec><setSpec>ru:com_2066_13798</setSpec><setSpec>ru:col_2066_13799</setSpec><setSpec>ru:col_2066_30204</setSpec><setSpec>ru:com_2066_119633</setSpec><setSpec>ru:col_2066_119644</setSpec></header><metadata><didl:DIDL xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS" xmlns:dii="urn:mpeg:mpeg21:2002:01-DII-NS" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mpeg:mpeg21:2002:02-DIDL-NS      http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didl.xsd     urn:mpeg:mpeg21:2002:01-DII-NS      http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dii/dii.xsd">
+  <didl:Item>
+    <didl:Descriptor>
+      <didl:Statement mimeType="application/xml">
+        <dii:Identifier>urn:nbn:nl:ui:22-2066/161830</dii:Identifier>
+      </didl:Statement>
+    </didl:Descriptor>
+    <didl:Descriptor>
+      <didl:Statement mimeType="application/xml">
+        <dcterms:modified>2017-01-17T02:04:00.842Z</dcterms:modified>
+      </didl:Statement>
+    </didl:Descriptor>
+    <didl:Component>
+      <didl:Resource mimeType="application/xml" ref="http://repository.ubn.ru.nl/handle/2066/161830"/>
+    </didl:Component>
+    <didl:Item>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <rdf:type rdf:resource="info:eu-repo/semantics/descriptiveMetadata"/>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Component>
+        <didl:Resource mimeType="application/xml">
+          <mods:mods xmlns:mods="http://www.loc.gov/mods/v3" version="3.6" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-6.xsd">
+  <mods:name type="personal" ID="n161830_aut_en_US_1">
+    <mods:namePart type="family">Chabout</mods:namePart>
+    <mods:namePart type="given">J.</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:name type="personal" ID="n161830_aut_en_US_2">
+    <mods:namePart type="family">Sarkar</mods:namePart>
+    <mods:namePart type="given">A.</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:name type="personal" ID="n161830_aut_en_US_3">
+    <mods:namePart type="family">Patel</mods:namePart>
+    <mods:namePart type="given">S.R.</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:name type="personal" ID="n161830_aut_en_US_4">
+    <mods:namePart type="family">Padden</mods:namePart>
+    <mods:namePart type="given">T.</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:name type="personal" ID="n161830_aut_en_US_5">
+    <mods:namePart type="family">Dunson</mods:namePart>
+    <mods:namePart type="given">D.B.</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:name type="personal" ID="n161830_aut_en_US_6">
+    <mods:namePart type="family">Fisher</mods:namePart>
+    <mods:namePart type="given">S.E.</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:name type="personal" ID="n161830_aut_en_US_7">
+    <mods:namePart type="family">Jarvis</mods:namePart>
+    <mods:namePart type="given">E.D.</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:titleInfo>
+    <mods:title>A Foxp2 Mutation Implicated in Human Speech Deficits Alters Sequencing of Ultrasonic Vocalizations in Adult Male Mice</mods:title>
+  </mods:titleInfo>
+  <mods:genre>info:eu-repo/semantics/article</mods:genre>
+  <mods:typeOfResource>text</mods:typeOfResource>
+  <mods:originInfo>
+    <mods:dateIssued encoding="w3cdtf">2016</mods:dateIssued>
+  </mods:originInfo>
+  <mods:relatedItem type="host">
+    <mods:titleInfo>
+      <mods:title>Frontiers in Behavioral Neuroscience</mods:title>
+    </mods:titleInfo>
+    <mods:originInfo>
+      <mods:publisher/>
+      <mods:dateIssued encoding="iso8601">2016</mods:dateIssued>
+    </mods:originInfo>
+    <mods:identifier type="uri">URN:ISSN:1662-5153</mods:identifier>
+    <mods:part>
+      <mods:detail type="volume">
+        <mods:number>10</mods:number>
+      </mods:detail>
+      <mods:extent unit="page">
+        <mods:start>18</mods:start>
+        <mods:end>36</mods:end>
+      </mods:extent>
+    </mods:part>
+  </mods:relatedItem>
+</mods:mods>
+        </didl:Resource>
+      </didl:Component>
+    </didl:Item>
+    <didl:Item>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <rdf:type rdf:resource="info:eu-repo/semantics/objectFile"/>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <dcterms:accessRights>http://purl.org/eprint/accessRights/OpenAccess</dcterms:accessRights>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <dcterms:modified>2017-01-17T02:04:00.842Z</dcterms:modified>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <dc:description>publisher's version</dc:description>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Component>
+        <didl:Resource mimeType="text/plain" ref="http://localhost:18081/resource-mock/sample-3.txt"/>
+      </didl:Component>
+    </didl:Item>
+    <didl:Item>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <rdf:type rdf:resource="info:eu-repo/semantics/humanStartPage"/>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Component>
+        <didl:Resource ref="http://repository.ubn.ru.nl/handle/2066/161830" mimeType="text/html"/>
+      </didl:Component>
+    </didl:Item>
+  </didl:Item>
+</didl:DIDL>
+</metadata><about><provenance xmlns="http://www.openarchives.org/OAI/2.0/provenance"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/provenance
+                      http://www.openarchives.org/OAI/2.0/provenance.xsd">
+
+<originDescription harvestDate="2017-01-18T02:00:31Z" altered="true">
+  <baseURL>http://repository.ubn.ru.nl/dspace-oai/request</baseURL>
+  <identifier>oai:repository.ubn.ru.nl:2066/161830</identifier>
+  <datestamp>2017-01-17T02:04:00Z</datestamp>
+  <metadataNamespace>http://www.loc.gov/mods/v3</metadataNamespace>
+</originDescription>
+</provenance>
+</about></record></GetRecord></OAI-PMH>

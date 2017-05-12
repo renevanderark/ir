@@ -1,0 +1,7 @@
+.idea
+.svn
+*.iml
+sample-repo.json
+local-deploy.sh
+target
+src/main/scripts/node/node_modules

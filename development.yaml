@@ -1,0 +1,39 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: ${PORT}
+      bindHost: ${HOST}
+  adminConnectors:
+    - type: http
+      port: ${ADMIN_PORT}
+  requestLog:
+    appenders:
+      - type: console
+        logFormat: "- %-5p  %m [%c{60}]%n"
+
+logging:
+  appenders:
+    - type: console
+      logFormat: "- %-5p  %m [%c{60}]%n"
+  level: INFO
+
+
+
+# Database settings.
+database:
+  validationQuery: "select 1 from dual"
+  # the name of your JDBC driver
+  driverClass: oracle.jdbc.driver.OracleDriver
+
+  # the username
+  user: system
+
+  # the password
+  password: oracle
+
+  # the JDBC URL 127.0.0.1:3306
+  url: jdbc:oracle:thin:system/oracle@localhost:49161:xe
+databaseProvider: oracle
+
+hostName: ${HOST}:${PORT}
+inSampleMode: false

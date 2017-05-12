@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2017-02-28T14:07:18Z</responseDate><request identifier="ru:oai:repository.ubn.ru.nl:2066/162526" metadataPrefix="nl_didl_norm" verb="GetRecord">http://oai.gharvester.dans.knaw.nl:8000/oaioai</request><GetRecord><record><header><identifier>ru:oai:repository.ubn.ru.nl:2066/162526</identifier><datestamp>2017-01-15T00:28:04Z</datestamp><setSpec>ru</setSpec><setSpec>ru:col_2066_119636</setSpec><setSpec>ru:com_2066_13798</setSpec><setSpec>ru:col_2066_13799</setSpec><setSpec>ru:col_2066_30204</setSpec><setSpec>ru:com_2066_119633</setSpec><setSpec>ru:col_2066_119644</setSpec><setSpec>ru:col_2066_119645</setSpec></header><metadata><didl:DIDL xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS" xmlns:dii="urn:mpeg:mpeg21:2002:01-DII-NS" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mpeg:mpeg21:2002:02-DIDL-NS      http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didl.xsd     urn:mpeg:mpeg21:2002:01-DII-NS      http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dii/dii.xsd">
+  <didl:Item>
+    <didl:Descriptor>
+      <didl:Statement mimeType="application/xml">
+        <dii:Identifier>urn:nbn:nl:ui:22-2066/162526</dii:Identifier>
+      </didl:Statement>
+    </didl:Descriptor>
+    <didl:Descriptor>
+      <didl:Statement mimeType="application/xml">
+        <dcterms:modified>2017-01-14T02:00:24.169Z</dcterms:modified>
+      </didl:Statement>
+    </didl:Descriptor>
+    <didl:Component>
+      <didl:Resource mimeType="application/xml" ref="http://repository.ubn.ru.nl/handle/2066/162526"/>
+    </didl:Component>
+    <didl:Item>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <rdf:type rdf:resource="info:eu-repo/semantics/descriptiveMetadata"/>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Component>
+        <didl:Resource mimeType="application/xml">
+          <mods:mods xmlns:mods="http://www.loc.gov/mods/v3" version="3.6" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-6.xsd">
+  <mods:name type="personal" ID="n162526_ths_en_US_1">
+    <mods:namePart type="family">Berg</mods:namePart>
+    <mods:namePart type="given">W.B. van den</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">ths</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:name type="personal" ID="n162526_ths_en_US_2">
+    <mods:namePart type="family">Lent</mods:namePart>
+    <mods:namePart type="given">P.L.E.M. van</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">ths</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:name type="personal" ID="n162526_ths_en_US_3">
+    <mods:namePart type="family">Koenders</mods:namePart>
+    <mods:namePart type="given">M.I.</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">ths</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:name type="personal" ID="n162526_aut_en_US_1">
+    <mods:namePart type="family">Munter</mods:namePart>
+    <mods:namePart type="given">W. de</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:identifier type="uri">9789402803693</mods:identifier>
+  <mods:titleInfo>
+    <mods:title>High systemic levels of low-density lipoprotein cholesterol: fuel to the flames in inflammatory osteoarthritis</mods:title>
+  </mods:titleInfo>
+  <mods:genre>info:eu-repo/semantics/doctoralThesis</mods:genre>
+  <mods:name type="corporate">
+    <mods:namePart>Radboud University Nijmegen</mods:namePart>
+    <mods:role>
+      <mods:roleTerm type="code" authority="marcrelator">dgg</mods:roleTerm>
+    </mods:role>
+  </mods:name>
+  <mods:typeOfResource>text</mods:typeOfResource>
+  <mods:originInfo>
+    <mods:publisher>[S.l. : s.n.]</mods:publisher>
+    <mods:dateIssued encoding="w3cdtf">2017</mods:dateIssued>
+  </mods:originInfo>
+</mods:mods>
+        </didl:Resource>
+      </didl:Component>
+    </didl:Item>
+    <didl:Item>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <rdf:type rdf:resource="info:eu-repo/semantics/objectFile"/>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <dcterms:accessRights>http://purl.org/eprint/accessRights/OpenAccess</dcterms:accessRights>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <dcterms:modified>2017-01-14T02:00:24.169Z</dcterms:modified>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <dc:description>publisher's version</dc:description>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Component>
+        <didl:Resource mimeType="text/plain" ref="http://localhost:18081/resource-mock/sample-1.txt"/>
+      </didl:Component>
+    </didl:Item>
+    <didl:Item>
+      <didl:Descriptor>
+        <didl:Statement mimeType="application/xml">
+          <rdf:type rdf:resource="info:eu-repo/semantics/humanStartPage"/>
+        </didl:Statement>
+      </didl:Descriptor>
+      <didl:Component>
+        <didl:Resource ref="http://repository.ubn.ru.nl/handle/2066/162526" mimeType="text/html"/>
+      </didl:Component>
+    </didl:Item>
+  </didl:Item>
+</didl:DIDL>
+</metadata><about><provenance xmlns="http://www.openarchives.org/OAI/2.0/provenance"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/provenance
+                      http://www.openarchives.org/OAI/2.0/provenance.xsd">
+
+<originDescription harvestDate="2017-01-15T01:28:04Z" altered="true">
+  <baseURL>http://repository.ubn.ru.nl/dspace-oai/request</baseURL>
+  <identifier>oai:repository.ubn.ru.nl:2066/162526</identifier>
+  <datestamp>2017-01-14T02:00:24Z</datestamp>
+  <metadataNamespace>http://www.loc.gov/mods/v3</metadataNamespace>
+</originDescription>
+</provenance>
+</about></record></GetRecord></OAI-PMH>

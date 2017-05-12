@@ -1,0 +1,31 @@
+import React from "react";
+import {Router, Route, IndexRoute, browserHistory} from "react-router";
+import {Provider, connect} from "react-redux";
+
+import store from "./store";
+import actions from "./actions";
+
+import rootConnector from "./connectors/root-connector";
+import App from "./components/app";
+
+const urls = {
+    root() {
+        return "/";
+    }
+};
+
+export { urls };
+
+const navigateTo = (key, args) => browserHistory.push(urls[key].apply(null, args));
+
+const connectComponent = (stateToProps) => connect(stateToProps, dispatch => actions(navigateTo, dispatch));
+
+export default (
+    <Provider store={store}>
+        <Router history={browserHistory}>
+            <Route path={urls.root()} component={connectComponent(rootConnector)(App)}>
+
+            </Route>
+        </Router>
+    </Provider>
+);

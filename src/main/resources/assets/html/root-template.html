@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Dare dashboard</title>
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+
+</head>
+
+<body>
+<div id='app'>
+
+</div>
+
+<script type="text/javascript">
+    <%= JS_ENVIRONMENT %>
+</script>
+<script type='text/javascript'>
+    (function(d, t) {
+        var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[1];
+        g.src = '/assets/javascripts/index.js?' + new Date().getTime();
+        s.parentNode.insertBefore(g, s);
+    }(document, 'script'));
+</script>
+
+</body>
+</html>
