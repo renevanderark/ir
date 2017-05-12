@@ -1,18 +1,10 @@
 package nl.kb.dare.model.repository;
 
+import nl.kb.dare.endpoints.websocket.StatusSocketRegistrations;
+
 public class RepositoryNotifier {
 
-    private boolean updated = false;
-
     public void notifyUpdate() {
-        this.updated = true;
-    }
-
-    public boolean wasUpdated() {
-        boolean notification = updated;
-        if (updated) {
-            updated = false;
-        }
-        return notification;
+        StatusSocketRegistrations.getInstance().broadcast("repository-change");
     }
 }

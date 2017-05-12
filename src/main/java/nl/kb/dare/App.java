@@ -10,6 +10,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
+import nl.kb.dare.endpoints.StatusWebsocketServlet;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryNotifier;
 import nl.kb.dare.model.repository.RepositoryValidator;
@@ -20,6 +21,8 @@ import nl.kb.http.HttpFetcher;
 import nl.kb.http.LenientHttpFetcher;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
 import org.skife.jdbi.v2.DBI;
+
+import javax.servlet.Servlet;
 
 public class App extends Application<Config> {
     public static void main(String[] args) throws Exception {
@@ -71,6 +74,10 @@ public class App extends Application<Config> {
         // Make JsonProcessingException show details
         register(environment, new JsonProcessingExceptionMapper(true));
 
+
+        // Websocket servlet status update notifier
+        registerServlet(environment, new StatusWebsocketServlet(), "statusWebsocket");
+
         // Task endpoints
         environment.admin().addTask(new LoadOracleSchemaTask(db));
         environment.admin().addTask(new LoadRepositoriesTask(repositoryDao));
@@ -79,5 +86,9 @@ public class App extends Application<Config> {
 
     private void register(Environment environment, Object component) {
         environment.jersey().register(component);
+    }
+
+    private void registerServlet(Environment environment, Servlet servlet, String name) {
+        environment.servlets().addServlet(name, servlet).addMapping("/status-socket");
     }
 }

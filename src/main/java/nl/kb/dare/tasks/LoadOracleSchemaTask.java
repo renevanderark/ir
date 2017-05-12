@@ -23,6 +23,7 @@ public class LoadOracleSchemaTask extends Task {
         final Handle h = db.open();
 
         runSQL("/database-schema/repositories.sql", h);
+        runSQL("/database-schema/dare_preproces.sql", h);
 
         h.close();
     }

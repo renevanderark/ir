@@ -6,7 +6,7 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <Header />
+                <Header socketClosed={this.props.socketClosed} />
                 <div className="container">
                     {this.props.children}
                 </div>

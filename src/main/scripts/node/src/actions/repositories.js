@@ -11,7 +11,7 @@ const fetchRepositories = (next = () => {}) => (dispatch) => {
 };
 
 const toggleRepositoryEnabled = (id, operation) => (dispatch) =>
-    xhr({url: `/repositories/${id}/${operation}`, method: "PUT"}, () => dispatch(fetchRepositories()));
+    xhr({url: `/repositories/${id}/${operation}`, method: "PUT"}, () => {});
 
 const enableRepository = (id) => toggleRepositoryEnabled(id, "enable");
 
@@ -21,7 +21,7 @@ const setHarvestSchedule = (id, scheduleEnumValue) => (dispatch) =>
     xhr({
         url: `/repositories/${id}/setSchedule/${scheduleEnumValue}`,
         method: "PUT",
-    }, () => dispatch(fetchRepositories()));
+    }, () => {});
 
 
 export {

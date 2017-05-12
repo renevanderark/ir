@@ -15,7 +15,7 @@ public interface RepositoryDao {
     @SqlUpdate("insert into repositories (name, url, metadataPrefix, oai_set, datestamp) " +
             "values (:name, :url, :metadataPrefix, :set, :dateStamp)")
     @GetGeneratedKeys
-    Integer insert(@BindBean Repository resvnpositoryConfig);
+    Integer insert(@BindBean Repository repositoryConfig);
 
     @SqlQuery("select * from repositories where id = :id")
     Repository findById(@Bind("id") int id);

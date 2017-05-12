@@ -2,6 +2,7 @@ import "./polyfills"
 import React from "react";
 import ReactDOM from "react-dom";
 import router from "./router";
-import bootstrap from "./bootstrap";
+import {connectSocket, fetchInitialData } from "./bootstrap";
 
-bootstrap(() => ReactDOM.render(router, document.getElementById("app")));
+fetchInitialData(() => ReactDOM.render(router, document.getElementById("app")));
+connectSocket();
