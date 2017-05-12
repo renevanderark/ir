@@ -27,7 +27,7 @@ BreadCrumbs.defaultProps = {
 };
 
 BreadCrumbs.propTypes = {
-    titles: React.PropTypes.array
+    titles: PropTypes.array
 };
 
 export default BreadCrumbs;

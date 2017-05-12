@@ -23,10 +23,58 @@ const setHarvestSchedule = (id, scheduleEnumValue) => (dispatch) =>
         method: "PUT",
     }, () => {});
 
+const saveRepository = (next) => (dispatch, getState) => {
+    const { underEdit } = getState().repositories;
+    if (!underEdit) {
+        return;
+    }
+
+    xhr({
+        url: underEdit.id ? `/repositories/${underEdit.id}` : `/repositories`,
+        method: underEdit.id ? "PUT" : "POST",
+        headers: { 'Content-type': "application/json", 'Accept': 'application/json'},
+        body: JSON.stringify(underEdit)
+    }, (err, resp, body) => {
+        const savedRepository = JSON.parse(body);
+        next(savedRepository.id)
+    });
+};
+
+
+const validateNewRepository = (repository) => (dispatch) =>
+    xhr({
+        url: `/repositories/validate`,
+        method: "POST",
+        headers: { "Content-type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(repository)
+    }, (err, resp, body) => {
+        if (resp.statusCode > 299) {
+            dispatch({
+                type: ActionTypes.RECEIVE_NEW_REPOSITORY_VALIDATION_RESULTS,
+                underEdit: repository,
+                data: {
+                    urlIsValidOAI: false,
+                    setExists: undefined,
+                    metadataFormatSupported: undefined
+                }
+            })
+        } else {
+            dispatch({
+                type: ActionTypes.RECEIVE_NEW_REPOSITORY_VALIDATION_RESULTS,
+                underEdit: repository,
+                data: {
+                    ...JSON.parse(body),
+                    urlIsValidOAI: true
+                }
+            })
+        }
+    });
 
 export {
     fetchRepositories,
     enableRepository,
     disableRepository,
-    setHarvestSchedule
+    setHarvestSchedule,
+    validateNewRepository,
+    saveRepository
 };

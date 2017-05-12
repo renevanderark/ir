@@ -1,6 +1,8 @@
 import React from "react";
 import Panel from "../layout/panel";
 import EnableToggle from "../widgets/enable-toggle";
+import { Link } from "react-router";
+import { urls } from "../../router";
 
 const Schedule = {
     DAILY: {label: "Dagelijks", enumValue: 0},
@@ -13,7 +15,12 @@ class Repositories extends React.Component {
     render() {
         return (
             <Panel title="Harvest definities">
-
+                <p>
+                    <Link to={urls.newRepository()}>
+                        <span className="glyphicon glyphicon-plus-sign" />{" "}
+                        Nieuwe harvest definitie toevoegen
+                    </Link>
+                </p>
                 <table className="table">
                     <thead>
                         <tr>
@@ -26,6 +33,7 @@ class Repositories extends React.Component {
                         </tr>
                     </thead>
                     <tbody>
+
                     {this.props.repositories.list.map((repo, i) => (
                         <tr key={i}>
                             <td>{repo.id}</td>

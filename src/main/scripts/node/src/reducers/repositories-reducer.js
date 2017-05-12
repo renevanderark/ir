@@ -2,7 +2,9 @@ import ActionTypes from "../action-types";
 
 const initialState = {
     list: [],
-    pending: false
+    pending: false,
+    underEdit: null,
+    validationResultsUnderEdit: {}
 };
 
 
@@ -18,6 +20,12 @@ export default function(state=initialState, action) {
                 ...state,
                 list: (action.data || []),
                 pending: false
+            };
+        case ActionTypes.RECEIVE_NEW_REPOSITORY_VALIDATION_RESULTS:
+            return {
+                ...state,
+                underEdit: action.underEdit,
+                validationResultsUnderEdit: action.data
             };
         default:
     }
