@@ -6,7 +6,10 @@ import store from "./store";
 import actions from "./actions";
 
 import rootConnector from "./connectors/root-connector";
+import repositoriesConnector from "./connectors/repositories-connector";
 import App from "./components/app";
+
+import Repositories from "./components/repositories/repositories";
 
 const urls = {
     root() {
@@ -24,7 +27,7 @@ export default (
     <Provider store={store}>
         <Router history={browserHistory}>
             <Route path={urls.root()} component={connectComponent(rootConnector)(App)}>
-
+                <IndexRoute component={connectComponent(repositoriesConnector)(Repositories) } />
             </Route>
         </Router>
     </Provider>

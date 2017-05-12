@@ -143,6 +143,22 @@ public class RepositoriesEndpointTest {
         assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
     }
 
+
+    @Test
+    public void setScheduleShouldUpdateTheRepository() {
+        final RepositoryDao dao = mock(RepositoryDao.class);
+        final RepositoryNotifier repositoryNotifier = mock(RepositoryNotifier.class);
+        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), repositoryNotifier);
+        final Integer id = 123;
+
+        final Response response = instance.setSchedule(id, 2);
+
+        verify(dao).setSchedule(id, 2);
+        verify(repositoryNotifier).notifyUpdate();
+
+        assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
+    }
+
     @Test
     public void indexShouldRespondWithAListOfRepositories() {
         final RepositoryDao dao = mock(RepositoryDao.class);

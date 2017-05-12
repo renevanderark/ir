@@ -76,6 +76,14 @@ public class RepositoriesEndpoint {
         return Response.ok("{}").build();
     }
 
+    @PUT
+    @Path("/{id}/setSchedule/{scheduleEnumValue}")
+    public Response setSchedule(@PathParam("id") Integer id, @PathParam("scheduleEnumValue") Integer scheduleEnumValue) {
+        dao.setSchedule(id, scheduleEnumValue);
+        repositoryNotifier.notifyUpdate();
+        return Response.ok("{}").build();
+    }
+
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)

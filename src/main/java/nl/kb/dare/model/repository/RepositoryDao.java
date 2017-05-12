@@ -40,4 +40,9 @@ public interface RepositoryDao {
             "set enabled = 0 " +
             "where id = :id")
     void disable(@Bind("id") Integer id);
+
+    @SqlUpdate("update repositories " +
+            "set schedule = :scheduleEnumValue " +
+            "where id = :id")
+    void setSchedule(@Bind("id") Integer id, @Bind("scheduleEnumValue") Integer scheduleEnumValue);
 }
