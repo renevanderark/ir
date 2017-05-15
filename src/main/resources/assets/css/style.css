@@ -1,29 +1,21 @@
-.pagination > li  > a {
-    cursor: pointer
+.enable-toggle {
+    display: inline-block;
+    position: relative;
+    margin-right: 4px;
+    margin-left: 4px;
+    top: 1px;
+    color: #6e6;
+    text-shadow: 0 1px 0 rgba(255,255,255,.3), 0 -1px 0 rgba(0,0,0,.7)
 }
 
-.list-group-item a {
-    cursor: pointer;
+.enable-toggle.off {
+    color: #faa;
+    text-shadow: 0 1px 0 rgba(128,128,128,.4), 0 -1px 0 rgba(0,0,0,.7)
 }
 
-.list-group-item.active a {
-    color: white;
-    cursor: default;
-}
-
-@media print {
-    .breadcrumb {
-        display: none;
-    }
-    .collapsed-panel {
-        display: none;
-    }
-
-    a[href]:after {
-        content: none !important;
-    }
-
-    .glyphicon {
-        display: none;
-    }
+.enable-toggle + button {
+    opacity: .9;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    box-shadow: 0 1px 1px #aaa5, inset 0 1px 1px #fff5
 }

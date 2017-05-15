@@ -1,6 +1,8 @@
 import React from "react";
 import Panel from "../layout/panel";
 import EnableToggle from "../widgets/enable-toggle";
+
+import { RunState } from "../../enums";
 import { Link } from "react-router";
 import { urls } from "../../router";
 
@@ -52,6 +54,7 @@ class Repositories extends React.Component {
                             </td>
                             <td>
                                 <EnableToggle enabled={repo.enabled}
+                                              toggleEnabled={repo.runState === RunState.WAITING}
                                               onEnableClick={() => this.props.onEnableRepository(repo.id)}
                                               onDisableClick={() => this.props.onDisableRepository(repo.id)} />
                             </td>
