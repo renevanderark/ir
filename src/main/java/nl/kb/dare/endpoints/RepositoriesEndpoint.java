@@ -84,32 +84,6 @@ public class RepositoriesEndpoint {
         return Response.ok("{}").build();
     }
 
-    @GET
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("id") Integer id) {
-        final Repository repositoryConfig = dao.findById(id);
-
-        if (repositoryConfig == null) {
-            return notFoundResponse(id);
-        }
-
-        return Response.ok(repositoryConfig).build();
-    }
-
-    @GET
-    @Path("/{id}/validate")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response validate(@PathParam("id") Integer id) {
-        final Repository repositoryConfig = dao.findById(id);
-
-        if (repositoryConfig == null) {
-            return notFoundResponse(id);
-        }
-
-        return getValidationResponse(repositoryConfig);
-    }
-
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/validate")
@@ -142,10 +116,4 @@ public class RepositoriesEndpoint {
         return Response.ok("{}").build();
     }
 
-    private Response notFoundResponse(Integer id) {
-        return Response
-                .status(Response.Status.NOT_FOUND)
-                .entity(new ErrorResponse("repository not found with id: " + id, Response.Status.NOT_FOUND.getStatusCode()))
-                .build();
-    }
 }
