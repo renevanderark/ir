@@ -6,8 +6,6 @@ import nl.kb.http.responsehandlers.ResponseHandlerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -125,7 +123,6 @@ public class ListIdentifiers {
             }
 
             onHarvestComplete.accept(lastDateStamp);
-            onProgress.accept("** harvest done for " + oaiSet);
         } catch (MalformedURLException e) {
             // SEVERE!!
             throw new RuntimeException(e);
@@ -137,17 +134,6 @@ public class ListIdentifiers {
      */
     public void interruptHarvest() {
         interrupted = true;
-    }
-
-    /**
-     *
-     * @return The set and datestamp currently being harvested
-     */
-    public Map<String, String> getHarvestStatus() {
-        Map<String, String> result = new HashMap<>();
-        result.put("dateStamp", lastDateStamp);
-        result.put("name", oaiSet);
-        return result;
     }
 
     public ListIdentifiers setVerb(String verb) {

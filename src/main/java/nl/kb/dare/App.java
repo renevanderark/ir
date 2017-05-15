@@ -8,6 +8,7 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import nl.kb.dare.endpoints.HarvesterEndpoint;
 import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
@@ -56,7 +57,7 @@ public class App extends Application<Config> {
                 : db.onDemand(RepositoryDao.class);
 
         // Cross process exchange utilities (notifiers)
-        final RepositoryNotifier repositoryNotifier = new RepositoryNotifier();
+        final RepositoryNotifier repositoryNotifier = new RepositoryNotifier(repositoryDao);
 
 
         // Initialize wrapped services (injected in endpoints)
@@ -67,6 +68,9 @@ public class App extends Application<Config> {
 
         // CRUD operations for repositories (harvest definitions)
         register(environment, new RepositoriesEndpoint(repositoryDao, repositoryValidator, repositoryNotifier));
+
+        // Operational controls for repository harvesters
+        register(environment, new HarvesterEndpoint(repositoryDao, repositoryNotifier, httpFetcher, responseHandlerFactory));
 
         // HTML + javascript app
         register(environment, new RootEndpoint(config.getHostName()));

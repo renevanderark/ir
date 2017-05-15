@@ -6,9 +6,10 @@ const connectSocket = () => {
     const webSocket = new WebSocket("ws://" + globals.hostName + "/status-socket");
 
     webSocket.onmessage = ({ data: msg}) => {
-        switch (msg) {
+        const {type, data} = JSON.parse(msg);
+        switch (type) {
             case "repository-change":
-                store.dispatch(fetchRepositories(() => {}));
+                store.dispatch({type: ActionTypes.RECEIVE_REPOSITORIES, data: data});
                 break;
         }
     };

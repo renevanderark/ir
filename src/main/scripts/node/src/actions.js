@@ -3,7 +3,8 @@ import {
     disableRepository,
     setHarvestSchedule,
     validateNewRepository,
-    saveRepository
+    saveRepository,
+    fetchRepositories
 } from "./actions/repositories";
 
 export default function actionsMaker(navigateTo, dispatch) {
@@ -14,6 +15,6 @@ export default function actionsMaker(navigateTo, dispatch) {
         onValidateNewRepository: (repository) => dispatch(validateNewRepository(repository)),
 
         onSaveRepository: () => dispatch(saveRepository(() => navigateTo("root"))),
-
+        onRefetchRepositories: () => dispatch(fetchRepositories(() => {}))
     };
 }

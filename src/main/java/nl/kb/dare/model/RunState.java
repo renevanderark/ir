@@ -17,4 +17,8 @@ public enum RunState {
         }
         return null;
     }
+
+    public int getCode() {
+        return code;
+    }
 }

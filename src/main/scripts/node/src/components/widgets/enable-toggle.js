@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 class EnableToggle extends React.Component {
 
     shouldComponentUpdate(nextProps) {
-        return this.props.enabled !== nextProps.enabled;
+        return this.props.enabled !== nextProps.enabled || this.props.toggleEnabled !== nextProps.toggleEnabled;
     }
 
     render () {

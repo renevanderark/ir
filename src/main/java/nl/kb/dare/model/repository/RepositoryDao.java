@@ -45,4 +45,10 @@ public interface RepositoryDao {
             "set schedule = :scheduleEnumValue " +
             "where id = :id")
     void setSchedule(@Bind("id") Integer id, @Bind("scheduleEnumValue") Integer scheduleEnumValue);
+
+    @SqlUpdate("update repositories set datestamp = :dateStamp where id = :id")
+    void setDateStamp(@Bind("id") Integer id, @Bind("dateStamp") String dateStamp);
+
+    @SqlUpdate("update repositories set runState = :runState where id = :id")
+    void setRunState(@Bind("id") Integer id, @Bind("runState") Integer runState);
 }
