@@ -45,9 +45,9 @@ public class RepositoriesEndpoint {
     public Response create(Repository repositoryConfig) {
         final Integer id = dao.insert(repositoryConfig);
         repositoryNotifier.notifyUpdate();
-        repositoryConfig.setId(id);
-        repositoryConfig.setEnabled(false);
-        return Response.created(URI.create("/repositories/" + id)).entity(repositoryConfig).build();
+        return Response.created(URI.create("/repositories/" + id))
+                .entity(String.format("{\"id\": %d}", id))
+                .build();
     }
 
     @PUT

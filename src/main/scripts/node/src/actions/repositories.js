@@ -35,8 +35,8 @@ const saveRepository = (next) => (dispatch, getState) => {
         headers: { 'Content-type': "application/json", 'Accept': 'application/json'},
         body: JSON.stringify(underEdit)
     }, (err, resp, body) => {
-        const savedRepository = JSON.parse(body);
-        next(savedRepository.id)
+        const { id } = JSON.parse(body);
+        next(id)
     });
 };
 
