@@ -12,8 +12,8 @@ CREATE TABLE repositories (
   oai_set varchar2(50) DEFAULT NULL,
   datestamp varchar2(50) DEFAULT NULL,
   enabled NUMBER(3) DEFAULT 0 NOT NULL,
-  running NUMBER(3) DEFAULT 0 NOT NULL,
   schedule NUMBER(10) DEFAULT 0 NOT NULL,
+  runState NUMBER(10) DEFAULT 0 NOT NULL,
   PRIMARY KEY (id)
 )
 

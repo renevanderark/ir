@@ -2,6 +2,7 @@ package nl.kb.dare.model.repository;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import nl.kb.dare.model.RunState;
 
 public class Repository {
 
@@ -13,13 +14,14 @@ public class Repository {
     private String dateStamp;
     private String name;
     private HarvestSchedule schedule;
+    private RunState runState;
 
     public Repository() {
 
     }
 
     public Repository(String url, String name, String metadataPrefix, String set, String dateStamp, Boolean enabled,
-                      HarvestSchedule schedule) {
+                      HarvestSchedule schedule, RunState runState) {
         this.url = url;
         this.name = name;
         this.metadataPrefix = metadataPrefix;
@@ -27,11 +29,12 @@ public class Repository {
         this.dateStamp = dateStamp;
         this.enabled = enabled;
         this.schedule = schedule;
+        this.runState = runState;
     }
 
     public Repository(String url, String name, String metadataPrefix, String set, String dateStamp, Boolean enabled,
-                      HarvestSchedule schedule, Integer id) {
-        this(url, name, metadataPrefix, set, dateStamp, enabled, schedule);
+                      HarvestSchedule schedule, RunState runState, Integer id) {
+        this(url, name, metadataPrefix, set, dateStamp, enabled, schedule, runState);
         this.id = id;
     }
 
@@ -68,6 +71,9 @@ public class Repository {
         return id;
     }
 
+    public RunState getRunState() {
+        return runState;
+    }
 
     @JsonProperty
     public void setUrl(String url) {
@@ -107,6 +113,5 @@ public class Repository {
     public void setId(Integer id) {
         this.id = id;
     }
-
 
 }

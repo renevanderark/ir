@@ -1,6 +1,7 @@
 package nl.kb.dare.endpoints;
 
 import com.google.common.collect.Lists;
+import nl.kb.dare.model.RunState;
 import nl.kb.dare.model.repository.HarvestSchedule;
 import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryDao;
@@ -30,7 +31,7 @@ public class RepositoriesEndpointTest {
         final RepositoryDao dao = mock(RepositoryDao.class);
         final RepositoryNotifier repositoryNotifier = mock(RepositoryNotifier.class);
         final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao,  mock(RepositoryValidator.class), repositoryNotifier);
-        final Repository repositoryConfig = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY);
+        final Repository repositoryConfig = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, RunState.WAITING);
         final Integer id = 123;
         when(dao.insert(repositoryConfig)).thenReturn(id);
 
@@ -65,7 +66,7 @@ public class RepositoriesEndpointTest {
         final RepositoryDao dao = mock(RepositoryDao.class);
         final RepositoryNotifier repositoryNotifier = mock(RepositoryNotifier.class);
         final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), repositoryNotifier);
-        final Repository repositoryConfig = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY);
+        final Repository repositoryConfig = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, RunState.WAITING);
         final Integer id = 123;
 
         final Response response = instance.update(id, repositoryConfig);
@@ -127,8 +128,8 @@ public class RepositoriesEndpointTest {
     public void indexShouldRespondWithAListOfRepositories() {
         final RepositoryDao dao = mock(RepositoryDao.class);
         final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), mock(RepositoryNotifier.class));
-        final Repository repositoryConfig1 = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, 1);
-        final Repository repositoryConfig2 = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, 2);
+        final Repository repositoryConfig1 = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, RunState.WAITING, 1);
+        final Repository repositoryConfig2 = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, RunState.WAITING, 2);
         final List<Repository> repositories = Lists.newArrayList(repositoryConfig1, repositoryConfig2);
 
         when(dao.list()).thenReturn(repositories);
@@ -145,7 +146,7 @@ public class RepositoriesEndpointTest {
         final RepositoryDao dao = mock(RepositoryDao.class);
         final RepositoryValidator validator = mock(RepositoryValidator.class);
         final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, validator, mock(RepositoryNotifier.class));
-        final Repository repositoryConfig = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY);
+        final Repository repositoryConfig = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, RunState.WAITING);
         final RepositoryValidator.ValidationResult validationResult = validator.new ValidationResult();
         when(validator.validate(repositoryConfig)).thenReturn(validationResult);
 

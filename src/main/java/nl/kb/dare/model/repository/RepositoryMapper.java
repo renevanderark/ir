@@ -1,5 +1,6 @@
 package nl.kb.dare.model.repository;
 
+import nl.kb.dare.model.RunState;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
@@ -19,6 +20,8 @@ public class RepositoryMapper implements ResultSetMapper<Repository> {
         final Integer id = resultSet.getInt("id");
         final Boolean enabled = resultSet.getBoolean("enabled");
         final HarvestSchedule schedule = HarvestSchedule.forCode(resultSet.getInt("schedule"));
-        return new Repository(url, name, metadataPrefix, set, dateStamp, enabled, schedule, id);
+        final RunState runState = RunState.forCode(resultSet.getInt("runState"));
+
+        return new Repository(url, name, metadataPrefix, set, dateStamp, enabled, schedule, runState, id);
     }
 }
