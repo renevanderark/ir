@@ -75,4 +75,12 @@ public class RepositoryNotifier {
         }
         notifyUpdate();
     }
+
+    public void onHarvestInterrupt(Integer id) {
+        synchronized (repositoryDao) {
+            repositoryDao.setRunState(id, RunState.INTERRUPTED.getCode());
+        }
+        notifyUpdate();
+    }
+
 }

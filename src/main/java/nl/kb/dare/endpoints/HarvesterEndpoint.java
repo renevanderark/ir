@@ -7,6 +7,7 @@ import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryNotifier;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
+import nl.kb.oaipmh.ListIdentifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import java.util.Optional;
 
 @Path("/harvesters/{repositoryId}")
 public class HarvesterEndpoint {
@@ -68,7 +70,33 @@ public class HarvesterEndpoint {
 
         new Thread(repositoryHarvester).start();
 
-        return Response.ok().build();
+        return Response.ok("{}").build();
+    }
 
+    @Path("/interrupt")
+    @POST
+    @Produces("application/json")
+    public Response interruptHarvester(@PathParam("repositoryId") Integer repositoryId) {
+
+        final Repository repository = repositoryDao.findById(repositoryId);
+
+        if (repository == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ErrorResponse("repository not found",
+                            Response.Status.NOT_FOUND.getStatusCode()))
+                    .build();
+        }
+
+        final Optional<ListIdentifiers> runningInstance = RepositoryHarvester
+                .getRunningInstance(repositoryId);
+
+        if (runningInstance.isPresent()) {
+            runningInstance.get().interruptHarvest();
+            repositoryNotifier.onHarvestInterrupt(repositoryId);
+        } else {
+            repositoryDao.setRunState(repositoryId, RunState.WAITING.getCode());
+        }
+
+        return Response.ok("{}").build();
     }
 }

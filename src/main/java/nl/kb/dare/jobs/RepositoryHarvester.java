@@ -18,6 +18,7 @@ public class RepositoryHarvester implements Runnable {
     private final RepositoryNotifier repositoryNotifier;
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
+
     private Optional<ListIdentifiers> runningInstance = Optional.empty();
 
     private RepositoryHarvester(
@@ -28,6 +29,16 @@ public class RepositoryHarvester implements Runnable {
         this.repositoryNotifier = repostoryNotifier;
         this.httpFetcher = httpFetcher;
         this.responseHandlerFactory = responseHandlerFactory;
+    }
+
+
+    public static Optional<ListIdentifiers> getRunningInstance(Integer repositoryId) {
+        if (instances.containsKey(repositoryId)) {
+            final RepositoryHarvester instance = instances.get(repositoryId);
+            return instance.runningInstance;
+        }
+
+        return Optional.empty();
     }
 
     public static RepositoryHarvester getInstance(
@@ -42,6 +53,7 @@ public class RepositoryHarvester implements Runnable {
 
         final RepositoryHarvester newInstance = new RepositoryHarvester(
                 repository, repositoryNotifier, httpFetcher, responseHandlerFactory);
+
         instances.put(repository.getId(), newInstance);
 
         return newInstance;

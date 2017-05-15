@@ -1,6 +1,7 @@
 import React from "react";
 import EnableToggle from "../widgets/enable-toggle";
 import { RunState } from "../../enums";
+import StartStopButton from "../widgets/start-stop-button";
 
 const Schedule = {
     DAILY: {label: "Dagelijks", enumValue: 0},
@@ -38,7 +39,9 @@ class RepositoryRow extends React.Component {
                                   onDisableClick={() => this.props.onDisableRepository(repository.id)} />
                 </td>
                 <td>
-                    {repository.runState}
+                    <StartStopButton runState={repository.runState}
+                                     onStopClick={() => this.props.onInterruptHarvest(repository.id)}
+                                     onStartClick={() => this.props.onStartHarvest(repository.id)}/>
                 </td>
             </tr>
         );

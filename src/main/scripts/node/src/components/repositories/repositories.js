@@ -40,6 +40,8 @@ class Repositories extends React.Component {
                                        onEnableRepository={this.props.onEnableRepository}
                                        onDisableRepository={this.props.onDisableRepository}
                                        onSetSchedule={this.props.onSetSchedule}
+                                       onStartHarvest={this.props.onStartHarvest}
+                                       onInterruptHarvest={this.props.onInterruptHarvest}
                                        repository={repository} />
                     ))}
                     </tbody>
