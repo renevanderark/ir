@@ -36,7 +36,8 @@ const saveRepository = (next) => (dispatch, getState) => {
         body: JSON.stringify(underEdit)
     }, (err, resp, body) => {
         const { id } = JSON.parse(body);
-        next(id)
+        dispatch({type: ActionTypes.ON_SAVE_REPOSITORY})
+        next(id);
     });
 };
 

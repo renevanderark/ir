@@ -27,6 +27,11 @@ export default function(state=initialState, action) {
                 underEdit: action.underEdit,
                 validationResultsUnderEdit: action.data
             };
+        case ActionTypes.ON_SAVE_REPOSITORY:
+            return {
+                ...state,
+                underEdit: null
+            };
         default:
     }
 
