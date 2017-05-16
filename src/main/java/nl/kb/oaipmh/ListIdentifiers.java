@@ -102,7 +102,6 @@ public class ListIdentifiers {
                 final HttpResponseHandler responseHandler = responseHandlerFactory.getSaxParsingHandler(xmlHandler);
                 final URL requestUrl = makeRequestUrl(resumptionToken);
 
-                onProgress.accept(requestUrl.toString());
 
                 httpFetcher.execute(requestUrl, responseHandler);
                 final Optional<String> optResumptionToken = xmlHandler.getResumptionToken();
@@ -113,7 +112,10 @@ public class ListIdentifiers {
                     break;
                 }
 
-                optDateStamp.ifPresent(s -> lastDateStamp = s);
+                optDateStamp.ifPresent(s -> {
+                    lastDateStamp = s;
+                    onProgress.accept(lastDateStamp);
+                });
 
                 if (optResumptionToken.isPresent()) {
                     resumptionToken = optResumptionToken.get();

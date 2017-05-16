@@ -56,9 +56,11 @@ public class RepositoryController {
         /* TODO handle harvester exception? */
     }
 
-    public void onHarvestProgress(Integer id, String message) {
-        LOG.info(message);
-        /* TODO detailed notify update only for repo identified by id notifyUpdate();*/
+    public void onHarvestProgress(Integer id, String dateStamp) {
+        synchronized (repositoryDao) {
+            repositoryDao.setDateStamp(id, dateStamp);
+        }
+        notifyUpdate();
     }
 
     public void beforeHarvest(Integer id) {
