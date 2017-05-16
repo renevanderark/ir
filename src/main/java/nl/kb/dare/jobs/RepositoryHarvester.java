@@ -1,5 +1,6 @@
 package nl.kb.dare.jobs;
 
+import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.http.HttpFetcher;
@@ -16,17 +17,22 @@ public class RepositoryHarvester implements Runnable {
     private static final Map<Integer, RepositoryHarvester> instances = Collections.synchronizedMap(new HashMap<>());
     private final Repository repository;
     private final RepositoryController repositoryController;
+    private final RecordBatchLoader recordBatchLoader;
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
 
     private ListIdentifiers runningInstance = null;
 
     private RepositoryHarvester(
-            Repository repository, RepositoryController repositoryController,
-            HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory) {
+            Repository repository,
+            RepositoryController repositoryController,
+            RecordBatchLoader recordBatchLoader,
+            HttpFetcher httpFetcher,
+            ResponseHandlerFactory responseHandlerFactory) {
 
         this.repository = repository;
         this.repositoryController = repositoryController;
+        this.recordBatchLoader = recordBatchLoader;
         this.httpFetcher = httpFetcher;
         this.responseHandlerFactory = responseHandlerFactory;
     }
@@ -44,6 +50,7 @@ public class RepositoryHarvester implements Runnable {
     public static RepositoryHarvester getInstance(
             Repository repository,
             RepositoryController repositoryController,
+            RecordBatchLoader recordBatchLoader,
             HttpFetcher httpFetcher,
             ResponseHandlerFactory responseHandlerFactory) {
 
@@ -52,7 +59,7 @@ public class RepositoryHarvester implements Runnable {
         }
 
         final RepositoryHarvester newInstance = new RepositoryHarvester(
-                repository, repositoryController, httpFetcher, responseHandlerFactory);
+                repository, repositoryController, recordBatchLoader, httpFetcher, responseHandlerFactory);
 
         instances.put(repository.getId(), newInstance);
 
@@ -70,9 +77,12 @@ public class RepositoryHarvester implements Runnable {
                 repository.getDateStamp(),
                 httpFetcher,
                 responseHandlerFactory,
-                dateStamp -> repositoryController.onHarvestComplete(repository.getId(), dateStamp),
+                dateStamp -> {
+                    repositoryController.onHarvestComplete(repository.getId(), dateStamp);
+                    recordBatchLoader.flushBatch();
+                },
                 exception -> repositoryController.onHarvestException(repository.getId(), exception),
-                oaiRecordHeader -> repositoryController.onOaiRecord(repository.getId(), oaiRecordHeader),
+                oaiRecordHeader -> recordBatchLoader.addToBatch(repository.getId(), oaiRecordHeader),
                 dateStamp -> repositoryController.onHarvestProgress(repository.getId(), dateStamp)
         );
 

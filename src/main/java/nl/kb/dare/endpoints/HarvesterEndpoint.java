@@ -2,14 +2,13 @@ package nl.kb.dare.endpoints;
 
 import nl.kb.dare.jobs.RepositoryHarvester;
 import nl.kb.dare.model.RunState;
+import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.repository.Repository;
-import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryController;
+import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
 import nl.kb.oaipmh.ListIdentifiers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -20,18 +19,22 @@ import java.util.Optional;
 
 @Path("/harvesters/{repositoryId}")
 public class HarvesterEndpoint {
-    private static final Logger LOG = LoggerFactory.getLogger(HarvesterEndpoint.class);
-
     private final RepositoryDao repositoryDao;
     private final RepositoryController repositoryController;
+    private final RecordBatchLoader recordBatchLoader;
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
 
-    public HarvesterEndpoint(RepositoryDao repositoryDao, RepositoryController repositoryController,
-                             HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory) {
+    public HarvesterEndpoint(
+            RepositoryDao repositoryDao,
+            RepositoryController repositoryController,
+            RecordBatchLoader recordBatchLoader,
+            HttpFetcher httpFetcher,
+            ResponseHandlerFactory responseHandlerFactory) {
 
         this.repositoryDao = repositoryDao;
         this.repositoryController = repositoryController;
+        this.recordBatchLoader = recordBatchLoader;
         this.httpFetcher = httpFetcher;
         this.responseHandlerFactory = responseHandlerFactory;
     }
@@ -66,7 +69,8 @@ public class HarvesterEndpoint {
         }
 
         final RepositoryHarvester repositoryHarvester = RepositoryHarvester
-                .getInstance(repository, repositoryController, httpFetcher, responseHandlerFactory);
+                .getInstance(repository, repositoryController, recordBatchLoader,
+                        httpFetcher, responseHandlerFactory);
 
         new Thread(repositoryHarvester).start();
 

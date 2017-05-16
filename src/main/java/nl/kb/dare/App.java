@@ -12,6 +12,8 @@ import nl.kb.dare.endpoints.HarvesterEndpoint;
 import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
+import nl.kb.dare.model.preproces.RecordBatchLoader;
+import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryValidator;
@@ -56,8 +58,11 @@ public class App extends Application<Config> {
                 ? db.onDemand(OracleRepositoryDao.class)
                 : db.onDemand(RepositoryDao.class);
 
+        final RecordDao recordDao = db.onDemand(RecordDao.class);
+
         // Cross process exchange utilities (controllers)
         final RepositoryController repositoryController = new RepositoryController(repositoryDao);
+        final RecordBatchLoader recordBatchLoader = new RecordBatchLoader(recordDao);
 
 
         // Initialize wrapped services (injected in endpoints)
@@ -70,7 +75,8 @@ public class App extends Application<Config> {
         register(environment, new RepositoriesEndpoint(repositoryDao, repositoryValidator, repositoryController));
 
         // Operational controls for repository harvesters
-        register(environment, new HarvesterEndpoint(repositoryDao, repositoryController, httpFetcher, responseHandlerFactory));
+        register(environment, new HarvesterEndpoint(repositoryDao, repositoryController,
+                recordBatchLoader, httpFetcher, responseHandlerFactory));
 
         // HTML + javascript app
         register(environment, new RootEndpoint(config.getHostName()));

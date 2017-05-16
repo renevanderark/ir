@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.kb.dare.endpoints.websocket.StatusSocketRegistrations;
 import nl.kb.dare.model.RunState;
-import nl.kb.oaipmh.OaiRecordHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,10 +54,6 @@ public class RepositoryController {
 
     public void onHarvestException(Integer id, Exception exception) {
         /* TODO handle harvester exception? */
-    }
-
-    public void onOaiRecord(Integer id, OaiRecordHeader oaiRecordHeader) {
-        /* TODO move to record controller */
     }
 
     public void onHarvestProgress(Integer id, String message) {
