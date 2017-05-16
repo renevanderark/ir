@@ -18,7 +18,8 @@ public class RecordBatchLoader {
     }
 
     public synchronized void addToBatch(Integer repositoryId, OaiRecordHeader oaiRecordHeader) {
-        if (oaiRecordHeader.getOaiStatus() == OaiStatus.AVAILABLE) {
+
+        if (oaiRecordHeader.getOaiStatus() == OaiStatus.AVAILABLE && recordDao.countByFingerprint(oaiRecordHeader) == 0) {
             batch.add(Record.fromHeader(oaiRecordHeader, repositoryId));
         }
 

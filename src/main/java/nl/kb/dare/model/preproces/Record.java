@@ -23,11 +23,11 @@ public class Record {
         this.fingerprint = fingerprint;
     }
 
-    public static Record fromHeader(OaiRecordHeader header, Integer repositoryId) {
+    static Record fromHeader(OaiRecordHeader header, Integer repositoryId) {
         return new Record(
                 header.getOaiStatus() == OaiStatus.AVAILABLE ? ProcessStatus.PENDING : ProcessStatus.SKIP,
                 "TODO: number generator",
-                header.getIdentifier(),
+                header.getFingerprint(),
                 repositoryId
         );
     }
