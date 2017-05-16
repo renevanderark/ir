@@ -2,7 +2,7 @@ package nl.kb.dare.endpoints;
 
 import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryDao;
-import nl.kb.dare.model.repository.RepositoryNotifier;
+import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.http.HttpResponseException;
 import org.xml.sax.SAXException;
@@ -25,12 +25,12 @@ import java.util.List;
 public class RepositoriesEndpoint {
     private RepositoryDao dao;
     private RepositoryValidator validator;
-    private final RepositoryNotifier repositoryNotifier;
+    private final RepositoryController repositoryController;
 
-    public RepositoriesEndpoint(RepositoryDao dao,  RepositoryValidator validator, RepositoryNotifier repositoryNotifier) {
+    public RepositoriesEndpoint(RepositoryDao dao,  RepositoryValidator validator, RepositoryController repositoryController) {
         this.dao = dao;
         this.validator = validator;
-        this.repositoryNotifier = repositoryNotifier;
+        this.repositoryController = repositoryController;
     }
 
     @GET
@@ -44,7 +44,7 @@ public class RepositoriesEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Repository repositoryConfig) {
         final Integer id = dao.insert(repositoryConfig);
-        repositoryNotifier.notifyUpdate();
+        repositoryController.notifyUpdate();
         return Response.created(URI.create("/repositories/" + id))
                 .entity(String.format("{\"id\": %d}", id))
                 .build();
@@ -55,7 +55,7 @@ public class RepositoriesEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") Integer id, Repository repositoryConfig) {
         dao.update(id, repositoryConfig);
-        repositoryNotifier.notifyUpdate();
+        repositoryController.notifyUpdate();
         return Response.ok(repositoryConfig).build();
     }
 
@@ -63,7 +63,7 @@ public class RepositoriesEndpoint {
     @Path("/{id}/enable")
     public Response enable(@PathParam("id") Integer id) {
         dao.enable(id);
-        repositoryNotifier.notifyUpdate();
+        repositoryController.notifyUpdate();
         return Response.ok("{}").build();
     }
 
@@ -72,7 +72,7 @@ public class RepositoriesEndpoint {
     @Path("/{id}/disable")
     public Response disable(@PathParam("id") Integer id) {
         dao.disable(id);
-        repositoryNotifier.notifyUpdate();
+        repositoryController.notifyUpdate();
         return Response.ok("{}").build();
     }
 
@@ -80,7 +80,7 @@ public class RepositoriesEndpoint {
     @Path("/{id}/setSchedule/{scheduleEnumValue}")
     public Response setSchedule(@PathParam("id") Integer id, @PathParam("scheduleEnumValue") Integer scheduleEnumValue) {
         dao.setSchedule(id, scheduleEnumValue);
-        repositoryNotifier.notifyUpdate();
+        repositoryController.notifyUpdate();
         return Response.ok("{}").build();
     }
 
@@ -112,7 +112,7 @@ public class RepositoriesEndpoint {
     @Path("/{id}")
     public Response delete(@PathParam("id") Integer id) {
         dao.remove(id);
-        repositoryNotifier.notifyUpdate();
+        repositoryController.notifyUpdate();
         return Response.ok("{}").build();
     }
 

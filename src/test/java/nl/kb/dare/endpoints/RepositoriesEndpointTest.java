@@ -5,7 +5,7 @@ import nl.kb.dare.model.RunState;
 import nl.kb.dare.model.repository.HarvestSchedule;
 import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryDao;
-import nl.kb.dare.model.repository.RepositoryNotifier;
+import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.http.HttpResponseException;
 import org.junit.Test;
@@ -29,8 +29,8 @@ public class RepositoriesEndpointTest {
     @Test
     public void createShouldCreateANewRpository() {
         final RepositoryDao dao = mock(RepositoryDao.class);
-        final RepositoryNotifier repositoryNotifier = mock(RepositoryNotifier.class);
-        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao,  mock(RepositoryValidator.class), repositoryNotifier);
+        final RepositoryController repositoryController = mock(RepositoryController.class);
+        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao,  mock(RepositoryValidator.class), repositoryController);
         final Repository repositoryConfig = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, RunState.WAITING);
         final Integer id = 123;
         when(dao.insert(repositoryConfig)).thenReturn(id);
@@ -38,7 +38,7 @@ public class RepositoriesEndpointTest {
         final Response response = instance.create(repositoryConfig);
 
         verify(dao).insert(repositoryConfig);
-        verify(repositoryNotifier).notifyUpdate();
+        verify(repositoryController).notifyUpdate();
         assertThat(response.getStatus(), equalTo(Response.Status.CREATED.getStatusCode()));
         assertThat(response.getHeaderString("Location"), equalTo("/repositories/" + id));
         assertThat(response.getEntity(), is(String.format("{\"id\": %d}", id)));
@@ -47,15 +47,15 @@ public class RepositoriesEndpointTest {
     @Test
     public void deleteShouldDeleteTheRepositoryAndItsRecords() throws IOException {
         final RepositoryDao dao = mock(RepositoryDao.class);
-        final RepositoryNotifier repositoryNotifier = mock(RepositoryNotifier.class);
-        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), repositoryNotifier);
+        final RepositoryController repositoryController = mock(RepositoryController.class);
+        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), repositoryController);
         final Integer id = 123;
 
         final Response response = instance.delete(id);
 
-        final InOrder inOrder = inOrder(dao, repositoryNotifier);
+        final InOrder inOrder = inOrder(dao, repositoryController);
         inOrder.verify(dao).remove(id);
-        inOrder.verify(repositoryNotifier).notifyUpdate();
+        inOrder.verify(repositoryController).notifyUpdate();
         inOrder.verifyNoMoreInteractions();
         assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
     }
@@ -64,15 +64,15 @@ public class RepositoriesEndpointTest {
     @Test
     public void updateShouldUpdateTheRepository() {
         final RepositoryDao dao = mock(RepositoryDao.class);
-        final RepositoryNotifier repositoryNotifier = mock(RepositoryNotifier.class);
-        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), repositoryNotifier);
+        final RepositoryController repositoryController = mock(RepositoryController.class);
+        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), repositoryController);
         final Repository repositoryConfig = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, RunState.WAITING);
         final Integer id = 123;
 
         final Response response = instance.update(id, repositoryConfig);
 
         verify(dao).update(id, repositoryConfig);
-        verify(repositoryNotifier).notifyUpdate();
+        verify(repositoryController).notifyUpdate();
 
         assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), equalTo(repositoryConfig));
@@ -81,14 +81,14 @@ public class RepositoriesEndpointTest {
     @Test
     public void enableShouldUpdateTheRepository() {
         final RepositoryDao dao = mock(RepositoryDao.class);
-        final RepositoryNotifier repositoryNotifier = mock(RepositoryNotifier.class);
-        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), repositoryNotifier);
+        final RepositoryController repositoryController = mock(RepositoryController.class);
+        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), repositoryController);
         final Integer id = 123;
 
         final Response response = instance.enable(id);
 
         verify(dao).enable(id);
-        verify(repositoryNotifier).notifyUpdate();
+        verify(repositoryController).notifyUpdate();
 
         assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
     }
@@ -96,14 +96,14 @@ public class RepositoriesEndpointTest {
     @Test
     public void disableShouldUpdateTheRepository() {
         final RepositoryDao dao = mock(RepositoryDao.class);
-        final RepositoryNotifier repositoryNotifier = mock(RepositoryNotifier.class);
-        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), repositoryNotifier);
+        final RepositoryController repositoryController = mock(RepositoryController.class);
+        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), repositoryController);
         final Integer id = 123;
 
         final Response response = instance.disable(id);
 
         verify(dao).disable(id);
-        verify(repositoryNotifier).notifyUpdate();
+        verify(repositoryController).notifyUpdate();
 
         assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
     }
@@ -112,14 +112,14 @@ public class RepositoriesEndpointTest {
     @Test
     public void setScheduleShouldUpdateTheRepository() {
         final RepositoryDao dao = mock(RepositoryDao.class);
-        final RepositoryNotifier repositoryNotifier = mock(RepositoryNotifier.class);
-        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), repositoryNotifier);
+        final RepositoryController repositoryController = mock(RepositoryController.class);
+        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), repositoryController);
         final Integer id = 123;
 
         final Response response = instance.setSchedule(id, 2);
 
         verify(dao).setSchedule(id, 2);
-        verify(repositoryNotifier).notifyUpdate();
+        verify(repositoryController).notifyUpdate();
 
         assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
     }
@@ -127,7 +127,7 @@ public class RepositoriesEndpointTest {
     @Test
     public void indexShouldRespondWithAListOfRepositories() {
         final RepositoryDao dao = mock(RepositoryDao.class);
-        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), mock(RepositoryNotifier.class));
+        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), mock(RepositoryController.class));
         final Repository repositoryConfig1 = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, RunState.WAITING, 1);
         final Repository repositoryConfig2 = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, RunState.WAITING, 2);
         final List<Repository> repositories = Lists.newArrayList(repositoryConfig1, repositoryConfig2);
@@ -145,7 +145,7 @@ public class RepositoriesEndpointTest {
     public void validateNewShouldReturnTheValidationResultForTheRepositoryConfiguration() throws IOException, SAXException, HttpResponseException {
         final RepositoryDao dao = mock(RepositoryDao.class);
         final RepositoryValidator validator = mock(RepositoryValidator.class);
-        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, validator, mock(RepositoryNotifier.class));
+        final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, validator, mock(RepositoryController.class));
         final Repository repositoryConfig = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, RunState.WAITING);
         final RepositoryValidator.ValidationResult validationResult = validator.new ValidationResult();
         when(validator.validate(repositoryConfig)).thenReturn(validationResult);

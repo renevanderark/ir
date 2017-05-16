@@ -13,7 +13,7 @@ import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
 import nl.kb.dare.model.repository.RepositoryDao;
-import nl.kb.dare.model.repository.RepositoryNotifier;
+import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.dare.model.repository.oracle.OracleRepositoryDao;
 import nl.kb.dare.tasks.LoadOracleSchemaTask;
@@ -56,8 +56,8 @@ public class App extends Application<Config> {
                 ? db.onDemand(OracleRepositoryDao.class)
                 : db.onDemand(RepositoryDao.class);
 
-        // Cross process exchange utilities (notifiers)
-        final RepositoryNotifier repositoryNotifier = new RepositoryNotifier(repositoryDao);
+        // Cross process exchange utilities (controllers)
+        final RepositoryController repositoryController = new RepositoryController(repositoryDao);
 
 
         // Initialize wrapped services (injected in endpoints)
@@ -67,10 +67,10 @@ public class App extends Application<Config> {
         // Register endpoints
 
         // CRUD operations for repositories (harvest definitions)
-        register(environment, new RepositoriesEndpoint(repositoryDao, repositoryValidator, repositoryNotifier));
+        register(environment, new RepositoriesEndpoint(repositoryDao, repositoryValidator, repositoryController));
 
         // Operational controls for repository harvesters
-        register(environment, new HarvesterEndpoint(repositoryDao, repositoryNotifier, httpFetcher, responseHandlerFactory));
+        register(environment, new HarvesterEndpoint(repositoryDao, repositoryController, httpFetcher, responseHandlerFactory));
 
         // HTML + javascript app
         register(environment, new RootEndpoint(config.getHostName()));

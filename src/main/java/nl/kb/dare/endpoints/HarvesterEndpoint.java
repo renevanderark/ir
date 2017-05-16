@@ -4,7 +4,7 @@ import nl.kb.dare.jobs.RepositoryHarvester;
 import nl.kb.dare.model.RunState;
 import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryDao;
-import nl.kb.dare.model.repository.RepositoryNotifier;
+import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
 import nl.kb.oaipmh.ListIdentifiers;
@@ -23,15 +23,15 @@ public class HarvesterEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(HarvesterEndpoint.class);
 
     private final RepositoryDao repositoryDao;
-    private final RepositoryNotifier repositoryNotifier;
+    private final RepositoryController repositoryController;
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
 
-    public HarvesterEndpoint(RepositoryDao repositoryDao, RepositoryNotifier repositoryNotifier,
+    public HarvesterEndpoint(RepositoryDao repositoryDao, RepositoryController repositoryController,
                              HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory) {
 
         this.repositoryDao = repositoryDao;
-        this.repositoryNotifier = repositoryNotifier;
+        this.repositoryController = repositoryController;
         this.httpFetcher = httpFetcher;
         this.responseHandlerFactory = responseHandlerFactory;
     }
@@ -66,7 +66,7 @@ public class HarvesterEndpoint {
         }
 
         final RepositoryHarvester repositoryHarvester = RepositoryHarvester
-                .getInstance(repository, repositoryNotifier, httpFetcher, responseHandlerFactory);
+                .getInstance(repository, repositoryController, httpFetcher, responseHandlerFactory);
 
         new Thread(repositoryHarvester).start();
 
@@ -92,7 +92,7 @@ public class HarvesterEndpoint {
 
         if (runningInstance.isPresent()) {
             runningInstance.get().interruptHarvest();
-            repositoryNotifier.onHarvestInterrupt(repositoryId);
+            repositoryController.onHarvestInterrupt(repositoryId);
         } else {
             repositoryDao.setRunState(repositoryId, RunState.WAITING.getCode());
         }

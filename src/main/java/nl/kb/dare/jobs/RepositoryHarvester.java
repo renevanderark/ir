@@ -1,7 +1,7 @@
 package nl.kb.dare.jobs;
 
 import nl.kb.dare.model.repository.Repository;
-import nl.kb.dare.model.repository.RepositoryNotifier;
+import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
 import nl.kb.oaipmh.ListIdentifiers;
@@ -15,18 +15,18 @@ public class RepositoryHarvester implements Runnable {
 
     private static final Map<Integer, RepositoryHarvester> instances = Collections.synchronizedMap(new HashMap<>());
     private final Repository repository;
-    private final RepositoryNotifier repositoryNotifier;
+    private final RepositoryController repositoryController;
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
 
     private Optional<ListIdentifiers> runningInstance = Optional.empty();
 
     private RepositoryHarvester(
-            Repository repository, RepositoryNotifier repostoryNotifier,
+            Repository repository, RepositoryController repositoryController,
             HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory) {
 
         this.repository = repository;
-        this.repositoryNotifier = repostoryNotifier;
+        this.repositoryController = repositoryController;
         this.httpFetcher = httpFetcher;
         this.responseHandlerFactory = responseHandlerFactory;
     }
@@ -43,7 +43,7 @@ public class RepositoryHarvester implements Runnable {
 
     public static RepositoryHarvester getInstance(
             Repository repository,
-            RepositoryNotifier repositoryNotifier,
+            RepositoryController repositoryController,
             HttpFetcher httpFetcher,
             ResponseHandlerFactory responseHandlerFactory) {
 
@@ -52,7 +52,7 @@ public class RepositoryHarvester implements Runnable {
         }
 
         final RepositoryHarvester newInstance = new RepositoryHarvester(
-                repository, repositoryNotifier, httpFetcher, responseHandlerFactory);
+                repository, repositoryController, httpFetcher, responseHandlerFactory);
 
         instances.put(repository.getId(), newInstance);
 
@@ -61,7 +61,7 @@ public class RepositoryHarvester implements Runnable {
 
     @Override
     public void run() {
-        repositoryNotifier.beforeHarvest(repository.getId());
+        repositoryController.beforeHarvest(repository.getId());
 
         runningInstance = Optional.of(new ListIdentifiers(
                 repository.getUrl(),
@@ -70,10 +70,10 @@ public class RepositoryHarvester implements Runnable {
                 repository.getDateStamp(),
                 httpFetcher,
                 responseHandlerFactory,
-                dateStamp -> repositoryNotifier.onHarvestComplete(repository.getId(), dateStamp),
-                exception -> repositoryNotifier.onHarvestException(repository.getId(), exception),
-                oaiRecordHeader -> repositoryNotifier.onOaiRecord(repository.getId(), oaiRecordHeader),
-                dateStamp -> repositoryNotifier.onHarvestProgress(repository.getId(), dateStamp)
+                dateStamp -> repositoryController.onHarvestComplete(repository.getId(), dateStamp),
+                exception -> repositoryController.onHarvestException(repository.getId(), exception),
+                oaiRecordHeader -> repositoryController.onOaiRecord(repository.getId(), oaiRecordHeader),
+                dateStamp -> repositoryController.onHarvestProgress(repository.getId(), dateStamp)
         ));
 
         runningInstance.get().harvest();

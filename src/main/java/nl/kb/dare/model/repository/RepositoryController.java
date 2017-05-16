@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class RepositoryNotifier {
-    private static final Logger LOG = LoggerFactory.getLogger(RepositoryNotifier.class);
+public class RepositoryController {
+    private static final Logger LOG = LoggerFactory.getLogger(RepositoryController.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final RepositoryDao repositoryDao;
@@ -28,7 +28,7 @@ public class RepositoryNotifier {
         }
     }
 
-    public RepositoryNotifier(RepositoryDao repositoryDao) {
+    public RepositoryController(RepositoryDao repositoryDao) {
         this.repositoryDao = repositoryDao;
     }
 
@@ -58,7 +58,7 @@ public class RepositoryNotifier {
     }
 
     public void onOaiRecord(Integer id, OaiRecordHeader oaiRecordHeader) {
-        /* TODO move to record notifier */
+        /* TODO move to record controller */
     }
 
     public void onHarvestProgress(Integer id, String message) {
