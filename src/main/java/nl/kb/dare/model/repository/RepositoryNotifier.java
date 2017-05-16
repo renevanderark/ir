@@ -54,10 +54,7 @@ public class RepositoryNotifier {
     }
 
     public void onHarvestException(Integer id, Exception exception) {
-        synchronized (repositoryDao) {
-            repositoryDao.setRunState(id, RunState.WAITING.getCode());
-        }
-        notifyUpdate();
+        /* TODO handle harvester exception? */
     }
 
     public void onOaiRecord(Integer id, OaiRecordHeader oaiRecordHeader) {

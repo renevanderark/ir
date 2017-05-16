@@ -19,17 +19,18 @@ class Repositories extends React.Component {
                 <table className="table">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>
+                                <span className="glyphicon glyphicon-refresh"
+                                      style={{cursor: "pointer"}}
+                                      onClick={() => this.props.onRefetchRepositories()}
+                                />
+                            </th>
                             <th>Naam</th>
                             <th>Set</th>
                             <th>Laatste datestamp</th>
                             <th>Harvest schema</th>
                             <th colSpan={2}>
                                 Actief
-                                <span className="glyphicon glyphicon-refresh pull-right"
-                                      style={{cursor: "pointer"}}
-                                      onClick={() => this.props.onRefetchRepositories()}
-                                />
                             </th>
                         </tr>
                     </thead>
