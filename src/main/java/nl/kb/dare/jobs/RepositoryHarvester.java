@@ -19,7 +19,7 @@ public class RepositoryHarvester implements Runnable {
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
 
-    private Optional<ListIdentifiers> runningInstance = Optional.empty();
+    private ListIdentifiers runningInstance = null;
 
     private RepositoryHarvester(
             Repository repository, RepositoryController repositoryController,
@@ -35,7 +35,7 @@ public class RepositoryHarvester implements Runnable {
     public static Optional<ListIdentifiers> getRunningInstance(Integer repositoryId) {
         if (instances.containsKey(repositoryId)) {
             final RepositoryHarvester instance = instances.get(repositoryId);
-            return instance.runningInstance;
+            return Optional.of(instance.runningInstance);
         }
 
         return Optional.empty();
@@ -63,7 +63,7 @@ public class RepositoryHarvester implements Runnable {
     public void run() {
         repositoryController.beforeHarvest(repository.getId());
 
-        runningInstance = Optional.of(new ListIdentifiers(
+        runningInstance = new ListIdentifiers(
                 repository.getUrl(),
                 repository.getSet(),
                 repository.getMetadataPrefix(),
@@ -74,11 +74,11 @@ public class RepositoryHarvester implements Runnable {
                 exception -> repositoryController.onHarvestException(repository.getId(), exception),
                 oaiRecordHeader -> repositoryController.onOaiRecord(repository.getId(), oaiRecordHeader),
                 dateStamp -> repositoryController.onHarvestProgress(repository.getId(), dateStamp)
-        ));
+        );
 
-        runningInstance.get().harvest();
+        runningInstance.harvest();
 
-        runningInstance = Optional.empty();
+        runningInstance = null;
         instances.remove(repository.getId());
     }
 }
