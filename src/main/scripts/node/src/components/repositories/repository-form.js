@@ -4,6 +4,7 @@ import TextField from "../forms/text-field";
 import DatestampField from "../forms/datestamp-field";
 import ValidationMarker from "../widgets/validation-marker";
 import { validateDateStamp } from "../forms/datestamp-field";
+import ButtonWithModalWarning from "../modals/button-with-modal-warning";
 
 class RepositoryForm extends React.Component {
     constructor(props) {
@@ -44,7 +45,7 @@ class RepositoryForm extends React.Component {
 
         const { repository, changed } = this.state;
 
-        const { onValidateNewRepository, validationResultsUnderEdit, onSaveRepository } = this.props;
+        const { onDeleteRepository, onValidateNewRepository, validationResultsUnderEdit, onSaveRepository } = this.props;
 
         const {urlIsValidOAI, setExists, metadataFormatSupported } = validationResultsUnderEdit;
 
@@ -58,8 +59,21 @@ class RepositoryForm extends React.Component {
             setExists &&
             metadataFormatSupported;
 
+        const deleteButton = repository.id ? (
+            <ButtonWithModalWarning
+                className="btn btn-danger pull-right"
+                label="Verwijderen"
+                onConfirm={() => onDeleteRepository(repository.id)}>
+                <p>
+                    Het verwijderen van een harvest definitie veroorzaakt ook een verwijdering van alle onverwerkte
+                    publicaties.
+                </p>
+                <p>Weet u zeker dat u deze harvest definitie wilt verwijderen?</p>
+            </ButtonWithModalWarning>
+        ) : null;
+
         return (
-            <Panel title="Nieuwe harvest definitie">
+            <Panel title={repository.id ? "Harvest definitie bewerken" : "Nieuwe harvest definitie"}>
                 <TextField label="Naam" value={repository.name} onChange={this.onChange.bind(this, "name")} />
                 <TextField label="Url" value={repository.url} onChange={this.onChange.bind(this, "url")}>
                     <ValidationMarker validates={urlIsValidOAI}
@@ -81,13 +95,15 @@ class RepositoryForm extends React.Component {
                 <button className="btn btn-default"
                         disabled={!validateDateStamp(repository.dateStamp)}
                         onClick={() => onValidateNewRepository(repository)}>
-                    Test settings
+                    Test configuratie
                 </button>
                 <button className="btn btn-default"
                         disabled={!allowedToSave}
                         onClick={onSaveRepository}>
-                    Save
+                    Opslaan
                 </button>
+
+                {deleteButton}
             </Panel>
         );
     }

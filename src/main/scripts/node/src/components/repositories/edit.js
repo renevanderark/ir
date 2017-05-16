@@ -12,12 +12,18 @@ class EditRepository extends React.Component {
     }
 
     render() {
-        const { onValidateNewRepository, validationResultsUnderEdit, onSaveRepository } = this.props;
+        const {
+            onDeleteRepository,
+            onValidateNewRepository,
+            validationResultsUnderEdit,
+            onSaveRepository
+        } = this.props;
 
         return (
             <RepositoryForm
                 onValidateNewRepository={onValidateNewRepository}
                 onSaveRepository={onSaveRepository}
+                onDeleteRepository={onDeleteRepository}
                 validationResultsUnderEdit={validationResultsUnderEdit}
                 underEdit={this.props.underEdit} />
         );

@@ -79,11 +79,19 @@ const validateNewRepository = (repository) => (dispatch) =>
         }
     });
 
+const deleteRepository = (id, next = () => {}) => (dispatch) => {
+    xhr({
+        url: `/repositories/${id}`,
+        method: "DELETE"
+    }, next);
+};
+
 export {
     fetchRepositories,
     enableRepository,
     disableRepository,
     setHarvestSchedule,
     validateNewRepository,
-    saveRepository
+    saveRepository,
+    deleteRepository
 };

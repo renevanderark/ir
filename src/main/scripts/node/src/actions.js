@@ -4,7 +4,8 @@ import {
     setHarvestSchedule,
     validateNewRepository,
     saveRepository,
-    fetchRepositories
+    fetchRepositories,
+    deleteRepository
 } from "./actions/repositories";
 
 import {
@@ -21,6 +22,7 @@ export default function actionsMaker(navigateTo, dispatch) {
         onStartHarvest: (repositoryId) => dispatch(startHarvest(repositoryId)),
         onInterruptHarvest: (repositoryId) => dispatch(interruptHarvest(repositoryId)),
         onSaveRepository: () => dispatch(saveRepository(() => navigateTo("root"))),
+        onDeleteRepository: (id) => dispatch(deleteRepository(id, () => navigateTo("root", []))),
         onRefetchRepositories: () => dispatch(fetchRepositories(() => {}))
     };
 }

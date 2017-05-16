@@ -102,7 +102,7 @@ class DatestampField extends React.Component {
                 </div>
                 <div className="col-md-1 col-sm-1 col-xs-1" />
                 <button className="btn btn-danger" onClick={() => this.props.onChange({target: {value: null}})}>
-                    Remove datestamp
+                    Verwijder datestamp
                 </button>
             </div>
         );
