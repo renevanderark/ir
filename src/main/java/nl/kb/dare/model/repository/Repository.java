@@ -77,6 +77,10 @@ public class Repository {
         return runState;
     }
 
+    public Integer getScheduleCode() {
+        return schedule.getCode();
+    }
+
     @JsonProperty
     public void setUrl(String url) {
         this.url = url;

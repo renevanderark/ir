@@ -20,17 +20,7 @@ class RepositoryRow extends React.Component {
                 <td>{repository.name}</td>
                 <td>{repository.set}</td>
                 <td>{repository.dateStamp || "- nog niet geharvest -"}</td>
-                <td>
-                    <select value={Schedule[repository.schedule].enumValue}
-                            disabled={repository.runState !== RunState.WAITING}
-                            onChange={(ev) => this.props.onSetSchedule(repository.id, ev.target.value)}
-                            className="form-control">
-
-                        <option value={Schedule.DAILY.enumValue}>{Schedule.DAILY.label}</option>
-                        <option value={Schedule.WEEKLY.enumValue}>{Schedule.WEEKLY.label}</option>
-                        <option value={Schedule.MONTHLY.enumValue}>{Schedule.MONTHLY.label}</option>
-                    </select>
-                </td>
+                <td>{Schedule[repository.schedule].label}</td>
                 <td>
                     <EnableToggle enabled={repository.enabled}
                                   toggleEnabled={repository.runState === RunState.WAITING}

@@ -5,6 +5,7 @@ import DatestampField from "../forms/datestamp-field";
 import ValidationMarker from "../widgets/validation-marker";
 import { validateDateStamp } from "../forms/datestamp-field";
 import ButtonWithModalWarning from "../modals/button-with-modal-warning";
+import { Schedule } from "../../enums";
 
 class RepositoryForm extends React.Component {
     constructor(props) {
@@ -91,7 +92,21 @@ class RepositoryForm extends React.Component {
                     />
                 </TextField>
                 <DatestampField label="Datestamp" value={repository.dateStamp} onChange={this.onChange.bind(this, "dateStamp")} />
+                <div className="form-group row">
+                    <label className="col-md-4 col-sm-32 col-xs-32">
+                        Schema
+                    </label>
+                    <span className="col-md-28">
+                        <select value={repository.schedule}
+                                onChange={this.onChange.bind(this, "schedule")}
+                                className="form-control">
 
+                            <option value="DAILY">{Schedule.DAILY.label}</option>
+                            <option value="WEEKLY">{Schedule.WEEKLY.label}</option>
+                            <option value="MONTHLY">{Schedule.MONTHLY.label}</option>
+                        </select>
+                    </span>
+                </div>
                 <button className="btn btn-default"
                         disabled={!validateDateStamp(repository.dateStamp)}
                         onClick={() => onValidateNewRepository(repository)}>

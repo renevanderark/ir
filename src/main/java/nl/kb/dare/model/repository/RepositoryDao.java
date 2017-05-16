@@ -12,8 +12,8 @@ import java.util.List;
 @RegisterMapper(RepositoryMapper.class)
 public interface RepositoryDao {
 
-    @SqlUpdate("insert into repositories (name, url, metadataPrefix, oai_set, datestamp) " +
-            "values (:name, :url, :metadataPrefix, :set, :dateStamp)")
+    @SqlUpdate("insert into repositories (name, url, metadataPrefix, oai_set, datestamp, schedule) " +
+            "values (:name, :url, :metadataPrefix, :set, :dateStamp, :scheduleCode)")
     @GetGeneratedKeys
     Integer insert(@BindBean Repository repositoryConfig);
 
@@ -24,7 +24,7 @@ public interface RepositoryDao {
     void remove(@Bind("id") int id);
 
     @SqlUpdate("update repositories " +
-            "set name=:r.name, url=:r.url, metadataPrefix=:r.metadataPrefix, oai_set=:r.set, datestamp=:r.dateStamp " +
+            "set name=:r.name, url=:r.url, metadataPrefix=:r.metadataPrefix, oai_set=:r.set, datestamp=:r.dateStamp, schedule=:r.scheduleCode " +
             "where id = :id")
     void update(@Bind("id") Integer id, @BindBean("r") Repository repositoryConfig);
 

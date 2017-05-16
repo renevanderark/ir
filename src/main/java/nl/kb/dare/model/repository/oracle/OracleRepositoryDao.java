@@ -14,8 +14,8 @@ import java.math.BigDecimal;
 public abstract class OracleRepositoryDao implements RepositoryDao {
 
 
-    @SqlUpdate("insert into repositories (id, name, url, metadataPrefix, oai_set, datestamp) " +
-            "values (repositories_seq.nextval, :name, :url, :metadataPrefix, :set, :dateStamp)")
+    @SqlUpdate("insert into repositories (id, name, url, metadataPrefix, oai_set, datestamp, schedule) " +
+            "values (repositories_seq.nextval, :name, :url, :metadataPrefix, :set, :dateStamp, :scheduleCode)")
     abstract void oracleInsert(@BindBean Repository repositoryConfig);
 
     @SqlQuery("select repositories_seq.currval from dual")

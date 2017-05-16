@@ -6,7 +6,8 @@ export default (state, routed) => ({
             url: "",
             set: "",
             metadataPrefix: "",
-            dateStamp: null
+            dateStamp: null,
+            schedule: "DAILY"
     }
     : state.repositories.underEdit || {
             ...state.repositories.list.find((repo) => repo.id === parseInt(routed.params.repositoryId, 10))

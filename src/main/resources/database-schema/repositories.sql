@@ -11,8 +11,8 @@ CREATE TABLE repositories (
   metadataPrefix varchar2(255) DEFAULT NULL,
   oai_set varchar2(50) DEFAULT NULL,
   datestamp varchar2(50) DEFAULT NULL,
+  schedule NUMBER(10) NOT NULL,
   enabled NUMBER(3) DEFAULT 0 NOT NULL,
-  schedule NUMBER(10) DEFAULT 0 NOT NULL,
   runState NUMBER(10) DEFAULT 0 NOT NULL,
   PRIMARY KEY (id)
 )

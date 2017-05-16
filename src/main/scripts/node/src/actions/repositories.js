@@ -36,7 +36,7 @@ const saveRepository = (next) => (dispatch, getState) => {
         headers: { 'Content-type': "application/json", 'Accept': 'application/json'},
         body: JSON.stringify({
             ...underEdit,
-            schedule: underEdit.schedule ? Schedule[underEdit.schedule].enumValue : Schedule.DAILY.enumValue
+            schedule: Schedule[underEdit.schedule].enumValue
         })
     }, (err, resp, body) => {
         const { id } = JSON.parse(body);
