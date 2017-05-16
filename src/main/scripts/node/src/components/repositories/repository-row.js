@@ -42,6 +42,7 @@ class RepositoryRow extends React.Component {
                         <span className="glyphicon glyphicon-edit" />
                     </Link>
                     <StartStopButton runState={repository.runState}
+                                     disabled={!repository.enabled}
                                      onStopClick={() => this.props.onInterruptHarvest(repository.id)}
                                      onStartClick={() => this.props.onStartHarvest(repository.id)}/>
                 </td>
