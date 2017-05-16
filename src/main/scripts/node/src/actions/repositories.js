@@ -1,5 +1,6 @@
 import xhr from "xhr";
 import ActionTypes from "../action-types";
+import { Schedule } from "../enums";
 
 const fetchRepositories = (next = () => {}) => (dispatch) => {
     dispatch({type: ActionTypes.REQUEST_REPOSITORIES});
@@ -33,10 +34,13 @@ const saveRepository = (next) => (dispatch, getState) => {
         url: underEdit.id ? `/repositories/${underEdit.id}` : `/repositories`,
         method: underEdit.id ? "PUT" : "POST",
         headers: { 'Content-type': "application/json", 'Accept': 'application/json'},
-        body: JSON.stringify(underEdit)
+        body: JSON.stringify({
+            ...underEdit,
+            schedule: underEdit.schedule ? Schedule[underEdit.schedule].enumValue : Schedule.DAILY.enumValue
+        })
     }, (err, resp, body) => {
         const { id } = JSON.parse(body);
-        dispatch({type: ActionTypes.ON_SAVE_REPOSITORY})
+        dispatch({type: ActionTypes.ON_SAVE_REPOSITORY});
         next(id);
     });
 };
@@ -47,7 +51,11 @@ const validateNewRepository = (repository) => (dispatch) =>
         url: `/repositories/validate`,
         method: "POST",
         headers: { "Content-type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify(repository)
+        body: JSON.stringify({
+            set: repository.set,
+            url: repository.url,
+            metadataPrefix: repository.metadataPrefix
+        })
     }, (err, resp, body) => {
         if (resp.statusCode > 299) {
             dispatch({

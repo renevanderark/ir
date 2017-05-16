@@ -3,11 +3,10 @@ import EnableToggle from "../widgets/enable-toggle";
 import { RunState } from "../../enums";
 import StartStopButton from "../widgets/start-stop-button";
 
-const Schedule = {
-    DAILY: {label: "Dagelijks", enumValue: 0},
-    WEEKLY: {label: "Wekelijks", enumValue: 1},
-    MONTHLY: {label: "Maandelijks", enumValue: 2}
-};
+import { Link } from "react-router";
+import { urls } from "../../router";
+
+import { Schedule } from "../../enums";
 
 
 class RepositoryRow extends React.Component {
@@ -39,6 +38,9 @@ class RepositoryRow extends React.Component {
                                   onDisableClick={() => this.props.onDisableRepository(repository.id)} />
                 </td>
                 <td>
+                    <Link to={urls.editRepository(repository.id)} className="btn btn-default">
+                        <span className="glyphicon glyphicon-edit" />
+                    </Link>
                     <StartStopButton runState={repository.runState}
                                      onStopClick={() => this.props.onInterruptHarvest(repository.id)}
                                      onStartClick={() => this.props.onStartHarvest(repository.id)}/>

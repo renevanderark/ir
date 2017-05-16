@@ -10,38 +10,24 @@ class RepositoryForm extends React.Component {
         super(props);
 
         this.state = {
-            repository: props.underEdit || props.repository,
+            repository: props.underEdit,
             changed: false
         };
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.underEdit) {
-            this.setState({
-                changed: false,
-                repository: nextProps.underEdit
-            });
-        } else {
-            this.setState({
-                changed: false,
-                repository: nextProps.repository
-            });
-        }
+        this.setState({
+            changed: false,
+            repository: nextProps.underEdit
+        });
     }
 
 
     componentDidMount() {
-        if (this.props.underEdit) {
-            this.setState({
-                changed: false,
-                repository: this.props.underEdit
-            });
-        } else {
-            this.setState({
-                changed: false,
-                repository: this.props.repository
-            });
-        }
+        this.setState({
+            changed: false,
+            repository: this.props.underEdit
+        });
     }
 
     onChange(field, ev) {
@@ -50,7 +36,8 @@ class RepositoryForm extends React.Component {
             repository: {
                 ...this.state.repository,
                 [field]: ev.target.value
-            }});
+            }
+        });
     }
 
     render() {

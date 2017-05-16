@@ -30,7 +30,8 @@ export default function(state=initialState, action) {
         case ActionTypes.ON_SAVE_REPOSITORY:
             return {
                 ...state,
-                underEdit: null
+                underEdit: null,
+                validationResultsUnderEdit: {}
             };
         default:
     }

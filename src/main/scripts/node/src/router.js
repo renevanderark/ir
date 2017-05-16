@@ -7,12 +7,13 @@ import actions from "./actions";
 
 import rootConnector from "./connectors/root-connector";
 import repositoriesConnector from "./connectors/repositories-connector";
-import newRepositoryConnector from "./connectors/new-repository-connector";
+import editRepositoryConnector from "./connectors/edit-repository-connector";
 
 import App from "./components/app";
 
 import Repositories from "./components/repositories/repositories";
 import NewRepository from "./components/repositories/new";
+import EditRepository from "./components/repositories/edit";
 
 const urls = {
     root() {
@@ -20,6 +21,11 @@ const urls = {
     },
     newRepository() {
         return "/nieuw"
+    },
+    editRepository(id) {
+        return id
+            ? `/bewerken/${id}`
+            : "/bewerken/:repositoryId"
     }
 };
 
@@ -34,8 +40,8 @@ export default (
         <Router history={browserHistory}>
             <Route path={urls.root()} component={connectComponent(rootConnector)(App)}>
                 <IndexRoute component={connectComponent(repositoriesConnector)(Repositories) } />
-                <Route path={urls.newRepository()} component={connectComponent(newRepositoryConnector)(NewRepository)} />
-
+                <Route path={urls.newRepository()} component={connectComponent(editRepositoryConnector)(NewRepository)} />
+                <Route path={urls.editRepository()} components={connectComponent(editRepositoryConnector)(EditRepository)} />
             </Route>
         </Router>
     </Provider>
