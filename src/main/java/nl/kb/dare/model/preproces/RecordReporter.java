@@ -23,7 +23,7 @@ public class RecordReporter {
         this.db = db;
     }
 
-    RecordStatusUpdate getStatusUpdate() {
+    public RecordStatusUpdate getStatusUpdate() {
         final Map<String, Map<String, Object>> result = new HashMap<>();
 
         final Handle handle = db.open();

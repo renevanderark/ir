@@ -1,12 +1,13 @@
 import store from "./store";
 import {fetchRepositories} from "./actions/repositories";
+import {fetchRecordStatus} from "./actions/record-status";
+
 import ActionTypes from "./action-types";
 
 const connectSocket = () => {
     const webSocket = new WebSocket("ws://" + globals.hostName + "/status-socket");
 
     webSocket.onmessage = ({ data: msg}) => {
-        console.log("onmessage");
         const {type, data} = JSON.parse(msg);
         switch (type) {
             case "repository-change":
@@ -34,7 +35,8 @@ const connectSocket = () => {
     webSocket.onopen = pingWs;
 };
 
-const fetchInitialData = (onInitialize) => store.dispatch(fetchRepositories(onInitialize));
+const fetchInitialData = (onInitialize) => store.dispatch(fetchRepositories(() =>
+    store.dispatch(fetchRecordStatus(onInitialize))));
 
 
 export { connectSocket, fetchInitialData };

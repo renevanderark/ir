@@ -2,7 +2,7 @@ package nl.kb.dare.model.preproces;
 
 import nl.kb.dare.model.SocketUpdate;
 
-class RecordStatusUpdate implements SocketUpdate {
+public class RecordStatusUpdate implements SocketUpdate {
 
     private final Object data;
 
