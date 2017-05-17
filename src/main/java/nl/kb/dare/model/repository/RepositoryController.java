@@ -1,46 +1,26 @@
 package nl.kb.dare.model.repository;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.kb.dare.endpoints.websocket.StatusSocketRegistrations;
 import nl.kb.dare.model.RunState;
+import nl.kb.dare.model.SocketNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 public class RepositoryController {
     private static final Logger LOG = LoggerFactory.getLogger(RepositoryController.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final RepositoryDao repositoryDao;
+    private final SocketNotifier socketNotifier;
 
-    private class RepositoryUpdate {
-        @JsonProperty
-        final String type = "repository-change";
-        @JsonProperty
-        final List<Repository> data;
-
-        RepositoryUpdate(List<Repository> list) {
-            this.data = list;
-        }
-    }
-
-    public RepositoryController(RepositoryDao repositoryDao) {
+    public RepositoryController(RepositoryDao repositoryDao, SocketNotifier socketNotifier) {
         this.repositoryDao = repositoryDao;
+        this.socketNotifier = socketNotifier;
     }
 
 
     public void notifyUpdate() {
-
-        final String msg;
-        try {
-            msg = objectMapper.writeValueAsString(new RepositoryUpdate(repositoryDao.list()));
-            StatusSocketRegistrations.getInstance().broadcast(msg);
-        } catch (JsonProcessingException e) {
-            LOG.error("Failed to produce json from RepositoryUpdate ", e);
-        }
+        socketNotifier.notifyUpdate(new RepositoryUpdate(repositoryDao.list()));
     }
 
     public void onHarvestComplete(Integer id, String dateStamp) {

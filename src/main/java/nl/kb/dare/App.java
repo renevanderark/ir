@@ -12,8 +12,10 @@ import nl.kb.dare.endpoints.HarvesterEndpoint;
 import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
+import nl.kb.dare.model.SocketNotifier;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.preproces.RecordDao;
+import nl.kb.dare.model.preproces.RecordReporter;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryValidator;
@@ -60,9 +62,12 @@ public class App extends Application<Config> {
 
         final RecordDao recordDao = db.onDemand(RecordDao.class);
 
-        // Cross process exchange utilities (controllers)
-        final RepositoryController repositoryController = new RepositoryController(repositoryDao);
-        final RecordBatchLoader recordBatchLoader = new RecordBatchLoader(recordDao);
+        // Cross process exchange utilities (controllers and notifiers)
+        final SocketNotifier socketNotifier = new SocketNotifier();
+        final RecordReporter recordReporter = new RecordReporter(db);
+
+        final RepositoryController repositoryController = new RepositoryController(repositoryDao, socketNotifier);
+        final RecordBatchLoader recordBatchLoader = new RecordBatchLoader(recordDao, recordReporter, socketNotifier);
 
 
         // Initialize wrapped services (injected in endpoints)

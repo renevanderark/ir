@@ -26,7 +26,10 @@ class Repositories extends React.Component {
                                 />
                             </th>
                             <th>Naam</th>
-                            <th>Set</th>
+                            <th>Wachtrij</th>
+                            <th>Downloaden</th>
+                            <th>Fout</th>
+                            <th>Download klaar</th>
                             <th>Laatste datestamp</th>
                             <th>Harvest schema</th>
                             <th colSpan={2}>
@@ -43,6 +46,7 @@ class Repositories extends React.Component {
                                        onSetSchedule={this.props.onSetSchedule}
                                        onStartHarvest={this.props.onStartHarvest}
                                        onInterruptHarvest={this.props.onInterruptHarvest}
+                                       recordStatus={this.props.repositories.recordStatus[repository.id] || {}}
                                        repository={repository} />
                     ))}
                     </tbody>

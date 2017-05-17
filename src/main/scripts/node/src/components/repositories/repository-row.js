@@ -12,13 +12,17 @@ import { Schedule } from "../../enums";
 class RepositoryRow extends React.Component {
 
     render() {
-        const { repository } = this.props;
+        const { repository, recordStatus } = this.props;
 
+//recordStatus
         return (
             <tr>
                 <td>{repository.id}</td>
                 <td>{repository.name}</td>
-                <td>{repository.set}</td>
+                <td>{recordStatus.pending || 0}</td>
+                <td>{recordStatus.processing || 0}</td>
+                <td>{recordStatus.failure || 0}</td>
+                <td>{recordStatus.processed || 0}</td>
                 <td>{repository.dateStamp || "- nog niet geharvest -"}</td>
                 <td>{Schedule[repository.schedule].label}</td>
                 <td>

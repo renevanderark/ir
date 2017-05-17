@@ -4,7 +4,8 @@ const initialState = {
     list: [],
     pending: false,
     underEdit: null,
-    validationResultsUnderEdit: {}
+    validationResultsUnderEdit: {},
+    recordStatus: {}
 };
 
 
@@ -32,6 +33,11 @@ export default function(state=initialState, action) {
                 ...state,
                 underEdit: null,
                 validationResultsUnderEdit: {}
+            };
+        case ActionTypes.RECEIVE_RECORD_STATUS:
+            return {
+                ...state,
+                recordStatus: action.data
             };
         default:
     }
