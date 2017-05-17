@@ -13,6 +13,13 @@ public interface RecordDao {
             "VALUES (SEQ_DARE_PREPROCES.nextval, :state, :kbObjId, CURRENT_TIMESTAMP, :fingerprint, :repositoryId)")
     void insertBatch(@BindBean List<Record> recordList);
 
-    @SqlQuery("SELECT COUNT(*) FROM DARE_PREPROCES WHERE FINGERPRINT = :fingerprint")
-    Long countByFingerprint(@BindBean OaiRecordHeader oaiRecordHeader);
+    @SqlQuery("select case " +
+            "            when exists (select 1 " +
+            "                         from dare_preproces " +
+            "                         where fingerprint = :fingerprint) " +
+            "            then 1 " +
+            "            else 0 " +
+            "        end " +
+            "from dual")
+    Boolean existsByFingerPrint(@BindBean OaiRecordHeader oaiRecordHeader);
 }
