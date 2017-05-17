@@ -47,4 +47,8 @@ public class Record {
     public Integer getRepositoryId() {
         return repositoryId;
     }
+
+    public void setKbObjId(Long kbObjId) {
+        this.kbObjId = String.format("%d", kbObjId);
+    }
 }

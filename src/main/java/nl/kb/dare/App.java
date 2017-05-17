@@ -21,6 +21,7 @@ import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.dare.model.repository.oracle.OracleRepositoryDao;
+import nl.kb.dare.nbn.NumbersController;
 import nl.kb.dare.tasks.LoadOracleSchemaTask;
 import nl.kb.dare.tasks.LoadRepositoriesTask;
 import nl.kb.http.HttpFetcher;
@@ -52,6 +53,8 @@ public class App extends Application<Config> {
 
         // GET request class for harvesting
         final HttpFetcher httpFetcher = new LenientHttpFetcher(true);
+        final HttpFetcher numbersGetter = new LenientHttpFetcher(false);
+
         // Handler factory for responses from httpFetcher
         final ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory();
 
@@ -63,12 +66,16 @@ public class App extends Application<Config> {
 
         final RecordDao recordDao = db.onDemand(RecordDao.class);
 
-        // Cross process exchange utilities (controllers and notifiers)
+        // Cross process exchange utilities (reporters and notifiers)
         final SocketNotifier socketNotifier = new SocketNotifier();
         final RecordReporter recordReporter = new RecordReporter(db);
 
+        // Data mutation controllers
+        final NumbersController numbersController = new NumbersController(config.getNumbersEndpoint(), numbersGetter,
+                responseHandlerFactory);
+
         final RepositoryController repositoryController = new RepositoryController(repositoryDao, socketNotifier);
-        final RecordBatchLoader recordBatchLoader = new RecordBatchLoader(recordDao, recordReporter, socketNotifier);
+        final RecordBatchLoader recordBatchLoader = new RecordBatchLoader(recordDao, numbersController, recordReporter, socketNotifier);
 
 
         // Initialize wrapped services (injected in endpoints)

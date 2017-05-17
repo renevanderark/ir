@@ -13,6 +13,9 @@ class Config extends Configuration {
     private String databaseProvider;
 
     @JsonProperty
+    private String numbersEndpoint;
+
+    @JsonProperty
     private Boolean inSampleMode = false;
 
     @JsonProperty("database")
@@ -35,5 +38,9 @@ class Config extends Configuration {
 
     public String getHostName() {
         return hostName;
+    }
+
+    public String getNumbersEndpoint() {
+        return numbersEndpoint;
     }
 }
