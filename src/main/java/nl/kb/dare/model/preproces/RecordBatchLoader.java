@@ -1,19 +1,14 @@
 package nl.kb.dare.model.preproces;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.kb.dare.model.SocketNotifier;
 import nl.kb.oaipmh.OaiRecordHeader;
 import nl.kb.oaipmh.OaiStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class RecordBatchLoader {
-    private static final Logger LOG = LoggerFactory.getLogger(RecordBatchLoader.class);
-    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final List<Record> batch = Collections.synchronizedList(new ArrayList<>());
 

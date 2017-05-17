@@ -1,6 +1,5 @@
 package nl.kb.dare.model.repository;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.kb.dare.model.RunState;
 import nl.kb.dare.model.SocketNotifier;
 import org.slf4j.Logger;
@@ -8,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 public class RepositoryController {
     private static final Logger LOG = LoggerFactory.getLogger(RepositoryController.class);
-    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final RepositoryDao repositoryDao;
     private final SocketNotifier socketNotifier;
