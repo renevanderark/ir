@@ -14,7 +14,14 @@ class RepositoryRow extends React.Component {
     render() {
         const { repository, recordStatus } = this.props;
 
-//recordStatus
+        const editLink = repository.enabled
+            ? (<button className="btn btn-default" disabled={true}>
+                <span className="glyphicon glyphicon-edit" />
+            </button> )
+            : (<Link to={urls.editRepository(repository.id)} className="btn btn-default">
+                <span className="glyphicon glyphicon-edit" />
+            </Link>);
+
         return (
             <tr>
                 <td>{repository.id}</td>
@@ -29,12 +36,10 @@ class RepositoryRow extends React.Component {
                     <EnableToggle enabled={repository.enabled}
                                   toggleEnabled={repository.runState === RunState.WAITING}
                                   onEnableClick={() => this.props.onEnableRepository(repository.id)}
-                                  onDisableClick={() => this.props.onDisableRepository(repository.id)} />
+                                  onDisableClick={() => this.props.onDisableRepository(repository.id)}/>
                 </td>
                 <td>
-                    <Link to={urls.editRepository(repository.id)} className="btn btn-default">
-                        <span className="glyphicon glyphicon-edit" />
-                    </Link>
+                    {editLink}
                     <StartStopButton runState={repository.runState}
                                      disabled={!repository.enabled}
                                      onStopClick={() => this.props.onInterruptHarvest(repository.id)}

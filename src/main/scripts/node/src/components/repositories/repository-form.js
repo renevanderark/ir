@@ -53,6 +53,7 @@ class RepositoryForm extends React.Component {
         if (!repository) { return null; }
 
         const allowedToSave =
+            !repository.enabled &&
             repository.name &&
             validateDateStamp(repository.dateStamp) &&
             !changed &&
@@ -73,8 +74,12 @@ class RepositoryForm extends React.Component {
             </ButtonWithModalWarning>
         ) : null;
 
-        return (
-            <Panel title={repository.id ? "Harvest definitie bewerken" : "Nieuwe harvest definitie"}>
+        return repository.enabled
+            ? (<Panel title={repository.id ? "Harvest definitie bewerken" : "Nieuwe harvest definitie"}>
+                <p>* Op dit moment staat deze harvest definitie aan,
+                    om hem te mogen bewerken moet de harvest definitie eerst worden uitgeschakeld.</p>
+            </Panel>)
+            : (<Panel title={repository.id ? "Harvest definitie bewerken" : "Nieuwe harvest definitie"}>
                 <TextField label="Naam" value={repository.name} onChange={this.onChange.bind(this, "name")} />
                 <TextField label="Url" value={repository.url} onChange={this.onChange.bind(this, "url")}>
                     <ValidationMarker validates={urlIsValidOAI}
