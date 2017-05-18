@@ -86,7 +86,7 @@ public class ListIdentifiersTest {
                 datestampConsumer,
                 errorConsumer,
                 onOaiRecordHeader,
-                onProgress);
+                onProgress, logMsg -> {});
 
         instance.harvest();
 
@@ -111,7 +111,7 @@ public class ListIdentifiersTest {
                 datestampConsumer,
                 errorConsumer,
                 onOaiRecordHeader,
-                onProgress);
+                onProgress, logMsg -> {});
 
 
         instance.harvest();
@@ -141,7 +141,7 @@ public class ListIdentifiersTest {
                 datestampConsumer,
                 errorConsumer,
                 onOaiRecordHeader,
-                onProgress);
+                onProgress, logMsg -> {});
 
 
         instance.harvest();
@@ -173,7 +173,7 @@ public class ListIdentifiersTest {
                 datestampConsumer,
                 errorConsumer,
                 onOaiRecordHeader,
-                onProgress);
+                onProgress, logMsg -> {});
 
         instance.harvest();
 

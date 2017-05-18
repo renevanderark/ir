@@ -28,6 +28,7 @@ public class ListIdentifiers {
 
     private boolean interrupted = false;
     private String lastDateStamp;
+    private final Consumer<String> onLogMessage;
     private String verb = "ListIdentifiers";
 
 
@@ -43,6 +44,7 @@ public class ListIdentifiers {
      * @param onException callback invoked when encountering exceptions during harvest
      * @param onOaiRecordHeader callback invoked for each encountered OAI/PMH record header
      * @param onProgress callback invoked for each new request to the endpoint
+     * @param onLogMessage log handler
      */
     public ListIdentifiers(
             String oaiUrl,
@@ -54,7 +56,8 @@ public class ListIdentifiers {
             Consumer<String> onHarvestComplete,
             Consumer<Exception> onException,
             Consumer<OaiRecordHeader> onOaiRecordHeader,
-            Consumer<String> onProgress) {
+            Consumer<String> onProgress,
+            Consumer<String> onLogMessage) {
 
         this.oaiUrl = oaiUrl;
         this.oaiSet = oaiSet;
@@ -68,6 +71,7 @@ public class ListIdentifiers {
         this.onProgress = onProgress;
 
         lastDateStamp = oaiDatestamp;
+        this.onLogMessage = onLogMessage;
     }
 
     private URL makeRequestUrl(String resumptionToken) throws MalformedURLException {
@@ -103,7 +107,14 @@ public class ListIdentifiers {
                 final URL requestUrl = makeRequestUrl(resumptionToken);
 
 
+                onLogMessage.accept(String.format("REQUESTING: %s", requestUrl.toString()));
+
+                final long before = System.currentTimeMillis();
                 httpFetcher.execute(requestUrl, responseHandler);
+
+                onLogMessage.accept(String.format("RESPONDED: %s (%dms)", requestUrl.toString(),
+                        System.currentTimeMillis() -before));
+
                 final Optional<String> optResumptionToken = xmlHandler.getResumptionToken();
                 final Optional<String> optDateStamp = xmlHandler.getLastDateStamp();
 

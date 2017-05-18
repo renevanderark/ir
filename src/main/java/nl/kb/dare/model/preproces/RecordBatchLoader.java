@@ -7,12 +7,14 @@ import nl.kb.oaipmh.OaiStatus;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 public class RecordBatchLoader {
 
-    private final List<Record> batch = Collections.synchronizedList(new ArrayList<>());
+    private final Map<Integer, List<Record>> batchMap = Collections.synchronizedMap(new HashMap<>());
 
     private final RecordDao recordDao;
     private final NumbersController numbersController;
@@ -28,27 +30,32 @@ public class RecordBatchLoader {
         this.socketNotifier = socketNotifier;
     }
 
-    public synchronized void addToBatch(Integer repositoryId, OaiRecordHeader oaiRecordHeader) {
+    public void addToBatch(Integer repositoryId, OaiRecordHeader oaiRecordHeader) {
 
+        if (!batchMap.containsKey(repositoryId)) {
+            batchMap.put(repositoryId, new ArrayList<>());
+        }
         if (oaiRecordHeader.getOaiStatus() == OaiStatus.AVAILABLE
                 && !recordDao.existsByFingerPrint(oaiRecordHeader)) {
-            batch.add(Record.fromHeader(oaiRecordHeader, repositoryId));
-        }
-
-        if (batch.size() == 100) {
-            flushBatch();
+            batchMap.get(repositoryId).add(Record.fromHeader(oaiRecordHeader, repositoryId));
         }
     }
 
-    public synchronized void flushBatch() {
-        if (batch.size() == 0) {
+    public void flushBatch(Integer repositoryId) {
+        if (!batchMap.containsKey(repositoryId) || batchMap.get(repositoryId).size() == 0) {
             return;
         }
 
-        final List<Long> numbers = numbersController.getNumbers(batch.size());
-        IntStream.range(0, batch.size()).forEach(idx -> batch.get(idx).setKbObjId(numbers.get(idx)));
-        recordDao.insertBatch(batch);
-        batch.clear();
+        final List<Record> records = batchMap.get(repositoryId);
+        final List<Long> numbers = numbersController.getNumbers(records.size());
+        IntStream.range(0, batchMap.size()).forEach(idx ->
+                records.get(idx).setKbObjId(numbers.get(idx)));
+
+        synchronized (recordDao) {
+            recordDao.insertBatch(records);
+        }
+
+        records.clear();
 
         socketNotifier.notifyUpdate(recordReporter.getStatusUpdate());
     }

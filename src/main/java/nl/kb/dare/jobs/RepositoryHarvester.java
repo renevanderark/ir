@@ -6,6 +6,8 @@ import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
 import nl.kb.oaipmh.ListIdentifiers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class RepositoryHarvester implements Runnable {
+    private static final Logger LOG = LoggerFactory.getLogger(RepositoryHarvester.class);
 
     private static final Map<Integer, RepositoryHarvester> instances = Collections.synchronizedMap(new HashMap<>());
     private final Repository repository;
@@ -68,6 +71,7 @@ public class RepositoryHarvester implements Runnable {
 
     @Override
     public void run() {
+        LOG.info("Staring harvest thread, running: " + instances.keySet().size());
         repositoryController.beforeHarvest(repository.getId());
 
         runningInstance = new ListIdentifiers(
@@ -77,18 +81,28 @@ public class RepositoryHarvester implements Runnable {
                 repository.getDateStamp(),
                 httpFetcher,
                 responseHandlerFactory,
-                dateStamp -> {
+                dateStamp -> { // onHarvestComplete
                     repositoryController.onHarvestComplete(repository.getId(), dateStamp);
-                    recordBatchLoader.flushBatch();
+                    recordBatchLoader.flushBatch(repository.getId());
                 },
                 exception -> repositoryController.onHarvestException(repository.getId(), exception),
-                oaiRecordHeader -> recordBatchLoader.addToBatch(repository.getId(), oaiRecordHeader),
-                dateStamp -> repositoryController.onHarvestProgress(repository.getId(), dateStamp)
+                oaiRecordHeader -> { // onRecord
+                    recordBatchLoader.addToBatch(repository.getId(), oaiRecordHeader);
+                },
+                dateStamp -> { // onProgress
+                    repositoryController.onHarvestProgress(repository.getId(), dateStamp);
+                    recordBatchLoader.flushBatch(repository.getId());
+                }, (String logMessage) -> { // onLogMessage
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("{} {}", repository.getName(), logMessage);
+                    }
+                }
         );
 
         runningInstance.harvest();
 
         runningInstance = null;
         instances.remove(repository.getId());
+        LOG.info("Ended harvest thread, running: " + instances.keySet().size());
     }
 }

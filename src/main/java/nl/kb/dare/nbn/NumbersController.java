@@ -35,7 +35,8 @@ public class NumbersController {
                 exceptions = responseHandler.getExceptions();
 
                 if (exceptions.size() > 0) {
-                    LOG.error("Failed to reach number generator at: {}", numbersEndpoint, exceptions.get(0));
+                    LOG.error("Failed to reach number generator at: {}?qt={}",
+                            numbersEndpoint, quantity,  exceptions.get(0));
                     LOG.warn("Will retry infinitely to reach number generator so please fix it!");
                     try { Thread.sleep(5000); } catch (InterruptedException ignored) { }
                 }
