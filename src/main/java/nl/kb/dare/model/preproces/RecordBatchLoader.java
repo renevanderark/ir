@@ -33,7 +33,7 @@ public class RecordBatchLoader {
     public void addToBatch(Integer repositoryId, OaiRecordHeader oaiRecordHeader) {
 
         if (!batchMap.containsKey(repositoryId)) {
-            batchMap.put(repositoryId, new ArrayList<>());
+            batchMap.put(repositoryId, Collections.synchronizedList(new ArrayList<>()));
         }
         if (oaiRecordHeader.getOaiStatus() == OaiStatus.AVAILABLE
                 && !recordDao.existsByFingerPrint(oaiRecordHeader)) {
@@ -48,13 +48,12 @@ public class RecordBatchLoader {
 
         final List<Record> records = batchMap.get(repositoryId);
         final List<Long> numbers = numbersController.getNumbers(records.size());
-        IntStream.range(0, batchMap.size()).forEach(idx ->
+        IntStream.range(0, records.size()).forEach(idx ->
                 records.get(idx).setKbObjId(numbers.get(idx)));
 
         synchronized (recordDao) {
             recordDao.insertBatch(records);
         }
-
         records.clear();
 
         socketNotifier.notifyUpdate(recordReporter.getStatusUpdate());
