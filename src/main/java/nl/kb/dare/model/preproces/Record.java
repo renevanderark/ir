@@ -13,14 +13,19 @@ public class Record {
     private String tsProcessed;
     private String fingerprint;
     private Integer repositoryId;
+    private String oaiIdentifier;
 
-    private Record(ProcessStatus state, String kbObjId, String fingerprint, Integer repositoryId) {
+    Record(Integer id, ProcessStatus state, String kbObjId, String fingerprint, Integer repositoryId, String oaiIdentifier) {
+        this.id = id;
         this.state = state;
         this.kbObjId = kbObjId;
         this.repositoryId = repositoryId;
-        this.tsCreate = tsCreate;
-        this.tsProcessed = tsProcessed;
         this.fingerprint = fingerprint;
+        this.oaiIdentifier = oaiIdentifier;
+    }
+
+    private Record(ProcessStatus state, String kbObjId, String fingerprint, Integer repositoryId, String oaiIdentifier) {
+        this(null, state, kbObjId, fingerprint, repositoryId, oaiIdentifier);
     }
 
     static Record fromHeader(OaiRecordHeader header, Integer repositoryId) {
@@ -28,7 +33,8 @@ public class Record {
                 header.getOaiStatus() == OaiStatus.AVAILABLE ? ProcessStatus.PENDING : ProcessStatus.SKIP,
                 "TODO: number generator",
                 header.getFingerprint(),
-                repositoryId
+                repositoryId,
+                header.getIdentifier()
         );
     }
 
@@ -50,5 +56,17 @@ public class Record {
 
     public void setKbObjId(Long kbObjId) {
         this.kbObjId = String.format("%d", kbObjId);
+    }
+
+    public void setState(ProcessStatus processStatus) {
+        this.state = processStatus;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getOaiIdentifier() {
+        return oaiIdentifier;
     }
 }

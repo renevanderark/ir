@@ -16,6 +16,8 @@ const connectSocket = () => {
             case "record-change":
                 store.dispatch({type: ActionTypes.RECEIVE_RECORD_STATUS, data: data});
                 break;
+            case "record-fetcher":
+                store.dispatch({type: ActionTypes.ON_FETCHER_RUNSTATE_CHANGE, data: data});
         }
     };
 

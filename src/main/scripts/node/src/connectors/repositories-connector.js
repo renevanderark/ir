@@ -1,1 +1,4 @@
-export default (state) => ({repositories: state.repositories});
+export default (state) => ({
+    repositories: state.repositories,
+    fetcherRunstate: state.fetcherRunstate
+});

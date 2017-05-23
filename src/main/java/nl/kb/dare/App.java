@@ -9,27 +9,33 @@ import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import nl.kb.dare.endpoints.HarvesterEndpoint;
+import nl.kb.dare.endpoints.OaiRecordFetcherEndpoint;
 import nl.kb.dare.endpoints.RecordStatusEndpoint;
 import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
+import nl.kb.dare.jobs.ScheduledOaiRecordFetcher;
 import nl.kb.dare.model.SocketNotifier;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
-import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryController;
+import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.dare.model.repository.oracle.OracleRepositoryDao;
 import nl.kb.dare.nbn.NumbersController;
+import nl.kb.dare.taskmanagers.ManagedPeriodicTask;
 import nl.kb.dare.tasks.LoadOracleSchemaTask;
 import nl.kb.dare.tasks.LoadRepositoriesTask;
+import nl.kb.filestorage.FileStorage;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.LenientHttpFetcher;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
+import nl.kb.xslt.PipedXsltTransformer;
 import org.skife.jdbi.v2.DBI;
 
 import javax.servlet.Servlet;
+import javax.xml.transform.stream.StreamSource;
 
 public class App extends Application<Config> {
     public static void main(String[] args) throws Exception {
@@ -53,6 +59,7 @@ public class App extends Application<Config> {
 
         // GET request class for harvesting
         final HttpFetcher httpFetcher = new LenientHttpFetcher(true);
+        final HttpFetcher downloader = new LenientHttpFetcher(false);
         final HttpFetcher numbersGetter = new LenientHttpFetcher(false);
 
         // Handler factory for responses from httpFetcher
@@ -66,6 +73,11 @@ public class App extends Application<Config> {
 
         final RecordDao recordDao = db.onDemand(RecordDao.class);
 
+        // File storage access
+
+        final FileStorage fileStorage = config.getFileStorageFactory().getFileStorage();
+
+
         // Cross process exchange utilities (reporters and notifiers)
         final SocketNotifier socketNotifier = new SocketNotifier();
         final RecordReporter recordReporter = new RecordReporter(db);
@@ -77,10 +89,24 @@ public class App extends Application<Config> {
         final RepositoryController repositoryController = new RepositoryController(repositoryDao, socketNotifier);
         final RecordBatchLoader recordBatchLoader = new RecordBatchLoader(recordDao, numbersController, recordReporter, socketNotifier);
 
+        // Xslt processors
+        final StreamSource stripOaiXslt = new StreamSource(PipedXsltTransformer.class.getResourceAsStream("/xslt/strip_oai_wrapper.xsl"));
+        final StreamSource didlToManifestXslt = new StreamSource(PipedXsltTransformer.class.getResourceAsStream("/xslt/didl-to-manifest.xsl"));
+
+        final PipedXsltTransformer xsltTransformer = PipedXsltTransformer.newInstance(stripOaiXslt, didlToManifestXslt);
 
         // Initialize wrapped services (injected in endpoints)
         final RepositoryValidator repositoryValidator = new RepositoryValidator(httpFetcher, responseHandlerFactory);
 
+        final ScheduledOaiRecordFetcher recordFetcher = new ScheduledOaiRecordFetcher(
+                recordDao,
+                repositoryDao,
+                downloader,
+                responseHandlerFactory,
+                fileStorage,
+                xsltTransformer,
+                socketNotifier,
+                recordReporter);
 
         // Register endpoints
 
@@ -90,6 +116,10 @@ public class App extends Application<Config> {
         // Operational controls for repository harvesters
         register(environment, new HarvesterEndpoint(repositoryDao, repositoryController,
                 recordBatchLoader, httpFetcher, responseHandlerFactory));
+
+        // Operational controls for record fetcher
+        register(environment, new OaiRecordFetcherEndpoint(recordFetcher));
+
 
         // Record status endpoint
         register(environment, new RecordStatusEndpoint(recordReporter));
@@ -103,6 +133,10 @@ public class App extends Application<Config> {
 
         // Websocket servlet status update notifier
         registerServlet(environment, new StatusWebsocketServlet(), "statusWebsocket");
+
+        // Lifecycle (scheduled tasks/deamons)
+        environment.lifecycle().manage(new ManagedPeriodicTask(recordFetcher));
+
 
         // Task endpoints
         environment.admin().addTask(new LoadOracleSchemaTask(db));

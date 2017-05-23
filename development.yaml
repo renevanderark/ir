@@ -36,6 +36,10 @@ database:
 databaseProvider: oracle
 
 hostName: ${HOST}:${PORT}
-inSampleMode: false
 
 numbersEndpoint: http://numbersa.wpakb.kb.nl:8080/numbers/nbn
+
+fileStorage:
+  storageType: local
+  storageDir: ../../dare2-files
+  sampleFileDir: "/tmp"

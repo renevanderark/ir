@@ -1,3 +1,5 @@
+import xhr from "xhr";
+
 import {
     enableRepository,
     disableRepository,
@@ -13,6 +15,12 @@ import {
     interruptHarvest
 } from "./actions/harvesters";
 
+const startOaiRecordFetcher = () => (dispatch) =>
+    xhr({url: "/workers/start", "method": "PUT"}, (err, resp, body) => {});
+
+const disableOaiRecordFetcher = () => (dispatch) =>
+    xhr({url: "/workers/disable", "method": "PUT"}, (err, resp, body) => {});
+
 export default function actionsMaker(navigateTo, dispatch) {
     return {
         onEnableRepository: (id) => dispatch(enableRepository(id)),
@@ -23,6 +31,9 @@ export default function actionsMaker(navigateTo, dispatch) {
         onInterruptHarvest: (repositoryId) => dispatch(interruptHarvest(repositoryId)),
         onSaveRepository: () => dispatch(saveRepository(() => navigateTo("root"))),
         onDeleteRepository: (id) => dispatch(deleteRepository(id, () => navigateTo("root", []))),
-        onRefetchRepositories: () => dispatch(fetchRepositories(() => {}))
+        onRefetchRepositories: () => dispatch(fetchRepositories(() => {})),
+
+        onStartOaiRecordFetcher: () => dispatch(startOaiRecordFetcher()),
+        onDisableOaiRecordFetcher: () => dispatch(disableOaiRecordFetcher()),
     };
 }

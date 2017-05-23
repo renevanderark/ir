@@ -4,18 +4,27 @@ import Panel from "../layout/panel";
 import { Link } from "react-router";
 import { urls } from "../../router";
 import RepositoryRow from "./repository-row";
+import EnableToggle from "../widgets/enable-toggle";
+import { FetcherRunState } from "../../enums";
 
 class Repositories extends React.Component {
 
     render() {
         return (
             <Panel title="Harvest definities">
-                <p>
-                    <Link to={urls.newRepository()}>
-                        <span className="glyphicon glyphicon-plus-sign" />{" "}
-                        Nieuwe harvest definitie toevoegen
-                    </Link>
-                </p>
+                Object Harvester ({this.props.fetcherRunstate}){" "}
+                <EnableToggle
+                    enabled={this.props.fetcherRunstate === FetcherRunState.RUNNING || this.props.fetcherRunstate === FetcherRunState.DISABLING}
+                    toggleEnabled={this.props.fetcherRunstate !== FetcherRunState.DISABLING}
+                    onEnableClick={this.props.onStartOaiRecordFetcher}
+                    onDisableClick={this.props.onDisableOaiRecordFetcher}/>
+                <hr />
+                <Link to={urls.newRepository()}>
+                    <span className="glyphicon glyphicon-plus-sign" />{" "}
+                    Nieuwe harvest definitie toevoegen
+                </Link>
+                <hr />
+
                 <table className="table">
                     <thead>
                         <tr>
