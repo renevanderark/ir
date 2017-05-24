@@ -1,13 +1,19 @@
 package nl.kb.http;
 
+import io.dropwizard.testing.junit.DropwizardAppRule;
+import nl.kb.http.mockserver.MockServer;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +27,19 @@ import static org.mockito.Mockito.when;
 
 public class LenientHttpFetcherTest {
 
+    private static final String MOCK_URL = "http://localhost:4567";
 
+    @ClassRule
+    public static final TestRule mockServerRule;
+
+    static {
+        try {
+            mockServerRule  = new DropwizardAppRule<>(MockServer.class,
+                    Paths.get(LenientHttpFetcherTest.class.getResource("/http/mockserver/mockserver.yml").toURI()).toString());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private URL makeUrl(InputStream responseData, HttpURLConnection urlConnection) throws IOException {
 
@@ -36,7 +54,25 @@ public class LenientHttpFetcherTest {
         return new URL("http", "example.com", 80, "/", urlStreamHandler);
     }
 
+    @Test
+    public void executeShouldThrowWhenPassingConnectTimeout() throws MalformedURLException {
+        final LenientHttpFetcher instance = new LenientHttpFetcher(false, 1000);
+        final HttpResponseHandler responseHandler = mock(HttpResponseHandler.class);
 
+        instance.execute(new URL("http://10.255.255.1"), responseHandler);
+
+        verify(responseHandler).onRequestError(any());
+    }
+
+    @Test
+    public void executeShouldThrowWhenPassingReadTimeout() throws MalformedURLException {
+        final LenientHttpFetcher instance = new LenientHttpFetcher(false, 1000, 500);
+        final HttpResponseHandler responseHandler = mock(HttpResponseHandler.class);
+
+        instance.execute(new URL(String.format("%s/timeout/no-data", MOCK_URL)), responseHandler);
+
+        verify(responseHandler).onRequestError(any());
+    }
 
     @Test
     public void executeShouldPassInputStreamAndResponseCodeToHandler() throws IOException {

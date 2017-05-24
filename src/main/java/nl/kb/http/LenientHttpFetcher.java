@@ -9,9 +9,21 @@ import java.util.Optional;
 public class LenientHttpFetcher implements HttpFetcher {
 
     private final boolean proactivelyClosing;
+    private final int connectTimeout;
+    private final int readTimeout;
 
     public LenientHttpFetcher(boolean proactivelyClosing) {
+        this(proactivelyClosing, 30_000);
+    }
+
+    LenientHttpFetcher(boolean proactivelyClosing, int connectTimeout) {
+        this(proactivelyClosing, connectTimeout, 30_000);
+    }
+
+    LenientHttpFetcher(boolean proactivelyClosing, int connectTimeout, int readTimeout) {
         this.proactivelyClosing = proactivelyClosing;
+        this.connectTimeout = connectTimeout;
+        this.readTimeout = readTimeout;
     }
 
     public void execute(URL url, HttpResponseHandler responseHandler) {
@@ -20,6 +32,8 @@ public class LenientHttpFetcher implements HttpFetcher {
         if (!connectionOpt.isPresent()) { return; }
 
         final HttpURLConnection connection = connectionOpt.get();
+        connection.setConnectTimeout(connectTimeout);
+        connection.setReadTimeout(readTimeout);
         if (proactivelyClosing) {
             connection.setRequestProperty("Connection", "close");
         } else {
