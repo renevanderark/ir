@@ -98,8 +98,10 @@ class GetRecordOperations {
             final OutputStream out = fileStorageHandle.getOutputStream("metadata.xml");
             final ChecksumOutputStream checksumOut = new ChecksumOutputStream("SHA-512");
             final ByteCountOutputStream byteCountOut = new ByteCountOutputStream();
-            // final Writer outputStreamWriter = new OutputStreamWriter(out, "UTF8");
-            LOG.info("fetching record: {}", urlStr);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("fetching record: {}", urlStr);
+            }
 
             final HttpResponseHandler responseHandler = responseHandlerFactory
                     .getStreamCopyingResponseHandler(out, checksumOut, byteCountOut);
@@ -148,16 +150,7 @@ class GetRecordOperations {
             synchronized (saxParser) {
                 saxParser.parse(fileStorageHandle.getFile("manifest.initial.xml"), manifestXmlHandler);
             }
-            final List<ObjectResource> objectResources = manifestXmlHandler.getObjectResources();
-
-/*            if (objectResources.isEmpty()) {
-                onError.accept(new ErrorReport(
-                        new IllegalArgumentException("No object files provided"),
-                        ErrorStatus.NO_RESOURCES)
-                );
-            }*/
-
-            return objectResources;
+            return manifestXmlHandler.getObjectResources();
         } catch (SAXException e) {
             onError.accept(new ErrorReport(e, ErrorStatus.XML_PARSING_ERROR));
             return Lists.newArrayList();

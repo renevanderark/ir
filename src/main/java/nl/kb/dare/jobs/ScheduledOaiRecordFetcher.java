@@ -139,7 +139,6 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
     }
 
     public void enable() {
-        LOG.info("FETCH RECORDS ENABLED");
         runState = RunState.RUNNING;
         socketNotifier.notifyUpdate(new RecordFetcherUpdate(runState));
     }
@@ -156,7 +155,9 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
     }
 
     private void finishRecord(Record record, ProcessStatus processStatus, long elapsed) {
-        LOG.info("Finished record {} with status {}  in {} seconds", record.getKbObjId(), processStatus, elapsed);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Finished record {} with status {}  in {} seconds", record.getKbObjId(), processStatus, elapsed);
+        }
         record.setState(processStatus);
         recordDao.updateState(record);
         socketNotifier.notifyUpdate(recordReporter.getStatusUpdate());
