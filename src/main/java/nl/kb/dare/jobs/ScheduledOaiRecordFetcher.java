@@ -9,6 +9,7 @@ import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
 import nl.kb.dare.model.reporting.ErrorReport;
+import nl.kb.dare.model.reporting.ErrorReportDao;
 import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
@@ -38,6 +39,7 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
     private final XsltTransformer xsltTransformer;
     private final SocketNotifier socketNotifier;
     private final RecordReporter recordReporter;
+    private final ErrorReportDao errorReportDao;
 
     public enum RunState {
         RUNNING, DISABLING, DISABLED
@@ -48,7 +50,8 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
     public ScheduledOaiRecordFetcher(RecordDao recordDao, RepositoryDao repositoryDao,
                                      HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory,
                                      FileStorage fileStorage, XsltTransformer xsltTransformer,
-                                     SocketNotifier socketNotifier, RecordReporter recordReporter) {
+                                     SocketNotifier socketNotifier, RecordReporter recordReporter,
+                                     ErrorReportDao errorReportDao) {
         this.recordDao = recordDao;
         this.repositoryDao = repositoryDao;
         this.httpFetcher = httpFetcher;
@@ -57,6 +60,7 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
         this.xsltTransformer = xsltTransformer;
         this.socketNotifier = socketNotifier;
         this.recordReporter = recordReporter;
+        this.errorReportDao = errorReportDao;
         this.runState = RunState.DISABLED;
     }
 
@@ -163,9 +167,9 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
         socketNotifier.notifyUpdate(recordReporter.getStatusUpdate());
     }
 
-    private void saveErrorReport(ErrorReport errorReport, Record oaiRecord) {
-        LOG.error("Failed to process record {} ({})", oaiRecord.getKbObjId(), errorReport.getUrl(), errorReport.getException());
-//        errorReportDao.insertOaiRecordError(new OaiRecordErrorReport(errorReport, oaiRecord));
+    private void saveErrorReport(ErrorReport errorReport, Record record) {
+        LOG.error("Failed to process record {} ({})", record.getOaiIdentifier(), errorReport.getUrl(), errorReport.getException());
+        errorReportDao.insert(record.getId(), errorReport);
     }
 
     @Override

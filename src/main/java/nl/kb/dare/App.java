@@ -19,6 +19,7 @@ import nl.kb.dare.model.SocketNotifier;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
+import nl.kb.dare.model.reporting.ErrorReportDao;
 import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryValidator;
@@ -73,6 +74,8 @@ public class App extends Application<Config> {
 
         final RecordDao recordDao = db.onDemand(RecordDao.class);
 
+        final ErrorReportDao errorReportDao = db.onDemand(ErrorReportDao.class);
+
         // File storage access
 
         final FileStorage fileStorage = config.getFileStorageFactory().getFileStorage();
@@ -106,7 +109,9 @@ public class App extends Application<Config> {
                 fileStorage,
                 xsltTransformer,
                 socketNotifier,
-                recordReporter);
+                recordReporter,
+                errorReportDao
+        );
 
         // Register endpoints
 

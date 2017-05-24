@@ -82,7 +82,7 @@ public class RepositoryValidatorTest {
         instance.validate(validConfig);
     }
 
-    @Test(expected = IOException.class)
+    @Test(expected = HttpResponseException.class)
     public void validateShouldThrowWhenHttpRequestFails() throws IOException, SAXException, HttpResponseException {
         final HttpFetcher failingFetcher = (url, responseHandler) -> responseHandler.onRequestError(new Exception("fails"));
         final Repository validConfig = new Repository("http://example.com", "name", "nl_didl_norm", "uvt:withfulltext:yes", null, true, HarvestSchedule.DAILY, RunState.WAITING);

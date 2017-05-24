@@ -52,9 +52,11 @@ public class ErrorReport {
         return dateStamp;
     }
 
-    String getErrorMessage() {
+    public String getErrorMessage() {
         return exception.getMessage();
     }
+
+    public Integer getStatusCode() { return errorStatus.getCode(); }
 
 
     public ErrorStatus getErrorStatus() {

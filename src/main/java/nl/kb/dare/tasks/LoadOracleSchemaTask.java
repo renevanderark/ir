@@ -24,6 +24,7 @@ public class LoadOracleSchemaTask extends Task {
 
         runSQL("/database-schema/repositories.sql", h);
         runSQL("/database-schema/dare_preproces.sql", h);
+        runSQL("/database-schema/error_reports.sql", h);
 
         h.close();
     }

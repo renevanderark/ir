@@ -71,10 +71,10 @@ public class ErrorReportingResponseHandlerTest {
 
         assertThat(instance.getExceptions(), containsInAnyOrder(
                 allOf(
-                    instanceOf(IOException.class),
+                    instanceOf(HttpResponseException.class),
                     hasProperty("message", is("problem"))
                 ), allOf(
-                    instanceOf(IOException.class),
+                    instanceOf(HttpResponseException.class),
                     hasProperty("message", is("another problem"))
                 )
         ));
@@ -111,9 +111,13 @@ public class ErrorReportingResponseHandlerTest {
                     hasProperty("url", is(THE_URL)),
                     hasProperty("statusCode", is(500))
             ), allOf(
-                    instanceOf(IOException.class)
+                    instanceOf(HttpResponseException.class),
+                        hasProperty("url", is(THE_URL)),
+                        hasProperty("statusCode", is(1002))
             ), allOf(
-                    instanceOf(IOException.class)
+                    instanceOf(HttpResponseException.class),
+                        hasProperty("url", is(THE_URL)),
+                        hasProperty("statusCode", is(1002))
             )
         ));
     }
