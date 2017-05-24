@@ -2,11 +2,8 @@ package nl.kb.dare.model.preproces;
 
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
+import static nl.kb.dare.model.Aggregations.getAggregateCounts;
 
 public class RecordReporter {
 
@@ -18,31 +15,19 @@ public class RecordReporter {
 
     private final DBI db;
 
-
     public RecordReporter(DBI db) {
         this.db = db;
     }
 
     public RecordStatusUpdate getStatusUpdate() {
-        final Map<String, Map<String, Object>> result = new HashMap<>();
-
-        final Handle handle = db.open();
-        for (Map<String, Object> row : handle.createQuery(SQL)) {
-            final String repositoryId = String.format("%d", getRowInt(row, "repository_id"));
-            final Integer statusCode = getRowInt(row, "status_code");
-            final Map<String, Object> statusMap = result.getOrDefault(repositoryId, new HashMap<>());
-            final ProcessStatus processStatus = ProcessStatus.forCode(statusCode);
-            if (processStatus != null) {
-                statusMap.put(processStatus.getStatus(), row.get("count"));
-            }
-            result.put(repositoryId, statusMap);
-        }
-        handle.close();
-        return new RecordStatusUpdate(result);
+        return new RecordStatusUpdate(getAggregateCounts(db, SQL, this::codeToHumanKey));
     }
 
-
-    private Integer getRowInt(Map<String, Object> row, String repository_id) {
-        return ((BigDecimal) row.get(repository_id)).intValue();
+    private String codeToHumanKey(int statusCode) {
+        final ProcessStatus processStatus = ProcessStatus.forCode(statusCode);
+        if (processStatus == null) {
+            return "" + statusCode;
+        }
+        return processStatus.getStatus();
     }
 }

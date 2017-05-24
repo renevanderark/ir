@@ -10,6 +10,7 @@ import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
 import nl.kb.dare.model.reporting.ErrorReport;
 import nl.kb.dare.model.reporting.ErrorReportDao;
+import nl.kb.dare.model.reporting.ErrorReporter;
 import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
@@ -40,6 +41,7 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
     private final SocketNotifier socketNotifier;
     private final RecordReporter recordReporter;
     private final ErrorReportDao errorReportDao;
+    private final ErrorReporter errorReporter;
 
     public enum RunState {
         RUNNING, DISABLING, DISABLED
@@ -51,7 +53,7 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
                                      HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory,
                                      FileStorage fileStorage, XsltTransformer xsltTransformer,
                                      SocketNotifier socketNotifier, RecordReporter recordReporter,
-                                     ErrorReportDao errorReportDao) {
+                                     ErrorReportDao errorReportDao, ErrorReporter errorReporter) {
         this.recordDao = recordDao;
         this.repositoryDao = repositoryDao;
         this.httpFetcher = httpFetcher;
@@ -61,6 +63,7 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
         this.socketNotifier = socketNotifier;
         this.recordReporter = recordReporter;
         this.errorReportDao = errorReportDao;
+        this.errorReporter = errorReporter;
         this.runState = RunState.DISABLED;
     }
 
@@ -170,6 +173,7 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
     private void saveErrorReport(ErrorReport errorReport, Record record) {
         LOG.error("Failed to process record {} ({})", record.getOaiIdentifier(), errorReport.getUrl(), errorReport.getException());
         errorReportDao.insert(record.getId(), errorReport);
+        socketNotifier.notifyUpdate(errorReporter.getStatusUpdate());
     }
 
     @Override

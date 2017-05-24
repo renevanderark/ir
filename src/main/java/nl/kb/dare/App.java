@@ -20,6 +20,7 @@ import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
 import nl.kb.dare.model.reporting.ErrorReportDao;
+import nl.kb.dare.model.reporting.ErrorReporter;
 import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryValidator;
@@ -84,6 +85,7 @@ public class App extends Application<Config> {
         // Cross process exchange utilities (reporters and notifiers)
         final SocketNotifier socketNotifier = new SocketNotifier();
         final RecordReporter recordReporter = new RecordReporter(db);
+        final ErrorReporter errorReporter = new ErrorReporter(db);
 
         // Data mutation controllers
         final NumbersController numbersController = new NumbersController(config.getNumbersEndpoint(), numbersGetter,
@@ -110,7 +112,8 @@ public class App extends Application<Config> {
                 xsltTransformer,
                 socketNotifier,
                 recordReporter,
-                errorReportDao
+                errorReportDao,
+                errorReporter
         );
 
         // Register endpoints
@@ -127,7 +130,7 @@ public class App extends Application<Config> {
 
 
         // Record status endpoint
-        register(environment, new RecordStatusEndpoint(recordReporter));
+        register(environment, new RecordStatusEndpoint(recordReporter, errorReporter));
 
         // HTML + javascript app
         register(environment, new RootEndpoint(config.getHostName()));
