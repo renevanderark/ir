@@ -162,17 +162,17 @@ class GetRecordOperations {
 
     boolean downloadResources(FileStorageHandle fileStorageHandle, List<ObjectResource> objectResources) {
         try {
-            final List<ErrorReport> errorReports = Lists.newArrayList();
             for (ObjectResource objectResource : objectResources) {
 
                 final List<ErrorReport> reports = resourceOperations
                         .downloadResource(objectResource, fileStorageHandle);
 
-                errorReports.addAll(reports);
-
+                if (reports.size() > 0) {
+                    onError.accept(reports.get(0));
+                    return false;
+                }
             }
-            errorReports.forEach(onError);
-            return errorReports.isEmpty();
+            return true;
         } catch (IOException | NoSuchAlgorithmException e) {
             onError.accept(new ErrorReport(e, ErrorStatus.IO_EXCEPTION));
             return false;

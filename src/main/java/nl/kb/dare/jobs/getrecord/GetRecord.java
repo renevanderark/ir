@@ -27,7 +27,7 @@ public class GetRecord {
     private final Record record;
     private final GetRecordOperations getRecordOperations;
 
-    private GetRecord(GetRecordOperations getRecordOperations, Record record) {
+    GetRecord(GetRecordOperations getRecordOperations, Record record) {
         this.getRecordOperations = getRecordOperations;
         this.record = record;
     }
