@@ -1,5 +1,8 @@
 import React from "react";
 import Panel from "../layout/panel";
+import {RunState} from "../../enums";
+import EnableToggle from "../widgets/enable-toggle";
+import StartStopButton from "../widgets/start-stop-button";
 
 class RepositoryStatus extends React.Component {
 
@@ -29,7 +32,46 @@ class RepositoryStatus extends React.Component {
             : (<i>Geen fouten aangetroffen</i>);
 
         return (
-            <div className="row">
+            <div>
+                <Panel title={`Harvest definitie: ${repository.name}`}>
+
+                    <div className="row">
+                        <label className="col-md-6">Naam</label>
+                        <span className="col-md-12">{repository.name}</span>
+                        <div className="pull-right col-md-6">
+                            <label >Harvest starten</label>
+                            <StartStopButton runState={repository.runState}
+                                             disabled={!repository.enabled}
+                                             onStopClick={() => this.props.onInterruptHarvest(repository.id)}
+                                             onStartClick={() => this.props.onStartHarvest(repository.id)}/>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <label className="col-md-6">URL</label>
+                        <span className="col-md-26">{repository.url}</span>
+                    </div>
+                    <div className="row">
+                        <label className="col-md-6">Set</label>
+                        <span className="col-md-26">{repository.set}</span>
+                    </div>
+                    <div className="row">
+                        <label className="col-md-6">Metadata prefix</label>
+                        <span className="col-md-26">{repository.metadataPrefix}</span>
+                    </div>
+                    <div className="row">
+                        <label className="col-md-6">Laatste datestamp</label>
+                        <span className="col-md-26">{repository.dateStamp || "- nog niet geharvest -"}</span>
+                    </div>
+                    <div className="row">
+                        <label className="col-md-6">Actief</label>
+                        <EnableToggle enabled={repository.enabled}
+                                      toggleEnabled={repository.runState === RunState.WAITING}
+                                      onEnableClick={() => this.props.onEnableRepository(repository.id)}
+                                      onDisableClick={() => this.props.onDisableRepository(repository.id)}/>
+                    </div>
+
+
+                </Panel>
                 <div className="col-md-15">
                     <Panel title={`Verwerkingsoverzicht: ${repository.name}`}>
                         <table className="table">

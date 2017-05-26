@@ -1,5 +1,7 @@
 import React from "react";
 
+import { Link } from "react-router";
+
 class Header extends React.Component {
 
     shouldComponentUpdate(nextProps) {
@@ -13,7 +15,7 @@ class Header extends React.Component {
             <div className="navbar navbar-default">
                 <div className="container container-fluid">
                     <div className="navbar-brand">
-                        Dare 2
+                        <Link to="/">Dare 2</Link>
                     </div>
                     <div className="navbar-right navbar-text">
                         <span style={{transform: "rotate(90deg)", color: socketClosed ? "red" : "green"}}
