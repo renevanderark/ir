@@ -1,6 +1,6 @@
 import store from "./store";
 import {fetchRepositories} from "./actions/repositories";
-import {fetchRecordStatus} from "./actions/record-status";
+import {fetchErrorStatus, fetchRecordStatus} from "./actions/record-status";
 
 import ActionTypes from "./action-types";
 
@@ -17,7 +17,7 @@ const connectSocket = () => {
                 store.dispatch({type: ActionTypes.RECEIVE_RECORD_STATUS, data: data});
                 break;
             case "error-change":
-                console.log(msg);
+                store.dispatch({type: ActionTypes.RECEIVE_ERROR_STATUS, data: data});
                 break;
             case "record-fetcher":
                 store.dispatch({type: ActionTypes.ON_FETCHER_RUNSTATE_CHANGE, data: data});
@@ -41,7 +41,8 @@ const connectSocket = () => {
 };
 
 const fetchInitialData = (onInitialize) => store.dispatch(fetchRepositories(() =>
-    store.dispatch(fetchRecordStatus(onInitialize))));
+    store.dispatch(fetchRecordStatus(() =>
+        store.dispatch(fetchErrorStatus(onInitialize))))));
 
 
 export { connectSocket, fetchInitialData };

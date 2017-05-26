@@ -8,4 +8,13 @@ const fetchRecordStatus = (next = () => {}) => (dispatch) => {
     });
 };
 
-export {fetchRecordStatus};
+const fetchErrorStatus = (next = () => {}) => (dispatch) => {
+    xhr({url: `/record-status/errors?${new Date().getTime()}`, method: "GET"}, (err, resp, body) => {
+        dispatch({type: ActionTypes.RECEIVE_ERROR_STATUS, data: JSON.parse(body)});
+        next();
+    });
+};
+
+
+
+export {fetchRecordStatus, fetchErrorStatus};

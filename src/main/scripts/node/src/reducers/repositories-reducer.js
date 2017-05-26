@@ -5,7 +5,8 @@ const initialState = {
     pending: false,
     underEdit: null,
     validationResultsUnderEdit: {},
-    recordStatus: {}
+    recordStatus: {},
+    errorStatus: {}
 };
 
 
@@ -38,6 +39,11 @@ export default function(state=initialState, action) {
             return {
                 ...state,
                 recordStatus: action.data
+            };
+        case ActionTypes.RECEIVE_ERROR_STATUS:
+            return {
+                ...state,
+                errorStatus: action.data
             };
         default:
     }

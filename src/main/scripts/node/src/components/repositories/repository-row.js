@@ -19,8 +19,12 @@ class RepositoryRow extends React.Component {
                 <span className="glyphicon glyphicon-edit" />
             </button> )
             : (<Link to={urls.editRepository(repository.id)} className="btn btn-default">
-                <span className="glyphicon glyphicon-edit" />
+                <span className="glyphicon glyphicon-pencil" />
             </Link>);
+
+        const statusLink = (<Link to={urls.repositoryStatus(repository.id)} className="btn btn-default">
+            <span className="glyphicon glyphicon-zoom-in" />
+        </Link>);
 
         return (
             <tr>
@@ -39,6 +43,7 @@ class RepositoryRow extends React.Component {
                                   onDisableClick={() => this.props.onDisableRepository(repository.id)}/>
                 </td>
                 <td>
+                    {statusLink}
                     {editLink}
                     <StartStopButton runState={repository.runState}
                                      disabled={!repository.enabled}

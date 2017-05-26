@@ -32,6 +32,4 @@ public class RecordStatusEndpoint {
 
         return Response.ok(errorReporter.getStatusUpdate().getData()).build();
     }
-
-
 }
