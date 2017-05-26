@@ -1,6 +1,6 @@
 import store from "./store";
 import {fetchRepositories} from "./actions/repositories";
-import {fetchErrorStatus, fetchRecordStatus} from "./actions/record-status";
+import {fetchErrorStatus, fetchRecordStatus, fetchStatusCodes} from "./actions/record-status";
 
 import ActionTypes from "./action-types";
 
@@ -41,8 +41,12 @@ const connectSocket = () => {
 };
 
 const fetchInitialData = (onInitialize) => store.dispatch(fetchRepositories(() =>
-    store.dispatch(fetchRecordStatus(() =>
-        store.dispatch(fetchErrorStatus(onInitialize))))));
+    store.dispatch(fetchStatusCodes(() =>
+        store.dispatch(fetchRecordStatus(() =>
+            store.dispatch(fetchErrorStatus(onInitialize))
+        ))
+    ))
+));
 
 
 export { connectSocket, fetchInitialData };

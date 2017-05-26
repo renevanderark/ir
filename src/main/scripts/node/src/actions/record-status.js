@@ -15,6 +15,13 @@ const fetchErrorStatus = (next = () => {}) => (dispatch) => {
     });
 };
 
+const fetchStatusCodes = (next = () => {}) => (dispatch) => {
+    xhr({url: `/record-status/status-codes`, method: "GET"}, (err, resp, body) => {
+        dispatch({type: ActionTypes.RECEIVE_STATUS_CODES, data: JSON.parse(body)});
+        next();
+    });
+};
 
 
-export {fetchRecordStatus, fetchErrorStatus};
+
+export {fetchRecordStatus, fetchErrorStatus, fetchStatusCodes};
