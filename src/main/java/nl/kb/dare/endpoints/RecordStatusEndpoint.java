@@ -9,6 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -38,6 +39,14 @@ public class RecordStatusEndpoint {
     public Response getErrorStatus() {
 
         return Response.ok(errorReporter.getStatusUpdate().getData()).build();
+    }
+
+    @GET
+    @Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @Path("/errors.xlsx")
+    public Response getErrorReport() {
+        final StreamingOutput output = errorReporter::getReport;
+        return Response.ok(output).build();
     }
 
     @GET
