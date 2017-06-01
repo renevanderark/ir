@@ -15,6 +15,7 @@ import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
 import nl.kb.dare.jobs.ScheduledOaiRecordFetcher;
+import nl.kb.dare.jobs.ScheduledRepositoryHarvester;
 import nl.kb.dare.model.RunState;
 import nl.kb.dare.model.SocketNotifier;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
@@ -109,6 +110,7 @@ public class App extends Application<Config> {
         // Initialize wrapped services (injected in endpoints)
         final RepositoryValidator repositoryValidator = new RepositoryValidator(httpFetcher, responseHandlerFactory);
 
+        // Process that starts record downloads every 200ms
         final ScheduledOaiRecordFetcher recordFetcher = new ScheduledOaiRecordFetcher(
                 recordDao,
                 repositoryDao,
@@ -164,7 +166,16 @@ public class App extends Application<Config> {
         registerServlet(environment, new StatusWebsocketServlet(), "statusWebsocket");
 
         // Lifecycle (scheduled tasks/deamons)
+        // Process that starts record downloads every 200ms
         environment.lifecycle().manage(new ManagedPeriodicTask(recordFetcher));
+        // Process that starts harvests daily, weekly or monthly
+        environment.lifecycle().manage(new ManagedPeriodicTask(new ScheduledRepositoryHarvester(
+                repositoryDao,
+                repositoryController,
+                recordBatchLoader,
+                httpFetcher,
+                responseHandlerFactory
+        )));
 
 
         // Task endpoints
