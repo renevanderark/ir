@@ -39,4 +39,7 @@ public interface RecordDao {
 
     @SqlUpdate("update DARE_PREPROCES set STATE = :state where ID = :id")
     void updateState(@BindBean Record record);
+
+    @SqlQuery("select * from DARE_PREPROCES where STATE = :process_status_code")
+    List<Record> fetchAllByProcessStatus(@Bind("process_status_code") Integer processStatusCode);
 }

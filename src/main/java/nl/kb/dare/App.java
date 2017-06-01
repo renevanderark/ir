@@ -15,6 +15,7 @@ import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
 import nl.kb.dare.jobs.ScheduledOaiRecordFetcher;
+import nl.kb.dare.model.RunState;
 import nl.kb.dare.model.SocketNotifier;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.preproces.RecordDao;
@@ -25,6 +26,7 @@ import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.dare.model.repository.oracle.OracleRepositoryDao;
+import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.nbn.NumbersController;
 import nl.kb.dare.taskmanagers.ManagedPeriodicTask;
 import nl.kb.dare.tasks.LoadOracleSchemaTask;
@@ -35,11 +37,15 @@ import nl.kb.http.LenientHttpFetcher;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
 import nl.kb.xslt.PipedXsltTransformer;
 import org.skife.jdbi.v2.DBI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.Servlet;
 import javax.xml.transform.stream.StreamSource;
 
 public class App extends Application<Config> {
+    private static final Logger LOG = LoggerFactory.getLogger(App.class);
+
     public static void main(String[] args) throws Exception {
         new App().run(args);
     }
@@ -115,6 +121,21 @@ public class App extends Application<Config> {
                 errorReportDao,
                 errorReporter
         );
+
+        // Fix potential data problems caused by hard termination of application
+        try {
+            // Reset all harvester states to waiting
+            repositoryDao.list().forEach(repository -> repositoryDao.setRunState(repository.getId(),
+                    RunState.WAITING.getCode()));
+
+            // Reset all records which have PROCESSING state to PENDING
+            recordDao.fetchAllByProcessStatus(ProcessStatus.PROCESSING.getCode()).forEach(record -> {
+                record.setState(ProcessStatus.PENDING);
+                recordDao.updateState(record);
+            });
+        } catch (Exception e) {
+            LOG.error("Failed to fix data on boot, probably caused by missing schema", e);
+        }
 
         // Register endpoints
 
