@@ -51,4 +51,7 @@ public interface RepositoryDao {
 
     @SqlUpdate("update repositories set runState = :runState where id = :id")
     void setRunState(@Bind("id") Integer id, @Bind("runState") Integer runState);
+
+    @SqlUpdate("update repositories set lastHarvest=CURRENT_TIMESTAMP where id = :id")
+    void setLastHarvest(@Bind("id") Integer id);
 }

@@ -128,8 +128,8 @@ public class RepositoriesEndpointTest {
     public void indexShouldRespondWithAListOfRepositories() {
         final RepositoryDao dao = mock(RepositoryDao.class);
         final RepositoriesEndpoint instance = new RepositoriesEndpoint(dao, mock(RepositoryValidator.class), mock(RepositoryController.class));
-        final Repository repositoryConfig1 = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, RunState.WAITING, 1);
-        final Repository repositoryConfig2 = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, RunState.WAITING, 2);
+        final Repository repositoryConfig1 = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, RunState.WAITING, 1, null);
+        final Repository repositoryConfig2 = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, RunState.WAITING, 2, null);
         final List<Repository> repositories = Lists.newArrayList(repositoryConfig1, repositoryConfig2);
 
         when(dao.list()).thenReturn(repositories);

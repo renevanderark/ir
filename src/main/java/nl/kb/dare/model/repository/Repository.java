@@ -5,11 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import nl.kb.dare.model.RunState;
 
+import java.time.LocalDate;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Repository {
 
     private Boolean enabled;
     private Integer id;
+    private LocalDate lastHarvest;
     private String url;
     private String metadataPrefix;
     private String set;
@@ -35,9 +38,10 @@ public class Repository {
     }
 
     public Repository(String url, String name, String metadataPrefix, String set, String dateStamp, Boolean enabled,
-                      HarvestSchedule schedule, RunState runState, Integer id) {
+                      HarvestSchedule schedule, RunState runState, Integer id, LocalDate lastHarvest) {
         this(url, name, metadataPrefix, set, dateStamp, enabled, schedule, runState);
         this.id = id;
+        this.lastHarvest = lastHarvest;
     }
 
 
@@ -120,4 +124,7 @@ public class Repository {
         this.id = id;
     }
 
+    public LocalDate getLastHarvest() {
+        return lastHarvest;
+    }
 }

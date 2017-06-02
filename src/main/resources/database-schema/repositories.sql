@@ -14,6 +14,7 @@ CREATE TABLE repositories (
   schedule NUMBER(10) NOT NULL,
   enabled NUMBER(3) DEFAULT 0 NOT NULL,
   runState NUMBER(10) DEFAULT 0 NOT NULL,
+  lastHarvest TIMESTAMP(6) DEFAULT NULL,
   PRIMARY KEY (id)
 )
 

@@ -43,6 +43,7 @@ public class RepositoryController {
 
     public void beforeHarvest(Integer id) {
         synchronized (repositoryDao) {
+            repositoryDao.setLastHarvest(id);
             repositoryDao.setRunState(id, RunState.RUNNING.getCode());
         }
         notifyUpdate();

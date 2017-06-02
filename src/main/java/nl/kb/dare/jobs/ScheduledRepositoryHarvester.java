@@ -12,7 +12,8 @@ import nl.kb.http.responsehandlers.ResponseHandlerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -49,6 +50,7 @@ public class ScheduledRepositoryHarvester extends AbstractScheduledService {
             repositoryDao.list().stream()
                     .filter(this::harvestShouldRun)
                     .forEach(this::startHarvest);
+
         } catch (Exception e) {
             LOG.error("Failed to start scheduled harvests, probably caused by missing schema", e);
 
@@ -59,21 +61,22 @@ public class ScheduledRepositoryHarvester extends AbstractScheduledService {
      * Slaagt wanneer een harvest gestart mag en moet worden
      * 1) Staat de repository aan (getEnabled) EN
      * 2) Is de harvest voor deze repository niet al aan het draaien (getRunState) EN
-     * 3a) Is het schema dagelijks? OF
-     * 3b) Is het schema wekelijks en is het vandaag maandag? OF
-     * 3c) Is het schema maandelijks en is het vandaag de eerste van de maand?
+     * 3a) Is er nog niet eerder geharvest? OF
+     * 3b) Is het schema dagelijks? OF
+     * 3c) Is het schema wekelijks en is het vandaag >= 7 sinds laatste harvest? OF
+     * 3d) Is het schema maandelijks en is het vandaag >= 1 maand sinds laatste harvest?
      *
      * @param repository de te toetsen repository
      * @return of de harvest voor deze repository mag en zou moeten draaien
      */
     private boolean harvestShouldRun(Repository repository) {
-        final int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-        final int dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-
         return repository.getEnabled() && repository.getRunState() == RunState.WAITING && (
-            (repository.getSchedule() == HarvestSchedule.DAILY) ||
-            (repository.getSchedule() == HarvestSchedule.WEEKLY && dayOfWeek == Calendar.MONDAY) ||
-            (repository.getSchedule() == HarvestSchedule.MONTHLY && dayOfMonth == 1)
+            repository.getSchedule() == HarvestSchedule.DAILY ||
+            repository.getLastHarvest() == null ||
+            (repository.getSchedule() == HarvestSchedule.WEEKLY &&
+                    ChronoUnit.DAYS.between(repository.getLastHarvest(), LocalDate.now()) >= 7) ||
+            (repository.getSchedule() == HarvestSchedule.MONTHLY &&
+                    ChronoUnit.MONTHS.between(repository.getLastHarvest(), LocalDate.now()) >= 1)
         );
     }
 
