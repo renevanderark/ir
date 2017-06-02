@@ -71,7 +71,7 @@ public class RepositoryHarvester implements Runnable {
 
     @Override
     public void run() {
-        LOG.info("Staring harvest thread, running: " + instances.keySet().size());
+        LOG.info("Staring harvest thread, queue size: " + instances.keySet().size());
         repositoryController.beforeHarvest(repository.getId());
 
         runningInstance = new ListIdentifiers(
@@ -103,6 +103,6 @@ public class RepositoryHarvester implements Runnable {
 
         runningInstance = null;
         instances.remove(repository.getId());
-        LOG.info("Ended harvest thread, running: " + instances.keySet().size());
+        LOG.info("Ended harvest thread, queue size: " + instances.keySet().size());
     }
 }

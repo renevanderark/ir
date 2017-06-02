@@ -16,6 +16,9 @@ class Config extends Configuration {
     @JsonProperty
     private String numbersEndpoint;
 
+    @JsonProperty
+    private Integer maxParallelHarvests;
+
 
     @JsonProperty("database")
     DataSourceFactory getDataSourceFactory() {
@@ -49,5 +52,9 @@ class Config extends Configuration {
 
     public String getNumbersEndpoint() {
         return numbersEndpoint;
+    }
+
+    public Integer getMaxParallelHarvests() {
+        return maxParallelHarvests;
     }
 }

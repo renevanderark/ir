@@ -14,7 +14,11 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * ScheduledRepositoryHarvester, conform spec:
@@ -30,26 +34,43 @@ public class ScheduledRepositoryHarvester extends AbstractScheduledService {
     private final RecordBatchLoader recordBatchLoader;
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
+    private final Integer maxParallel;
 
     public ScheduledRepositoryHarvester(RepositoryDao repositoryDao,
                                         RepositoryController repositoryController,
                                         RecordBatchLoader recordBatchLoader,
                                         HttpFetcher httpFetcher,
-                                        ResponseHandlerFactory responseHandlerFactory) {
+                                        ResponseHandlerFactory responseHandlerFactory,
+                                        Integer maxParallel) {
 
         this.repositoryDao = repositoryDao;
         this.repositoryController = repositoryController;
         this.recordBatchLoader = recordBatchLoader;
         this.httpFetcher = httpFetcher;
         this.responseHandlerFactory = responseHandlerFactory;
+        this.maxParallel = maxParallel;
     }
 
     @Override
     protected void runOneIteration() throws Exception {
         try {
-            repositoryDao.list().stream()
+            final List<Thread> harvestThreads = repositoryDao.list().stream()
                     .filter(this::harvestShouldRun)
-                    .forEach(this::startHarvest);
+                    .map(this::mapToHarvestThread)
+                    .collect(toList());
+
+            final List<Thread> queue = new ArrayList<>();
+            while (harvestThreads.size() > 0) {
+                for (int i = 0; i < maxParallel && harvestThreads.size() > 0; i++) {
+                    final Thread harvestThread = harvestThreads.remove(0);
+                    queue.add(harvestThread);
+                    harvestThread.start();
+                }
+
+                for (Thread thread : queue) {
+                    thread.join();
+                }
+            }
 
         } catch (Exception e) {
             LOG.error("Failed to start scheduled harvests, probably caused by missing schema", e);
@@ -80,12 +101,12 @@ public class ScheduledRepositoryHarvester extends AbstractScheduledService {
         );
     }
 
-    private void startHarvest(Repository repository) {
+    private Thread mapToHarvestThread(Repository repository) {
         final RepositoryHarvester repositoryHarvester = RepositoryHarvester
                 .getInstance(repository, repositoryController, recordBatchLoader,
                         httpFetcher, responseHandlerFactory);
 
-        new Thread(repositoryHarvester).start();
+        return new Thread(repositoryHarvester);
     }
 
     @Override

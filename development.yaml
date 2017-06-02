@@ -43,3 +43,5 @@ fileStorage:
   storageType: local
   storageDir: ../../dare2-files
   sampleFileDir: "/tmp"
+
+maxParallelHarvests: 3

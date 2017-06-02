@@ -174,7 +174,8 @@ public class App extends Application<Config> {
                 repositoryController,
                 recordBatchLoader,
                 httpFetcher,
-                responseHandlerFactory
+                responseHandlerFactory,
+                config.getMaxParallelHarvests()
         )));
 
 
