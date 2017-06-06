@@ -1,42 +1,28 @@
 package nl.kb.dare.endpoints;
 
-import nl.kb.dare.jobs.RepositoryHarvester;
+import nl.kb.dare.jobs.ScheduledHarvestRunner;
 import nl.kb.dare.model.RunState;
-import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.repository.Repository;
-import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryDao;
-import nl.kb.http.HttpFetcher;
-import nl.kb.http.responsehandlers.ResponseHandlerFactory;
-import nl.kb.oaipmh.ListIdentifiers;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import java.util.Optional;
 
 @Path("/harvesters/{repositoryId}")
 public class HarvesterEndpoint {
     private final RepositoryDao repositoryDao;
-    private final RepositoryController repositoryController;
-    private final RecordBatchLoader recordBatchLoader;
-    private final HttpFetcher httpFetcher;
-    private final ResponseHandlerFactory responseHandlerFactory;
+    private final ScheduledHarvestRunner harvestRunner;
+
 
     public HarvesterEndpoint(
             RepositoryDao repositoryDao,
-            RepositoryController repositoryController,
-            RecordBatchLoader recordBatchLoader,
-            HttpFetcher httpFetcher,
-            ResponseHandlerFactory responseHandlerFactory) {
+            ScheduledHarvestRunner harvestRunner) {
 
         this.repositoryDao = repositoryDao;
-        this.repositoryController = repositoryController;
-        this.recordBatchLoader = recordBatchLoader;
-        this.httpFetcher = httpFetcher;
-        this.responseHandlerFactory = responseHandlerFactory;
+        this.harvestRunner = harvestRunner;
     }
 
     @Path("/start")
@@ -52,10 +38,10 @@ public class HarvesterEndpoint {
                     .build();
         }
 
-        if (repository.getRunState() != RunState.WAITING) {
+        if (harvestRunner.getHarvesterRunstate(repository.getId()) != RunState.WAITING) {
             return Response
                     .status(Response.Status.CONFLICT)
-                    .entity(new ErrorResponse("harvest already running",
+                    .entity(new ErrorResponse("harvest already queued or running",
                             Response.Status.CONFLICT.getStatusCode()))
                     .build();
         }
@@ -68,11 +54,7 @@ public class HarvesterEndpoint {
                     .build();
         }
 
-        final RepositoryHarvester repositoryHarvester = RepositoryHarvester
-                .getInstance(repository, repositoryController, recordBatchLoader,
-                        httpFetcher, responseHandlerFactory);
-
-        new Thread(repositoryHarvester).start();
+        harvestRunner.startHarvest(repository.getId());
 
         return Response.ok("{}").build();
     }
@@ -91,14 +73,8 @@ public class HarvesterEndpoint {
                     .build();
         }
 
-        final Optional<ListIdentifiers> runningInstance = RepositoryHarvester
-                .getRunningInstance(repositoryId);
-
-        if (runningInstance.isPresent()) {
-            runningInstance.get().interruptHarvest();
-            repositoryController.onHarvestInterrupt(repositoryId);
-        } else {
-            repositoryDao.setRunState(repositoryId, RunState.WAITING.getCode());
+        if (harvestRunner.getHarvesterRunstate(repositoryId) == RunState.RUNNING) {
+            harvestRunner.interruptHarvest(repositoryId);
         }
 
         return Response.ok("{}").build();

@@ -14,9 +14,9 @@ import nl.kb.dare.endpoints.RecordStatusEndpoint;
 import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
+import nl.kb.dare.jobs.ScheduledHarvestRunner;
 import nl.kb.dare.jobs.ScheduledOaiRecordFetcher;
 import nl.kb.dare.jobs.ScheduledRepositoryHarvester;
-import nl.kb.dare.model.RunState;
 import nl.kb.dare.model.SocketNotifier;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.preproces.RecordDao;
@@ -85,7 +85,6 @@ public class App extends Application<Config> {
         final ErrorReportDao errorReportDao = db.onDemand(ErrorReportDao.class);
 
         // File storage access
-
         final FileStorage fileStorage = config.getFileStorageFactory().getFileStorage();
 
 
@@ -93,6 +92,7 @@ public class App extends Application<Config> {
         final SocketNotifier socketNotifier = new SocketNotifier();
         final RecordReporter recordReporter = new RecordReporter(db);
         final ErrorReporter errorReporter = new ErrorReporter(db);
+
 
         // Data mutation controllers
         final NumbersController numbersController = new NumbersController(config.getNumbersEndpoint(), numbersGetter,
@@ -106,6 +106,15 @@ public class App extends Application<Config> {
         final StreamSource didlToManifestXslt = new StreamSource(PipedXsltTransformer.class.getResourceAsStream("/xslt/didl-to-manifest.xsl"));
 
         final PipedXsltTransformer xsltTransformer = PipedXsltTransformer.newInstance(stripOaiXslt, didlToManifestXslt);
+
+        // Process that manages the amount of running harvesters every 200ms
+        final ScheduledHarvestRunner harvestRunner = new ScheduledHarvestRunner(
+                repositoryController,
+                recordBatchLoader,
+                httpFetcher,
+                responseHandlerFactory,
+                repositoryDao, config.getMaxParallelHarvests()
+        );
 
         // Initialize wrapped services (injected in endpoints)
         final RepositoryValidator repositoryValidator = new RepositoryValidator(httpFetcher, responseHandlerFactory);
@@ -126,10 +135,6 @@ public class App extends Application<Config> {
 
         // Fix potential data problems caused by hard termination of application
         try {
-            // Reset all harvester states to waiting
-            repositoryDao.list().forEach(repository -> repositoryDao.setRunState(repository.getId(),
-                    RunState.WAITING.getCode()));
-
             // Reset all records which have PROCESSING state to PENDING
             recordDao.fetchAllByProcessStatus(ProcessStatus.PROCESSING.getCode()).forEach(record -> {
                 record.setState(ProcessStatus.PENDING);
@@ -145,8 +150,7 @@ public class App extends Application<Config> {
         register(environment, new RepositoriesEndpoint(repositoryDao, repositoryValidator, repositoryController));
 
         // Operational controls for repository harvesters
-        register(environment, new HarvesterEndpoint(repositoryDao, repositoryController,
-                recordBatchLoader, httpFetcher, responseHandlerFactory));
+        register(environment, new HarvesterEndpoint(repositoryDao, harvestRunner));
 
         // Operational controls for record fetcher
         register(environment, new OaiRecordFetcherEndpoint(recordFetcher));
@@ -168,14 +172,14 @@ public class App extends Application<Config> {
         // Lifecycle (scheduled tasks/deamons)
         // Process that starts record downloads every 200ms
         environment.lifecycle().manage(new ManagedPeriodicTask(recordFetcher));
+
+        // Process that manages the amount of running harvesters every 200ms
+        environment.lifecycle().manage(new ManagedPeriodicTask(harvestRunner));
+
         // Process that starts harvests daily, weekly or monthly
         environment.lifecycle().manage(new ManagedPeriodicTask(new ScheduledRepositoryHarvester(
                 repositoryDao,
-                repositoryController,
-                recordBatchLoader,
-                httpFetcher,
-                responseHandlerFactory,
-                config.getMaxParallelHarvests()
+                harvestRunner
         )));
 
 

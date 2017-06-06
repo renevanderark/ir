@@ -13,7 +13,6 @@ CREATE TABLE repositories (
   datestamp varchar2(50) DEFAULT NULL,
   schedule NUMBER(10) NOT NULL,
   enabled NUMBER(3) DEFAULT 0 NOT NULL,
-  runState NUMBER(10) DEFAULT 0 NOT NULL,
   lastHarvest TIMESTAMP(6) DEFAULT NULL,
   PRIMARY KEY (id)
 )

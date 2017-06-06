@@ -1,7 +1,7 @@
 package nl.kb.dare.model;
 
 public enum RunState {
-    WAITING(0), RUNNING(1), INTERRUPTED(2);
+    WAITING(0), RUNNING(1), INTERRUPTED(2), QUEUED(3);
 
     private final int code;
 

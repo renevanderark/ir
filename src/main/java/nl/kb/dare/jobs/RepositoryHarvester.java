@@ -1,77 +1,50 @@
 package nl.kb.dare.jobs;
 
+import nl.kb.dare.model.RunState;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryController;
+import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
 import nl.kb.oaipmh.ListIdentifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 public class RepositoryHarvester implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(RepositoryHarvester.class);
 
-    private static final Map<Integer, RepositoryHarvester> instances = Collections.synchronizedMap(new HashMap<>());
-    private final Repository repository;
+    private final Integer repositoryId;
     private final RepositoryController repositoryController;
     private final RecordBatchLoader recordBatchLoader;
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
+    private final RepositoryDao repositoryDao;
 
     private ListIdentifiers runningInstance = null;
+    private RunState runState = RunState.WAITING;
 
-    private RepositoryHarvester(
-            Repository repository,
+    RepositoryHarvester(
+            Integer repositoryId,
             RepositoryController repositoryController,
             RecordBatchLoader recordBatchLoader,
             HttpFetcher httpFetcher,
-            ResponseHandlerFactory responseHandlerFactory) {
+            ResponseHandlerFactory responseHandlerFactory,
+            RepositoryDao repositoryDao) {
 
-        this.repository = repository;
+        this.repositoryId = repositoryId;
         this.repositoryController = repositoryController;
         this.recordBatchLoader = recordBatchLoader;
         this.httpFetcher = httpFetcher;
         this.responseHandlerFactory = responseHandlerFactory;
-    }
-
-
-    public static Optional<ListIdentifiers> getRunningInstance(Integer repositoryId) {
-        if (instances.containsKey(repositoryId)) {
-            final RepositoryHarvester instance = instances.get(repositoryId);
-            return Optional.of(instance.runningInstance);
-        }
-
-        return Optional.empty();
-    }
-
-    public static RepositoryHarvester getInstance(
-            Repository repository,
-            RepositoryController repositoryController,
-            RecordBatchLoader recordBatchLoader,
-            HttpFetcher httpFetcher,
-            ResponseHandlerFactory responseHandlerFactory) {
-
-        if (instances.containsKey(repository.getId())) {
-            return instances.get(repository.getId());
-        }
-
-        final RepositoryHarvester newInstance = new RepositoryHarvester(
-                repository, repositoryController, recordBatchLoader, httpFetcher, responseHandlerFactory);
-
-        instances.put(repository.getId(), newInstance);
-
-        return newInstance;
+        this.repositoryDao = repositoryDao;
     }
 
     @Override
     public void run() {
-        LOG.info("Staring harvest thread, queue size: " + instances.keySet().size());
+        this.runState = RunState.RUNNING;
+        final Repository repository = repositoryDao.findById(repositoryId);
+
         repositoryController.beforeHarvest(repository.getId());
 
         runningInstance = new ListIdentifiers(
@@ -102,7 +75,23 @@ public class RepositoryHarvester implements Runnable {
         runningInstance.harvest();
 
         runningInstance = null;
-        instances.remove(repository.getId());
-        LOG.info("Ended harvest thread, queue size: " + instances.keySet().size());
+        this.runState = RunState.WAITING;
+    }
+
+    void sendInterrupt() {
+        if (runningInstance != null) {
+            runningInstance.interruptHarvest();
+            this.runState = RunState.INTERRUPTED;
+        } else {
+            this.runState = RunState.WAITING;
+        }
+    }
+
+    RunState getRunState() {
+        return runState;
+    }
+
+    void setRunState(RunState runState) {
+        this.runState = runState;
     }
 }

@@ -20,6 +20,7 @@ class RepositoryUpdate implements SocketUpdate {
 
     @Override
     public Object getData() {
+
         return data;
     }
 }

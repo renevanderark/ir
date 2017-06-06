@@ -1,6 +1,5 @@
 package nl.kb.dare.model.repository;
 
-import nl.kb.dare.model.RunState;
 import nl.kb.dare.model.SocketNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,6 @@ public class RepositoryController {
         LOG.debug("onHarvestComplete {} {}", id, dateStamp);
         synchronized (repositoryDao) {
             repositoryDao.setDateStamp(id, dateStamp);
-            repositoryDao.setRunState(id, RunState.WAITING.getCode());
         }
         notifyUpdate();
     }
@@ -44,14 +42,6 @@ public class RepositoryController {
     public void beforeHarvest(Integer id) {
         synchronized (repositoryDao) {
             repositoryDao.setLastHarvest(id);
-            repositoryDao.setRunState(id, RunState.RUNNING.getCode());
-        }
-        notifyUpdate();
-    }
-
-    public void onHarvestInterrupt(Integer id) {
-        synchronized (repositoryDao) {
-            repositoryDao.setRunState(id, RunState.INTERRUPTED.getCode());
         }
         notifyUpdate();
     }
