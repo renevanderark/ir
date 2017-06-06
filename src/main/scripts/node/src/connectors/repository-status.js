@@ -1,6 +1,7 @@
+import {RunState} from "../enums";
 export default (state, routed) => {
     const { repositoryId } = routed.params;
-    const { errorStatus, recordStatus, list: repositoryList } =  state.repositories;
+    const { errorStatus, recordStatus, list: repositoryList, harvesterRunStates } =  state.repositories;
     const { statusCodes: { errorStatuses }} = state.status;
 
     return {
@@ -10,6 +11,7 @@ export default (state, routed) => {
             amount: errorStatus[repositoryId][errorCode]
         })),
         recordStatus: recordStatus[repositoryId] || {},
-        repository: repositoryList.find(repo => repo.id === parseInt(repositoryId, 10))
+        repository: repositoryList.find(repo => repo.id === parseInt(repositoryId, 10)),
+        runState: harvesterRunStates[repositoryId] || { runState : RunState.WAITING}
     };
 }

@@ -1,5 +1,6 @@
 package nl.kb.dare.jobs;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import nl.kb.dare.model.RunState;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.repository.Repository;
@@ -87,7 +88,8 @@ public class RepositoryHarvester implements Runnable {
         }
     }
 
-    RunState getRunState() {
+    @JsonProperty
+    public RunState getRunState() {
         return runState;
     }
 

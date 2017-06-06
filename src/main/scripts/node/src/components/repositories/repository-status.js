@@ -7,7 +7,7 @@ import StartStopButton from "../widgets/start-stop-button";
 class RepositoryStatus extends React.Component {
 
     render() {
-        const {repository, recordStatus, errorStatus } = this.props;
+        const {repository, recordStatus, errorStatus, runState: { runState } } = this.props;
 
 
         const errorTable = errorStatus.length > 0
@@ -40,7 +40,7 @@ class RepositoryStatus extends React.Component {
                         <span className="col-md-12">{repository.name}</span>
                         <div className="pull-right col-md-6">
                             <label >Harvest starten</label>
-                            <StartStopButton runState={repository.runState}
+                            <StartStopButton runState={runState}
                                              disabled={!repository.enabled}
                                              onStopClick={() => this.props.onInterruptHarvest(repository.id)}
                                              onStartClick={() => this.props.onStartHarvest(repository.id)}/>
@@ -65,7 +65,7 @@ class RepositoryStatus extends React.Component {
                     <div className="row">
                         <label className="col-md-6">Actief</label>
                         <EnableToggle enabled={repository.enabled}
-                                      toggleEnabled={repository.runState === RunState.WAITING}
+                                      toggleEnabled={runState === RunState.WAITING}
                                       onEnableClick={() => this.props.onEnableRepository(repository.id)}
                                       onDisableClick={() => this.props.onDisableRepository(repository.id)}/>
                     </div>

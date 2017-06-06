@@ -1,6 +1,7 @@
 package nl.kb.dare.model.repository;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -11,13 +12,15 @@ public class Repository {
 
     private Boolean enabled;
     private Integer id;
-    private LocalDate lastHarvest;
     private String url;
     private String metadataPrefix;
     private String set;
     private String dateStamp;
     private String name;
+
     private HarvestSchedule schedule;
+    @JsonIgnore
+    private LocalDate lastHarvest;
 
     public Repository() {
 
@@ -117,6 +120,7 @@ public class Repository {
         this.id = id;
     }
 
+    @JsonIgnore
     public LocalDate getLastHarvest() {
         return lastHarvest;
     }

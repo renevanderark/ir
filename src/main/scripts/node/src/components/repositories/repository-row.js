@@ -12,7 +12,7 @@ import { Schedule } from "../../enums";
 class RepositoryRow extends React.Component {
 
     render() {
-        const { repository, recordStatus } = this.props;
+        const { repository, recordStatus, runState: { runState } } = this.props;
 
         const editLink = repository.enabled
             ? (<button className="btn btn-default" disabled={true}>
@@ -38,14 +38,14 @@ class RepositoryRow extends React.Component {
                 <td>{Schedule[repository.schedule].label}</td>
                 <td>
                     <EnableToggle enabled={repository.enabled}
-                                  toggleEnabled={repository.runState === RunState.WAITING}
+                                  toggleEnabled={runState === RunState.WAITING}
                                   onEnableClick={() => this.props.onEnableRepository(repository.id)}
                                   onDisableClick={() => this.props.onDisableRepository(repository.id)}/>
                 </td>
                 <td>
                     {statusLink}
                     {editLink}
-                    <StartStopButton runState={repository.runState}
+                    <StartStopButton runState={runState || RunState.WAITING}
                                      disabled={!repository.enabled}
                                      onStopClick={() => this.props.onInterruptHarvest(repository.id)}
                                      onStartClick={() => this.props.onStartHarvest(repository.id)}/>

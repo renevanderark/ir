@@ -2,6 +2,8 @@ package nl.kb.dare.jobs;
 
 import com.google.common.util.concurrent.AbstractScheduledService;
 import nl.kb.dare.model.RunState;
+import nl.kb.dare.model.SocketNotifier;
+import nl.kb.dare.model.SocketUpdate;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryDao;
@@ -20,6 +22,7 @@ public class ScheduledHarvestRunner extends AbstractScheduledService {
     private final RecordBatchLoader recordBatchLoader;
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
+    private final SocketNotifier socketNotifier;
     private final int maxParallel;
     private RepositoryDao repositoryDao;
 
@@ -27,13 +30,16 @@ public class ScheduledHarvestRunner extends AbstractScheduledService {
                                   RecordBatchLoader recordBatchLoader,
                                   HttpFetcher httpFetcher,
                                   ResponseHandlerFactory responseHandlerFactory,
-                                  RepositoryDao repositoryDao, int maxParallel) {
+                                  RepositoryDao repositoryDao,
+                                  SocketNotifier socketNotifier,
+                                  int maxParallel) {
 
         this.repositoryController = repositoryController;
         this.recordBatchLoader = recordBatchLoader;
         this.httpFetcher = httpFetcher;
         this.responseHandlerFactory = responseHandlerFactory;
         this.repositoryDao = repositoryDao;
+        this.socketNotifier = socketNotifier;
         this.maxParallel = maxParallel;
     }
 
@@ -78,6 +84,18 @@ public class ScheduledHarvestRunner extends AbstractScheduledService {
                 .limit(slots)
                 .map(Map.Entry::getValue)
                 .forEach(harvester -> new Thread(harvester).start());
+
+        socketNotifier.notifyUpdate(new SocketUpdate() {
+            @Override
+            public String getType() {
+                return "harvester-runstate";
+            }
+
+            @Override
+            public Object getData() {
+                return harvesters;
+            }
+        });
     }
 
     @Override

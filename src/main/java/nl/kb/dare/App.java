@@ -113,7 +113,9 @@ public class App extends Application<Config> {
                 recordBatchLoader,
                 httpFetcher,
                 responseHandlerFactory,
-                repositoryDao, config.getMaxParallelHarvests()
+                repositoryDao,
+                socketNotifier,
+                config.getMaxParallelHarvests()
         );
 
         // Initialize wrapped services (injected in endpoints)

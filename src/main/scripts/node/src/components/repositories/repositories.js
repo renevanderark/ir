@@ -5,7 +5,7 @@ import { Link } from "react-router";
 import { urls } from "../../router";
 import RepositoryRow from "./repository-row";
 import EnableToggle from "../widgets/enable-toggle";
-import { FetcherRunState } from "../../enums";
+import {FetcherRunState, RunState} from "../../enums";
 
 class Repositories extends React.Component {
 
@@ -56,7 +56,10 @@ class Repositories extends React.Component {
                                        onStartHarvest={this.props.onStartHarvest}
                                        onInterruptHarvest={this.props.onInterruptHarvest}
                                        recordStatus={this.props.repositories.recordStatus[repository.id] || {}}
-                                       repository={repository} />
+                                       repository={repository}
+                                       runState={this.props.repositories.harvesterRunStates[repository.id]
+                                        || {runState: RunState.WAITING}}
+                        />
                     ))}
                     </tbody>
                 </table>

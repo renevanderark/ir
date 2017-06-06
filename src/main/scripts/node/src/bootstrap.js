@@ -21,6 +21,12 @@ const connectSocket = () => {
                 break;
             case "record-fetcher":
                 store.dispatch({type: ActionTypes.ON_FETCHER_RUNSTATE_CHANGE, data: data});
+                break;
+            case "harvester-runstate":
+                store.dispatch({type: ActionTypes.RECEIVE_HARVESTER_RUNSTATE, data: data});
+                break;
+            default:
+                break;
         }
     };
 

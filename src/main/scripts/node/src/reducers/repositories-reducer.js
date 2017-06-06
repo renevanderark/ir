@@ -6,7 +6,8 @@ const initialState = {
     underEdit: null,
     validationResultsUnderEdit: {},
     recordStatus: {},
-    errorStatus: {}
+    errorStatus: {},
+    harvesterRunStates: {}
 };
 
 
@@ -44,6 +45,11 @@ export default function(state=initialState, action) {
             return {
                 ...state,
                 errorStatus: action.data
+            };
+        case ActionTypes.RECEIVE_HARVESTER_RUNSTATE:
+            return {
+                ...state,
+                harvesterRunStates: action.data
             };
         default:
     }

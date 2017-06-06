@@ -1,7 +1,8 @@
 const RunState = {
     WAITING: "WAITING",
     RUNNING: "RUNNING",
-    INTERRUPTED: "INTERRUPTED"
+    INTERRUPTED: "INTERRUPTED",
+    QUEUED: "QUEUED"
 };
 
 const FetcherRunState = {
