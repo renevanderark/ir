@@ -73,7 +73,8 @@ public class HarvesterEndpoint {
                     .build();
         }
 
-        if (harvestRunner.getHarvesterRunstate(repositoryId) == RunState.RUNNING) {
+        if (harvestRunner.getHarvesterRunstate(repositoryId) == RunState.RUNNING ||
+                harvestRunner.getHarvesterRunstate(repositoryId) == RunState.QUEUED) {
             harvestRunner.interruptHarvest(repositoryId);
         }
 

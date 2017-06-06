@@ -14,7 +14,7 @@ class StartStopButton extends React.Component {
                 );
             case RunState.QUEUED:
                 return (
-                    <button className="btn btn-default pull-right" disabled={true}>
+                    <button className="btn btn-default pull-right" onClick={this.props.onStopClick}>
                         <span className="glyphicon glyphicon-time" />
                     </button>
                 );
