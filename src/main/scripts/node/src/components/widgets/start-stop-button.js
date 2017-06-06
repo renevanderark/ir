@@ -27,7 +27,8 @@ class StartStopButton extends React.Component {
             case RunState.WAITING:
             default:
                 return (
-                    <button className="btn btn-default pull-right" onClick={this.props.onStartClick} >
+                    <button className="btn btn-default pull-right" disabled={this.props.disabled}
+                            onClick={this.props.onStartClick} >
                         <span className="glyphicon glyphicon-play" />
                     </button>
                 );
