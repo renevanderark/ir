@@ -1,17 +1,11 @@
 package nl.kb.oaipmh;
 
-import org.apache.commons.codec.digest.DigestUtils;
-
 public class OaiRecordHeader {
     private String identifier;
     private String dateStamp;
     private OaiStatus oaiStatus;
 
     public OaiRecordHeader() {
-    }
-
-    public String getFingerprint() {
-        return DigestUtils.sha1Hex(identifier + "|" + dateStamp);
     }
 
     public String getIdentifier() {

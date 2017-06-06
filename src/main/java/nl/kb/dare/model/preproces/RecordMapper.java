@@ -15,9 +15,9 @@ public class RecordMapper implements ResultSetMapper<Record> {
         final Integer repositoryId = resultSet.getInt("REPOSITORY_ID");
         final Integer state = resultSet.getInt("STATE");
         final String kbObjId = resultSet.getString("KBOBJID");
-        final String fingerprint = resultSet.getString("FINGERPRINT");
         final String oaiIdentifier = resultSet.getString("OAI_ID");
+        final String oaiDateStamp = resultSet.getString("OAI_DATESTAMP");
 
-        return new Record(id, ProcessStatus.forCode(state), kbObjId, fingerprint, repositoryId, oaiIdentifier);
+        return new Record(id, ProcessStatus.forCode(state), kbObjId, repositoryId, oaiIdentifier, oaiDateStamp);
     }
 }

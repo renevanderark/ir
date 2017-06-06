@@ -13,19 +13,19 @@ import java.util.List;
 @RegisterMapper(RecordMapper.class)
 public interface RecordDao {
 
-    @SqlBatch("INSERT INTO DARE_PREPROCES (ID, STATE, KBOBJID, TS_CREATE, FINGERPRINT, REPOSITORY_ID, OAI_ID) " +
-            "VALUES (SEQ_DARE_PREPROCES.nextval, :state, :kbObjId, CURRENT_TIMESTAMP, :fingerprint, :repositoryId, :oaiIdentifier)")
+    @SqlBatch("INSERT INTO DARE_PREPROCES (ID, STATE, KBOBJID, TS_CREATE, REPOSITORY_ID, OAI_ID, OAI_DATESTAMP) " +
+            "VALUES (SEQ_DARE_PREPROCES.nextval, :state, :kbObjId, CURRENT_TIMESTAMP, :repositoryId, :oaiIdentifier, :oaiDateStamp)")
     void insertBatch(@BindBean List<Record> recordList);
 
     @SqlQuery("select case " +
             "            when exists (select 1 " +
             "                         from dare_preproces " +
-            "                         where fingerprint = :fingerprint) " +
+            "                         where oai_id = :identifier and oai_datestamp = :dateStamp) " +
             "            then 1 " +
             "            else 0 " +
             "        end " +
             "from dual")
-    Boolean existsByFingerPrint(@BindBean OaiRecordHeader oaiRecordHeader);
+    Boolean existsByDatestampAndIdentifier(@BindBean OaiRecordHeader oaiRecordHeader);
 
 
 

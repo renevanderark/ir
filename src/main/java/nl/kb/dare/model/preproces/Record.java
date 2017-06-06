@@ -11,30 +11,33 @@ public class Record {
     private String kbObjId;
     private String tsCreate;
     private String tsProcessed;
-    private String fingerprint;
     private Integer repositoryId;
     private String oaiIdentifier;
+    private final String oaiDateStamp;
 
-    Record(Integer id, ProcessStatus state, String kbObjId, String fingerprint, Integer repositoryId, String oaiIdentifier) {
+
+    Record(Integer id, ProcessStatus state, String kbObjId,  Integer repositoryId,
+           String oaiIdentifier, String oaiDateStamp) {
         this.id = id;
         this.state = state;
         this.kbObjId = kbObjId;
         this.repositoryId = repositoryId;
-        this.fingerprint = fingerprint;
         this.oaiIdentifier = oaiIdentifier;
+        this.oaiDateStamp = oaiDateStamp;
     }
 
-    private Record(ProcessStatus state, String kbObjId, String fingerprint, Integer repositoryId, String oaiIdentifier) {
-        this(null, state, kbObjId, fingerprint, repositoryId, oaiIdentifier);
+    private Record(ProcessStatus state, String kbObjId, Integer repositoryId,
+                   String oaiIdentifier, String oaiDateStamp) {
+        this(null, state, kbObjId, repositoryId, oaiIdentifier, oaiDateStamp);
     }
 
     static Record fromHeader(OaiRecordHeader header, Integer repositoryId) {
         return new Record(
                 header.getOaiStatus() == OaiStatus.AVAILABLE ? ProcessStatus.PENDING : ProcessStatus.SKIP,
-                "TODO: number generator",
-                header.getFingerprint(),
+                null,
                 repositoryId,
-                header.getIdentifier()
+                header.getIdentifier(),
+                header.getDateStamp()
         );
     }
 
@@ -44,10 +47,6 @@ public class Record {
 
     public String getKbObjId() {
         return kbObjId;
-    }
-
-    public String getFingerprint() {
-        return fingerprint;
     }
 
     public Integer getRepositoryId() {
@@ -69,4 +68,6 @@ public class Record {
     public String getOaiIdentifier() {
         return oaiIdentifier;
     }
+
+    public String getOaiDateStamp() { return oaiDateStamp; }
 }

@@ -36,7 +36,7 @@ public class RecordBatchLoader {
             batchMap.put(repositoryId, Collections.synchronizedList(new ArrayList<>()));
         }
         if (oaiRecordHeader.getOaiStatus() == OaiStatus.AVAILABLE
-                && !recordDao.existsByFingerPrint(oaiRecordHeader)) {
+                && !recordDao.existsByDatestampAndIdentifier(oaiRecordHeader)) {
             batchMap.get(repositoryId).add(Record.fromHeader(oaiRecordHeader, repositoryId));
         }
     }
