@@ -16,7 +16,7 @@ public class SocketNotifier {
             msg = objectMapper.writeValueAsString(socketUpdate);
             StatusSocketRegistrations.getInstance().broadcast(msg);
         } catch (JsonProcessingException e) {
-            LOG.error("Failed to produce json from RecordBatchLoader ", e);
+            LOG.error("Failed to produce json from message payload ", e);
         }
     }
 

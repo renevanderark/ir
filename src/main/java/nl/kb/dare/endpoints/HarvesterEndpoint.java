@@ -5,13 +5,14 @@ import nl.kb.dare.model.RunState;
 import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryDao;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-@Path("/harvesters/{repositoryId}")
+@Path("/harvesters")
 public class HarvesterEndpoint {
     private final RepositoryDao repositoryDao;
     private final ScheduledHarvestRunner harvestRunner;
@@ -25,7 +26,7 @@ public class HarvesterEndpoint {
         this.harvestRunner = harvestRunner;
     }
 
-    @Path("/start")
+    @Path("/{repositoryId}/start")
     @POST
     @Produces("application/json")
     public Response startHarvester(@PathParam("repositoryId") Integer repositoryId) {
@@ -59,7 +60,7 @@ public class HarvesterEndpoint {
         return Response.ok("{}").build();
     }
 
-    @Path("/interrupt")
+    @Path("/{repositoryId}/interrupt")
     @POST
     @Produces("application/json")
     public Response interruptHarvester(@PathParam("repositoryId") Integer repositoryId) {
@@ -79,5 +80,12 @@ public class HarvesterEndpoint {
         }
 
         return Response.ok("{}").build();
+    }
+
+    @Path("/status")
+    @GET
+    @Produces("application/json")
+    public Response getStatus() {
+        return Response.ok(harvestRunner.getStatusUpdate().getData()).build();
     }
 }

@@ -106,10 +106,14 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
     }
 
     private void checkRunState() {
+        final RunState runStateBefore = runState;
         runState = runState == RunState.DISABLED || runState == RunState.DISABLING
                 ? runningWorkers.get() > 0 ? RunState.DISABLING : RunState.DISABLED
                 : RunState.RUNNING;
-        socketNotifier.notifyUpdate(new RecordFetcherUpdate(runState));
+
+        if (runStateBefore != runState) {
+            socketNotifier.notifyUpdate(new RecordFetcherUpdate(runState));
+        }
     }
 
     private List<Record> fetchNextRecords(int limit) {

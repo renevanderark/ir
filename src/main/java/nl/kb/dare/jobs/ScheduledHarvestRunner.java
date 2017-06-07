@@ -3,7 +3,6 @@ package nl.kb.dare.jobs;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import nl.kb.dare.model.RunState;
 import nl.kb.dare.model.SocketNotifier;
-import nl.kb.dare.model.SocketUpdate;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryDao;
@@ -48,7 +47,7 @@ public class ScheduledHarvestRunner extends AbstractScheduledService {
             final RepositoryHarvester harvester = new RepositoryHarvester(
                     repositoryId, repositoryController,
                     recordBatchLoader, httpFetcher, responseHandlerFactory,
-                    repositoryDao
+                    repositoryDao, (RunState runState) -> notifyStateChange()
             );
 
             harvesters.put(repositoryId, harvester);
@@ -85,21 +84,19 @@ public class ScheduledHarvestRunner extends AbstractScheduledService {
                 .map(Map.Entry::getValue)
                 .forEach(harvester -> new Thread(harvester).start());
 
-        socketNotifier.notifyUpdate(new SocketUpdate() {
-            @Override
-            public String getType() {
-                return "harvester-runstate";
-            }
+    }
 
-            @Override
-            public Object getData() {
-                return harvesters;
-            }
-        });
+    public HarvesterStatusUpdate getStatusUpdate() {
+        return new HarvesterStatusUpdate(harvesters);
+    }
+
+    private void notifyStateChange() {
+        socketNotifier.notifyUpdate(getStatusUpdate());
     }
 
     @Override
     protected Scheduler scheduler() {
+
         return Scheduler.newFixedRateSchedule(0, 200, TimeUnit.MILLISECONDS);
     }
 }

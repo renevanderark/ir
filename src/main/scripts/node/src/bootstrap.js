@@ -1,6 +1,6 @@
 import store from "./store";
 import {fetchRepositories} from "./actions/repositories";
-import {fetchErrorStatus, fetchRecordStatus, fetchStatusCodes} from "./actions/record-status";
+import {fetchErrorStatus, fetchRecordStatus, fetchStatusCodes, fetchHarvesterStatus} from "./actions/record-status";
 
 import ActionTypes from "./action-types";
 
@@ -9,6 +9,7 @@ const connectSocket = () => {
 
     webSocket.onmessage = ({ data: msg}) => {
         const {type, data} = JSON.parse(msg);
+        // console.log(`${type} - ${new Date().getTime()}`);
         switch (type) {
             case "repository-change":
                 store.dispatch({type: ActionTypes.RECEIVE_REPOSITORIES, data: data});
@@ -47,9 +48,11 @@ const connectSocket = () => {
 };
 
 const fetchInitialData = (onInitialize) => store.dispatch(fetchRepositories(() =>
-    store.dispatch(fetchStatusCodes(() =>
-        store.dispatch(fetchRecordStatus(() =>
-            store.dispatch(fetchErrorStatus(onInitialize))
+    store.dispatch(fetchHarvesterStatus(() =>
+        store.dispatch(fetchStatusCodes(() =>
+            store.dispatch(fetchRecordStatus(() =>
+                store.dispatch(fetchErrorStatus(onInitialize))
+            ))
         ))
     ))
 ));

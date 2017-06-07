@@ -12,6 +12,8 @@ import nl.kb.oaipmh.ListIdentifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.function.Consumer;
+
 public class RepositoryHarvester implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(RepositoryHarvester.class);
 
@@ -21,6 +23,7 @@ public class RepositoryHarvester implements Runnable {
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
     private final RepositoryDao repositoryDao;
+    private final Consumer<RunState> stateChangeNotifier;
 
     private ListIdentifiers runningInstance = null;
     private RunState runState = RunState.WAITING;
@@ -31,7 +34,9 @@ public class RepositoryHarvester implements Runnable {
             RecordBatchLoader recordBatchLoader,
             HttpFetcher httpFetcher,
             ResponseHandlerFactory responseHandlerFactory,
-            RepositoryDao repositoryDao) {
+            RepositoryDao repositoryDao,
+            Consumer<RunState> stateChangeNotifier
+    ) {
 
         this.repositoryId = repositoryId;
         this.repositoryController = repositoryController;
@@ -39,11 +44,13 @@ public class RepositoryHarvester implements Runnable {
         this.httpFetcher = httpFetcher;
         this.responseHandlerFactory = responseHandlerFactory;
         this.repositoryDao = repositoryDao;
+        this.stateChangeNotifier = stateChangeNotifier;
     }
 
     @Override
     public void run() {
-        this.runState = RunState.RUNNING;
+        this.setRunState(RunState.RUNNING);
+
         final Repository repository = repositoryDao.findById(repositoryId);
 
         repositoryController.beforeHarvest(repository.getId());
@@ -76,15 +83,15 @@ public class RepositoryHarvester implements Runnable {
         runningInstance.harvest();
 
         runningInstance = null;
-        this.runState = RunState.WAITING;
+        this.setRunState(RunState.WAITING);
     }
 
     void sendInterrupt() {
         if (runningInstance != null) {
             runningInstance.interruptHarvest();
-            this.runState = RunState.INTERRUPTED;
+            this.setRunState(RunState.INTERRUPTED);
         } else {
-            this.runState = RunState.WAITING;
+            this.setRunState(RunState.WAITING);
         }
     }
 
@@ -95,5 +102,6 @@ public class RepositoryHarvester implements Runnable {
 
     void setRunState(RunState runState) {
         this.runState = runState;
+        stateChangeNotifier.accept(this.runState);
     }
 }

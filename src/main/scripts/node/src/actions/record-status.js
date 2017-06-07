@@ -22,6 +22,12 @@ const fetchStatusCodes = (next = () => {}) => (dispatch) => {
     });
 };
 
+const fetchHarvesterStatus = (next = () => {}) => (dispatch) => {
+    xhr({url: `/harvesters/status`, method: "GET"}, (err, resp, body) => {
+        dispatch({type: ActionTypes.RECEIVE_HARVESTER_RUNSTATE, data: JSON.parse(body)});
+        next();
+    });
+};
 
 
-export {fetchRecordStatus, fetchErrorStatus, fetchStatusCodes};
+export {fetchRecordStatus, fetchErrorStatus, fetchStatusCodes, fetchHarvesterStatus};
