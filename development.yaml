@@ -45,3 +45,5 @@ fileStorage:
   sampleFileDir: "/tmp"
 
 maxParallelHarvests: 3
+maxParallelDownloads: 20
+downloadQueueFillDelayMs: 200

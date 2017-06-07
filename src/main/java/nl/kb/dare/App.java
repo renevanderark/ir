@@ -132,8 +132,9 @@ public class App extends Application<Config> {
                 socketNotifier,
                 recordReporter,
                 errorReportDao,
-                errorReporter
-        );
+                errorReporter,
+                config.getMaxParallelDownloads(),
+                config.getDownloadQueueFillDelayMs());
 
         // Fix potential data problems caused by hard termination of application
         try {

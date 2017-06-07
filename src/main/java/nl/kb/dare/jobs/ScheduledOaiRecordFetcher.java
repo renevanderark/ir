@@ -29,7 +29,6 @@ import static java.util.stream.Collectors.toList;
 
 public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledOaiRecordFetcher.class);
-    private static final Integer MAX_WORKERS = 20;
     private static AtomicInteger runningWorkers = new AtomicInteger(0);
 
     private final RecordDao recordDao;
@@ -42,6 +41,8 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
     private final RecordReporter recordReporter;
     private final ErrorReportDao errorReportDao;
     private final ErrorReporter errorReporter;
+    private final Integer maxParallelDownloads;
+    private final Long downloadQueueFillDelayMs;
 
     public enum RunState {
         RUNNING, DISABLING, DISABLED
@@ -53,7 +54,8 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
                                      HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory,
                                      FileStorage fileStorage, XsltTransformer xsltTransformer,
                                      SocketNotifier socketNotifier, RecordReporter recordReporter,
-                                     ErrorReportDao errorReportDao, ErrorReporter errorReporter) {
+                                     ErrorReportDao errorReportDao, ErrorReporter errorReporter,
+                                     Integer maxWorkers, Long downloadQueueFillDelayMs) {
         this.recordDao = recordDao;
         this.repositoryDao = repositoryDao;
         this.httpFetcher = httpFetcher;
@@ -64,6 +66,8 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
         this.recordReporter = recordReporter;
         this.errorReportDao = errorReportDao;
         this.errorReporter = errorReporter;
+        this.maxParallelDownloads = maxWorkers;
+        this.downloadQueueFillDelayMs = downloadQueueFillDelayMs;
         this.runState = RunState.DISABLED;
     }
 
@@ -74,7 +78,7 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
             return;
         }
 
-        final List<Record> pendingRecords = fetchNextRecords(MAX_WORKERS - runningWorkers.get());
+        final List<Record> pendingRecords = fetchNextRecords(maxParallelDownloads);
         final List<Thread> workers = Lists.newArrayList();
 
         for (Record record : pendingRecords) {
@@ -95,6 +99,8 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
             worker.start();
             runningWorkers.getAndIncrement();
         }
+        socketNotifier.notifyUpdate(recordReporter.getStatusUpdate());
+
 
         if (runState == RunState.DISABLING) {
             for (Thread worker : workers) {
@@ -127,7 +133,7 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
         for (Integer repositoryId : repositoryIds) {
             final List<Record> processing = recordDao.fetchNextWithProcessStatusByRepositoryId(
                     ProcessStatus.PROCESSING.getCode(),
-                    dividedLimit,
+                    maxParallelDownloads,
                     repositoryId
             );
 
@@ -135,15 +141,11 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
             if (remainingLimit <= 0) { continue; }
             final List<Record> pending = recordDao.fetchNextWithProcessStatusByRepositoryId(
                     ProcessStatus.PENDING.getCode(),
-                    dividedLimit,
+                    remainingLimit,
                     repositoryId
             );
 
             result.addAll(pending);
-            limit -= pending.size();
-            if (limit <= 0) {
-                return result;
-            }
         }
 
         return result;
@@ -162,7 +164,6 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
     private void startRecord(Record record) {
         record.setState(ProcessStatus.PROCESSING);
         recordDao.updateState(record);
-        socketNotifier.notifyUpdate(recordReporter.getStatusUpdate());
     }
 
     private void finishRecord(Record record, ProcessStatus processStatus, long elapsed) {
@@ -182,6 +183,6 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
 
     @Override
     protected Scheduler scheduler() {
-        return Scheduler.newFixedRateSchedule(0, 200, TimeUnit.MILLISECONDS);
+        return Scheduler.newFixedRateSchedule(0, downloadQueueFillDelayMs, TimeUnit.MILLISECONDS);
     }
 }

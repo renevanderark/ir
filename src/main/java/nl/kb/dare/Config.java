@@ -19,6 +19,12 @@ class Config extends Configuration {
     @JsonProperty
     private Integer maxParallelHarvests;
 
+    @JsonProperty
+    private Integer maxParallelDownloads;
+
+    @JsonProperty
+    private Long downloadQueueFillDelayMs;
+
 
     @JsonProperty("database")
     DataSourceFactory getDataSourceFactory() {
@@ -56,5 +62,13 @@ class Config extends Configuration {
 
     public Integer getMaxParallelHarvests() {
         return maxParallelHarvests;
+    }
+
+    public Integer getMaxParallelDownloads() {
+        return maxParallelDownloads;
+    }
+
+    public Long getDownloadQueueFillDelayMs() {
+        return downloadQueueFillDelayMs;
     }
 }
