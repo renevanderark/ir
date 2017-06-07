@@ -33,7 +33,7 @@ public class Record {
 
     static Record fromHeader(OaiRecordHeader header, Integer repositoryId) {
         return new Record(
-                header.getOaiStatus() == OaiStatus.AVAILABLE ? ProcessStatus.PENDING : ProcessStatus.SKIP,
+                header.getOaiStatus() == OaiStatus.AVAILABLE ? ProcessStatus.PENDING : ProcessStatus.DELETED,
                 null,
                 repositoryId,
                 header.getIdentifier(),

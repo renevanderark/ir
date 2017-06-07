@@ -1,6 +1,7 @@
 package nl.kb.dare.model.preproces;
 
 import nl.kb.dare.model.SocketNotifier;
+import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.nbn.NumbersController;
 import nl.kb.oaipmh.OaiRecordHeader;
 import nl.kb.oaipmh.OaiStatus;
@@ -35,9 +36,21 @@ public class RecordBatchLoader {
         if (!batchMap.containsKey(repositoryId)) {
             batchMap.put(repositoryId, Collections.synchronizedList(new ArrayList<>()));
         }
+
         if (oaiRecordHeader.getOaiStatus() == OaiStatus.AVAILABLE
                 && !recordDao.existsByDatestampAndIdentifier(oaiRecordHeader)) {
             batchMap.get(repositoryId).add(Record.fromHeader(oaiRecordHeader, repositoryId));
+        }
+
+        // DARE2017-9 when a record exists as PENDING or FAILED, which is later deleted, set the status to deleted
+        if (oaiRecordHeader.getOaiStatus() == OaiStatus.DELETED) {
+            final Record existing = recordDao.findByOaiId(oaiRecordHeader.getIdentifier());
+            if (existing != null && existing.getState() != ProcessStatus.PROCESSED.getCode()) {
+                existing.setState(ProcessStatus.DELETED);
+                synchronized (recordDao) {
+                    recordDao.updateState(existing);
+                }
+            }
         }
     }
 

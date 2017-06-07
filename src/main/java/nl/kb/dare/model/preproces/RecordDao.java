@@ -42,4 +42,7 @@ public interface RecordDao {
 
     @SqlQuery("select * from DARE_PREPROCES where STATE = :process_status_code")
     List<Record> fetchAllByProcessStatus(@Bind("process_status_code") Integer processStatusCode);
+
+    @SqlQuery("select * from DARE_PREPROCES where OAI_ID = :oaiId")
+    Record findByOaiId(@Bind("oaiId") String oaiIdentifier);
 }

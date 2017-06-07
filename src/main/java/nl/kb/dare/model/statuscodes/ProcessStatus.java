@@ -1,11 +1,11 @@
 package nl.kb.dare.model.statuscodes;
 
 public enum ProcessStatus {
-    SKIP(1, "skip"),
     PENDING(10, "pending"),
+    DELETED(998, "deleted"),
+    PROCESSED(40, "processed"),
     PROCESSING(20, "processing"),
-    FAILED(90, "failure"),
-    PROCESSED(100, "processed");
+    FAILED(999, "failure");
 
     private final int code;
     private final String status;
