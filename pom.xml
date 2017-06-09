@@ -113,6 +113,14 @@
             <version>1.10</version>
         </dependency>
 
+
+        <!-- h2 database for dao unit tests and integration testing -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.193</version>
+        </dependency>
+
         <!-- [TESTING] -->
         <!-- Mockito mocking framework -->
         <dependency>
@@ -134,14 +142,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit-version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- h2 database for dao unit tests -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.193</version>
             <scope>test</scope>
         </dependency>
 
