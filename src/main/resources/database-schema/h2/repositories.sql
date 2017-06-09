@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS repositories;
+
 CREATE TABLE repositories (
   id number(10) AUTO_INCREMENT,
   name VARCHAR2(255) DEFAULT NULL,

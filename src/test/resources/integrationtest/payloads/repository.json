@@ -1,0 +1,9 @@
+{
+  "name": "Testing",
+  "set": "test",
+  "url": "http://example.com",
+  "metadataPrefix": "nl_didl_norm",
+  "enabled": false,
+  "dateStamp": null,
+  "schedule": 2
+}

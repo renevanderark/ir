@@ -34,6 +34,5 @@ public class LoadH2SchemaTask extends Task {
         final String schemaSql = IOUtils.toString(resource, "UTF8");
 
         h.update(schemaSql);
-        System.out.println(schemaSql);
     }
 }
