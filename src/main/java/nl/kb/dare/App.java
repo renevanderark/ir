@@ -21,6 +21,7 @@ import nl.kb.dare.model.SocketNotifier;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
+import nl.kb.dare.model.preproces.h2.H2RecordDao;
 import nl.kb.dare.model.reporting.ErrorReportDao;
 import nl.kb.dare.model.reporting.ErrorReporter;
 import nl.kb.dare.model.repository.RepositoryController;
@@ -30,6 +31,7 @@ import nl.kb.dare.model.repository.oracle.OracleRepositoryDao;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.nbn.NumbersController;
 import nl.kb.dare.taskmanagers.ManagedPeriodicTask;
+import nl.kb.dare.tasks.LoadH2SchemaTask;
 import nl.kb.dare.tasks.LoadOracleSchemaTask;
 import nl.kb.dare.tasks.LoadRepositoriesTask;
 import nl.kb.filestorage.FileStorage;
@@ -80,7 +82,9 @@ public class App extends Application<Config> {
                 ? db.onDemand(OracleRepositoryDao.class)
                 : db.onDemand(RepositoryDao.class);
 
-        final RecordDao recordDao = db.onDemand(RecordDao.class);
+        final RecordDao recordDao = config.getDatabaseProvider().equalsIgnoreCase("h2")
+                ? db.onDemand(H2RecordDao.class)
+                : db.onDemand(RecordDao.class);
 
         final ErrorReportDao errorReportDao = db.onDemand(ErrorReportDao.class);
 
@@ -144,7 +148,7 @@ public class App extends Application<Config> {
                 recordDao.updateState(record);
             });
         } catch (Exception e) {
-            LOG.error("Failed to fix data on boot, probably caused by missing schema", e);
+            LOG.warn("Failed to fix data on boot, probably caused by missing schema", e);
         }
 
         // Register endpoints
@@ -187,7 +191,13 @@ public class App extends Application<Config> {
 
 
         // Task endpoints
-        environment.admin().addTask(new LoadOracleSchemaTask(db));
+        if (config.getDatabaseProvider().equalsIgnoreCase("oracle")) {
+            environment.admin().addTask(new LoadOracleSchemaTask(db));
+        }
+
+        if (config.getDatabaseProvider().equalsIgnoreCase("h2")) {
+            environment.admin().addTask(new LoadH2SchemaTask(db));
+        }
         environment.admin().addTask(new LoadRepositoriesTask(repositoryDao));
     }
 

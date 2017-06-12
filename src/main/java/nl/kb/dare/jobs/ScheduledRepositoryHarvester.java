@@ -38,7 +38,7 @@ public class ScheduledRepositoryHarvester extends AbstractScheduledService {
                     .forEach(harvestRunner::startHarvest);
 
         } catch (Exception e) {
-            LOG.error("Failed to start scheduled harvests, probably caused by missing schema", e);
+            LOG.warn("Failed to start scheduled harvests, probably caused by missing schema", e);
 
         }
     }
