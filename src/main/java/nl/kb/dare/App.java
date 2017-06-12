@@ -148,7 +148,7 @@ public class App extends Application<Config> {
                 recordDao.updateState(record);
             });
         } catch (Exception e) {
-            LOG.error("Failed to fix data on boot, probably caused by missing schema", e);
+            LOG.warn("Failed to fix data on boot, probably caused by missing schema", e);
         }
 
         // Register endpoints

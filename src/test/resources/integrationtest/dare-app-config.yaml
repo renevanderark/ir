@@ -15,7 +15,7 @@ logging:
   appenders:
     - type: console
       logFormat: "- %-5p  %m [%c{60}]%n"
-  level: INFO
+  level: ERROR
 
 
 
