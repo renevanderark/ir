@@ -1,5 +1,6 @@
 import xhr from "xhr";
 import ActionTypes from "../action-types";
+import {handleResponse} from "./response-handler";
 
 const fetchRecordStatus = (next = () => {}) => (dispatch) => {
     xhr({url: `/record-status?${new Date().getTime()}`, method: "GET"}, (err, resp, body) => {
@@ -24,10 +25,11 @@ const fetchStatusCodes = (next = () => {}) => (dispatch) => {
 
 const fetchHarvesterStatus = (next = () => {}) => (dispatch) => {
     xhr({url: `/harvesters/status`, method: "GET", headers: {'Authorization': localStorage.getItem("authToken")}},
-        (err, resp, body) => {
-        dispatch({type: ActionTypes.RECEIVE_HARVESTER_RUNSTATE, data: JSON.parse(body)});
-        next();
-    });
+        (err, resp, body) => handleResponse(resp, () => {
+            dispatch({type: ActionTypes.RECEIVE_HARVESTER_RUNSTATE, data: JSON.parse(body)});
+            next();
+        })
+    );
 };
 
 

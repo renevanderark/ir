@@ -1,4 +1,5 @@
 import xhr from "xhr";
+import {handleResponse} from "./response-handler";
 const startHarvest = (repositoryId) => (distpatch) =>
     xhr({
         method: "POST",
@@ -7,7 +8,9 @@ const startHarvest = (repositoryId) => (distpatch) =>
           'Authorization': localStorage.getItem("authToken")
         },
         uri: `/harvesters/${repositoryId}/start`
-    }, (err, resp, body) => { });
+    }, (err, resp, body) => {
+        handleResponse(resp);
+    });
 
 const interruptHarvest = (repositoryId) => (distpatch) =>
     xhr({
@@ -17,6 +20,8 @@ const interruptHarvest = (repositoryId) => (distpatch) =>
             'Authorization': localStorage.getItem("authToken")
         },
         uri: `/harvesters/${repositoryId}/interrupt`
-    }, (err, resp, body) => { });
+    }, (err, resp, body) => {
+        handleResponse(resp);
+    });
 
 export { startHarvest, interruptHarvest }
