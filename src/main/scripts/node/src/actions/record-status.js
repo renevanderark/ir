@@ -23,7 +23,8 @@ const fetchStatusCodes = (next = () => {}) => (dispatch) => {
 };
 
 const fetchHarvesterStatus = (next = () => {}) => (dispatch) => {
-    xhr({url: `/harvesters/status`, method: "GET"}, (err, resp, body) => {
+    xhr({url: `/harvesters/status`, method: "GET", headers: {'Authorization': localStorage.getItem("authToken")}},
+        (err, resp, body) => {
         dispatch({type: ActionTypes.RECEIVE_HARVESTER_RUNSTATE, data: JSON.parse(body)});
         next();
     });

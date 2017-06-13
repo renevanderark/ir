@@ -46,3 +46,5 @@ fileStorage:
 maxParallelHarvests: 3
 maxParallelDownloads: 20
 downloadQueueFillDelayMs: 200
+
+authEnabled: false

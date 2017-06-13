@@ -14,6 +14,7 @@ import nl.kb.dare.endpoints.RecordStatusEndpoint;
 import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
+import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
 import nl.kb.dare.jobs.ScheduledHarvestRunner;
 import nl.kb.dare.jobs.ScheduledOaiRecordFetcher;
 import nl.kb.dare.jobs.ScheduledRepositoryHarvester;
@@ -151,23 +152,25 @@ public class App extends Application<Config> {
             LOG.warn("Failed to fix data on boot, probably caused by missing schema", e);
         }
 
+        final KbAuthFilter filter = new KbAuthFilter(config.getAuthEnabled());
+
         // Register endpoints
 
         // CRUD operations for repositories (harvest definitions)
-        register(environment, new RepositoriesEndpoint(repositoryDao, repositoryValidator, repositoryController));
+        register(environment, new RepositoriesEndpoint(filter, repositoryDao, repositoryValidator, repositoryController));
 
         // Operational controls for repository harvesters
-        register(environment, new HarvesterEndpoint(repositoryDao, harvestRunner));
+        register(environment, new HarvesterEndpoint(filter, repositoryDao, harvestRunner));
 
         // Operational controls for record fetcher
-        register(environment, new OaiRecordFetcherEndpoint(recordFetcher));
+        register(environment, new OaiRecordFetcherEndpoint(filter, recordFetcher));
 
 
         // Record status endpoint
-        register(environment, new RecordStatusEndpoint(recordReporter, errorReporter));
+        register(environment, new RecordStatusEndpoint(filter, recordReporter, errorReporter));
 
         // HTML + javascript app
-        register(environment, new RootEndpoint(config.getHostName()));
+        register(environment, new RootEndpoint(filter, config.getHostName()));
 
         // Make JsonProcessingException show details
         register(environment, new JsonProcessingExceptionMapper(true));

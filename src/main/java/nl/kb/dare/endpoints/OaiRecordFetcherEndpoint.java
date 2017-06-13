@@ -1,5 +1,6 @@
 package nl.kb.dare.endpoints;
 
+import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
 import nl.kb.dare.jobs.ScheduledOaiRecordFetcher;
 
 import javax.ws.rs.PUT;
@@ -11,7 +12,7 @@ import javax.ws.rs.core.Response;
 public class OaiRecordFetcherEndpoint {
     private final ScheduledOaiRecordFetcher oaiRecordFetcher;
 
-    public OaiRecordFetcherEndpoint(ScheduledOaiRecordFetcher oaiRecordFetcher) {
+    public OaiRecordFetcherEndpoint(KbAuthFilter filter, ScheduledOaiRecordFetcher oaiRecordFetcher) {
 
         this.oaiRecordFetcher = oaiRecordFetcher;
     }

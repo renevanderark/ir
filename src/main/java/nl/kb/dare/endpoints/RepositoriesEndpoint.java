@@ -1,5 +1,6 @@
 package nl.kb.dare.endpoints;
 
+import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
 import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryController;
@@ -27,7 +28,7 @@ public class RepositoriesEndpoint {
     private RepositoryValidator validator;
     private final RepositoryController repositoryController;
 
-    public RepositoriesEndpoint(RepositoryDao dao,  RepositoryValidator validator, RepositoryController repositoryController) {
+    public RepositoriesEndpoint(KbAuthFilter filter, RepositoryDao dao, RepositoryValidator validator, RepositoryController repositoryController) {
         this.dao = dao;
         this.validator = validator;
         this.repositoryController = repositoryController;

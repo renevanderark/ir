@@ -4,11 +4,14 @@ package nl.kb.dare.endpoints;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.BufferedReader;
@@ -33,9 +36,11 @@ public class RootEndpoint {
         }
     }
 
+    private final KbAuthFilter filter;
     private final String hostName;
 
-    public RootEndpoint(String hostName) {
+    public RootEndpoint(KbAuthFilter filter, String hostName) {
+        this.filter = filter;
 
         this.hostName = hostName;
     }
@@ -43,6 +48,17 @@ public class RootEndpoint {
     @GET
     public Response getHtml() {
         return Response.ok(parseHtmlTemplate()).build();
+    }
+
+    @GET
+    @Path("/authenticate")
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Response authenticate(@QueryParam("xml") String base64Xml) {
+        return filter.getToken(base64Xml).map(token ->
+            Response.status(Response.Status.FOUND).header("Location", "/?token=" + token).build()
+        ).orElseGet(() ->
+            Response.status(Response.Status.FORBIDDEN).entity("Login failed").build()
+        );
     }
 
     @GET

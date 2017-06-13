@@ -1,5 +1,6 @@
 package nl.kb.dare.endpoints;
 
+import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
 import nl.kb.dare.model.preproces.RecordReporter;
 import nl.kb.dare.model.reporting.ErrorReporter;
 import nl.kb.dare.model.statuscodes.ErrorStatus;
@@ -20,7 +21,7 @@ public class RecordStatusEndpoint {
     private final RecordReporter recordReporter;
     private final ErrorReporter errorReporter;
 
-    public RecordStatusEndpoint(RecordReporter recordReporter, ErrorReporter errorReporter) {
+    public RecordStatusEndpoint(KbAuthFilter filter, RecordReporter recordReporter, ErrorReporter errorReporter) {
         this.recordReporter = recordReporter;
         this.errorReporter = errorReporter;
     }

@@ -25,6 +25,9 @@ class Config extends Configuration {
     @JsonProperty
     private Long downloadQueueFillDelayMs;
 
+    @JsonProperty
+    private Boolean authEnabled;
+
 
     @JsonProperty("database")
     DataSourceFactory getDataSourceFactory() {
@@ -70,5 +73,9 @@ class Config extends Configuration {
 
     public Long getDownloadQueueFillDelayMs() {
         return downloadQueueFillDelayMs;
+    }
+
+    public boolean getAuthEnabled() {
+        return authEnabled;
     }
 }
