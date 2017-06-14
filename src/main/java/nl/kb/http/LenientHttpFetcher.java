@@ -17,7 +17,7 @@ public class LenientHttpFetcher implements HttpFetcher {
     }
 
     LenientHttpFetcher(boolean proactivelyClosing, int connectTimeout) {
-        this(proactivelyClosing, connectTimeout, 30_000);
+        this(proactivelyClosing, connectTimeout, 300_000);
     }
 
     LenientHttpFetcher(boolean proactivelyClosing, int connectTimeout, int readTimeout) {
