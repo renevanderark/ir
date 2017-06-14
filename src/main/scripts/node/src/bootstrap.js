@@ -1,9 +1,10 @@
 import store from "./store";
 import {fetchRepositories} from "./actions/repositories";
-import {fetchErrorStatus, fetchRecordStatus, fetchStatusCodes, fetchHarvesterStatus} from "./actions/record-status";
+import {fetchErrorStatus, fetchRecordStatus, fetchStatusCodes } from "./actions/record-status";
 import {fetchCredentials} from "./actions/credentials"
 
 import ActionTypes from "./action-types";
+import {fetchHarvesterStatus} from "./actions/harvesters";
 
 const connectSocket = () => {
     const webSocket = new WebSocket("ws://" + globals.hostName + "/status-socket");
