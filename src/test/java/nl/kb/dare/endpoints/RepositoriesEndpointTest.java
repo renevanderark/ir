@@ -46,7 +46,7 @@ public class RepositoriesEndpointTest {
         final Integer id = 123;
         when(dao.insert(repositoryConfig)).thenReturn(id);
 
-        final Response response = instance.create(repositoryConfig);
+        final Response response = instance.create(repositoryConfig,"");
 
         verify(dao).insert(repositoryConfig);
         verify(repositoryController).notifyUpdate();
@@ -62,7 +62,7 @@ public class RepositoriesEndpointTest {
         final RepositoriesEndpoint instance = new RepositoriesEndpoint(filter, dao, mock(RepositoryValidator.class), repositoryController);
         final Integer id = 123;
 
-        final Response response = instance.delete(id);
+        final Response response = instance.delete(id,"");
 
         final InOrder inOrder = inOrder(dao, repositoryController);
         inOrder.verify(dao).remove(id);
@@ -80,7 +80,7 @@ public class RepositoriesEndpointTest {
         final Repository repositoryConfig = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY);
         final Integer id = 123;
 
-        final Response response = instance.update(id, repositoryConfig);
+        final Response response = instance.update(id, repositoryConfig,"");
 
         verify(dao).update(id, repositoryConfig);
         verify(repositoryController).notifyUpdate();
@@ -96,7 +96,7 @@ public class RepositoriesEndpointTest {
         final RepositoriesEndpoint instance = new RepositoriesEndpoint(filter, dao, mock(RepositoryValidator.class), repositoryController);
         final Integer id = 123;
 
-        final Response response = instance.enable(id);
+        final Response response = instance.enable(id,"");
 
         verify(dao).enable(id);
         verify(repositoryController).notifyUpdate();
@@ -111,7 +111,7 @@ public class RepositoriesEndpointTest {
         final RepositoriesEndpoint instance = new RepositoriesEndpoint(filter, dao, mock(RepositoryValidator.class), repositoryController);
         final Integer id = 123;
 
-        final Response response = instance.disable(id);
+        final Response response = instance.disable(id,"");
 
         verify(dao).disable(id);
         verify(repositoryController).notifyUpdate();
@@ -119,21 +119,6 @@ public class RepositoriesEndpointTest {
         assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
     }
 
-
-    @Test
-    public void setScheduleShouldUpdateTheRepository() {
-        final RepositoryDao dao = mock(RepositoryDao.class);
-        final RepositoryController repositoryController = mock(RepositoryController.class);
-        final RepositoriesEndpoint instance = new RepositoriesEndpoint(filter, dao, mock(RepositoryValidator.class), repositoryController);
-        final Integer id = 123;
-
-        final Response response = instance.setSchedule(id, 2);
-
-        verify(dao).setSchedule(id, 2);
-        verify(repositoryController).notifyUpdate();
-
-        assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
-    }
 
     @Test
     public void indexShouldRespondWithAListOfRepositories() {
@@ -144,7 +129,7 @@ public class RepositoriesEndpointTest {
         final List<Repository> repositories = Lists.newArrayList(repositoryConfig1, repositoryConfig2);
 
         when(dao.list()).thenReturn(repositories);
-        final Response response = instance.index();
+        final Response response = instance.index("");
 
         verify(dao).list();
         assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
@@ -161,7 +146,7 @@ public class RepositoriesEndpointTest {
         final RepositoryValidator.ValidationResult validationResult = validator.new ValidationResult();
         when(validator.validate(repositoryConfig)).thenReturn(validationResult);
 
-        final Response response = instance.validateNew(repositoryConfig);
+        final Response response = instance.validateNew(repositoryConfig,"");
 
         assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), equalTo(validationResult));

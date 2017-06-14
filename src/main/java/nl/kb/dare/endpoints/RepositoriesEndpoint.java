@@ -11,6 +11,7 @@ import org.xml.sax.SAXException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -24,11 +25,13 @@ import java.util.List;
 
 @Path("/repositories")
 public class RepositoriesEndpoint {
+    private final KbAuthFilter filter;
     private RepositoryDao dao;
     private RepositoryValidator validator;
     private final RepositoryController repositoryController;
 
     public RepositoriesEndpoint(KbAuthFilter filter, RepositoryDao dao, RepositoryValidator validator, RepositoryController repositoryController) {
+        this.filter = filter;
         this.dao = dao;
         this.validator = validator;
         this.repositoryController = repositoryController;
@@ -36,60 +39,78 @@ public class RepositoriesEndpoint {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response index() {
-        final List<Repository> list = dao.list();
-        return Response.ok().entity(list).build();
+    public Response index(@HeaderParam("Authorization") String auth) {
+
+        return filter.getFilterResponse(auth).orElseGet(() -> {
+            final List<Repository> list = dao.list();
+            return Response.ok().entity(list).build();
+        });
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(Repository repositoryConfig) {
-        final Integer id = dao.insert(repositoryConfig);
-        repositoryController.notifyUpdate();
-        return Response.created(URI.create("/repositories/" + id))
-                .entity(String.format("{\"id\": %d}", id))
-                .build();
+    public Response create(Repository repositoryConfig, @HeaderParam("Authorization") String auth) {
+
+        return filter.getFilterResponse(auth).orElseGet(() -> {
+            final Integer id = dao.insert(repositoryConfig);
+            repositoryController.notifyUpdate();
+            return Response.created(URI.create("/repositories/" + id))
+                    .entity(String.format("{\"id\": %d}", id))
+                    .build();
+        });
     }
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") Integer id, Repository repositoryConfig) {
-        dao.update(id, repositoryConfig);
-        repositoryController.notifyUpdate();
-        return Response.ok(repositoryConfig).build();
+    public Response update(@PathParam("id") Integer id, Repository repositoryConfig, @HeaderParam("Authorization") String auth) {
+
+        return filter.getFilterResponse(auth).orElseGet(() -> {
+            dao.update(id, repositoryConfig);
+            repositoryController.notifyUpdate();
+            return Response.ok(repositoryConfig).build();
+        });
     }
 
     @PUT
     @Path("/{id}/enable")
-    public Response enable(@PathParam("id") Integer id) {
-        dao.enable(id);
-        repositoryController.notifyUpdate();
-        return Response.ok("{}").build();
+    public Response enable(@PathParam("id") Integer id, @HeaderParam("Authorization") String auth) {
+
+        return filter.getFilterResponse(auth).orElseGet(() -> {
+            dao.enable(id);
+            repositoryController.notifyUpdate();
+            return Response.ok("{}").build();
+        });
     }
 
 
     @PUT
     @Path("/{id}/disable")
-    public Response disable(@PathParam("id") Integer id) {
-        dao.disable(id);
-        repositoryController.notifyUpdate();
-        return Response.ok("{}").build();
+    public Response disable(@PathParam("id") Integer id, @HeaderParam("Authorization") String auth) {
+
+        return filter.getFilterResponse(auth).orElseGet(() -> {
+            dao.disable(id);
+            repositoryController.notifyUpdate();
+            return Response.ok("{}").build();
+        });
     }
 
-    @PUT
-    @Path("/{id}/setSchedule/{scheduleEnumValue}")
-    public Response setSchedule(@PathParam("id") Integer id, @PathParam("scheduleEnumValue") Integer scheduleEnumValue) {
-        dao.setSchedule(id, scheduleEnumValue);
-        repositoryController.notifyUpdate();
-        return Response.ok("{}").build();
+    @DELETE
+    @Path("/{id}")
+    public Response delete(@PathParam("id") Integer id, @HeaderParam("Authorization") String auth) {
+
+        return filter.getFilterResponse(auth).orElseGet(() -> {
+            dao.remove(id);
+            repositoryController.notifyUpdate();
+            return Response.ok("{}").build();
+        });
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/validate")
-    public Response validateNew(Repository repositoryConfig) {
-        return getValidationResponse(repositoryConfig);
+    public Response validateNew(Repository repositoryConfig, @HeaderParam("Authorization") String auth) {
+        return filter.getFilterResponse(auth).orElseGet(() -> getValidationResponse(repositoryConfig));
     }
 
     private Response getValidationResponse(Repository repositoryConfig) {
@@ -107,14 +128,6 @@ public class RepositoriesEndpoint {
                     .entity(new ErrorResponse("failed to parse xml response for repository url: " + repositoryConfig.getUrl(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()))
                     .build();
         }
-    }
-
-    @DELETE
-    @Path("/{id}")
-    public Response delete(@PathParam("id") Integer id) {
-        dao.remove(id);
-        repositoryController.notifyUpdate();
-        return Response.ok("{}").build();
     }
 
 }
