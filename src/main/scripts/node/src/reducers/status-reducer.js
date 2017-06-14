@@ -2,7 +2,8 @@ import ActionTypes from "../action-types";
 
 const initialState = {
     socketClosed: true,
-    statusCodes: null
+    statusCodes: null,
+    credentials: {}
 };
 
 export default function(state=initialState, action) {
@@ -21,6 +22,11 @@ export default function(state=initialState, action) {
             return {
                 ...state,
                 statusCodes: action.data
+            };
+        case ActionTypes.RECEIVE_CREDENTIALS:
+            return {
+                ...state,
+                credentials: action.data
             };
         default:
     }

@@ -1,6 +1,7 @@
 import store from "./store";
 import {fetchRepositories} from "./actions/repositories";
 import {fetchErrorStatus, fetchRecordStatus, fetchStatusCodes, fetchHarvesterStatus} from "./actions/record-status";
+import {fetchCredentials} from "./actions/credentials"
 
 import ActionTypes from "./action-types";
 
@@ -47,15 +48,18 @@ const connectSocket = () => {
     webSocket.onopen = pingWs;
 };
 
-const fetchInitialData = (onInitialize) => store.dispatch(fetchRepositories(() =>
-    store.dispatch(fetchHarvesterStatus(() =>
-        store.dispatch(fetchStatusCodes(() =>
-            store.dispatch(fetchRecordStatus(() =>
-                store.dispatch(fetchErrorStatus(onInitialize))
+const fetchInitialData = (onInitialize) => {
+    store.dispatch(fetchRepositories(() =>
+        store.dispatch(fetchHarvesterStatus(() =>
+            store.dispatch(fetchStatusCodes(() =>
+                store.dispatch(fetchRecordStatus(() =>
+                    store.dispatch(fetchErrorStatus(onInitialize))
+                ))
             ))
         ))
-    ))
-));
+    ));
 
+    store.dispatch(fetchCredentials());
+};
 
 export { connectSocket, fetchInitialData };

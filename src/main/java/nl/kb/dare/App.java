@@ -8,6 +8,7 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import nl.kb.dare.endpoints.AuthenticationEndpoint;
 import nl.kb.dare.endpoints.HarvesterEndpoint;
 import nl.kb.dare.endpoints.OaiRecordFetcherEndpoint;
 import nl.kb.dare.endpoints.RecordStatusEndpoint;
@@ -156,6 +157,9 @@ public class App extends Application<Config> {
 
         // Register endpoints
 
+        // Authentication services
+        register(environment, new AuthenticationEndpoint(filter, config.getKbAutLocation(), config.getHostName()));
+
         // CRUD operations for repositories (harvest definitions)
         register(environment, new RepositoriesEndpoint(filter, repositoryDao, repositoryValidator, repositoryController));
 
@@ -165,16 +169,14 @@ public class App extends Application<Config> {
         // Operational controls for record fetcher
         register(environment, new OaiRecordFetcherEndpoint(filter, recordFetcher));
 
-
         // Record status endpoint
         register(environment, new RecordStatusEndpoint(filter, recordReporter, errorReporter));
 
         // HTML + javascript app
-        register(environment, new RootEndpoint(filter, config.getHostName()));
+        register(environment, new RootEndpoint(config.getKbAutLocation(), config.getHostName()));
 
         // Make JsonProcessingException show details
         register(environment, new JsonProcessingExceptionMapper(true));
-
 
         // Websocket servlet status update notifier
         registerServlet(environment, new StatusWebsocketServlet(), "statusWebsocket");

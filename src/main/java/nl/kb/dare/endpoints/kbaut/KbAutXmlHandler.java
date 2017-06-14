@@ -7,14 +7,21 @@ import org.xml.sax.helpers.DefaultHandler;
 class KbAutXmlHandler extends DefaultHandler {
 
     private boolean valid = false;
-    private boolean inStatus = false;
+    private String username = "";
 
     private final StringBuilder statusBuilder = new StringBuilder();
+    private final StringBuilder usernameBuilder = new StringBuilder();
+
+    private boolean inStatus = false;
+    private boolean inUsername = false;
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (qName.equals("status")) {
             inStatus = true;
+        } else if (qName.equals("name")) {
+            inUsername = true;
+
         }
     }
 
@@ -26,6 +33,10 @@ class KbAutXmlHandler extends DefaultHandler {
                 valid = true;
             }
             statusBuilder.setLength(0);
+        } else if (qName.equals("name")) {
+            inUsername = false;
+            username = usernameBuilder.toString();
+            usernameBuilder.setLength(0);
         }
     }
 
@@ -33,6 +44,8 @@ class KbAutXmlHandler extends DefaultHandler {
     public void characters(char ch[], int start, int length) {
         if (inStatus) {
             statusBuilder.append(getStrippedText(ch, start, length));
+        } else if (inUsername) {
+            usernameBuilder.append(getStrippedText(ch, start, length));
         }
     }
 
@@ -46,5 +59,9 @@ class KbAutXmlHandler extends DefaultHandler {
 
     boolean isValid() {
         return valid;
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

@@ -49,3 +49,4 @@ maxParallelDownloads: 20
 downloadQueueFillDelayMs: 200
 
 authEnabled: true
+kbAutLocation: https://kbaut.kb.nl/request

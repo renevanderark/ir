@@ -4,14 +4,11 @@ package nl.kb.dare.endpoints;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.BufferedReader;
@@ -36,29 +33,17 @@ public class RootEndpoint {
         }
     }
 
-    private final KbAuthFilter filter;
     private final String hostName;
+    private final String kbAutLocation;
 
-    public RootEndpoint(KbAuthFilter filter, String hostName) {
-        this.filter = filter;
-
+    public RootEndpoint(String kbAutLocation, String hostName) {
+        this.kbAutLocation = kbAutLocation;
         this.hostName = hostName;
     }
 
     @GET
     public Response getHtml() {
         return Response.ok(parseHtmlTemplate()).build();
-    }
-
-    @GET
-    @Path("/authenticate")
-    @Consumes(MediaType.TEXT_PLAIN)
-    public Response authenticate(@QueryParam("xml") String base64Xml) {
-        return filter.getToken(base64Xml).map(token ->
-            Response.status(Response.Status.FOUND).header("Location", "/?token=" + token).build()
-        ).orElseGet(() ->
-            Response.status(Response.Status.FORBIDDEN).entity("Login failed").build()
-        );
     }
 
     @GET
@@ -88,7 +73,7 @@ public class RootEndpoint {
     }
 
     private String parseHtmlTemplate(String... pathParams) {
-        final JsEnv env = new JsEnv(pathParams, hostName);
+        final JsEnv env = new JsEnv(pathParams, hostName, kbAutLocation);
 
         try {
             final String jsEnv = new ObjectMapper().writeValueAsString(env);
@@ -107,11 +92,14 @@ public class RootEndpoint {
         private final String[] pathParams;
         @JsonProperty
         private final String hostName;
+        @JsonProperty
+        private final String kbAutLocation;
 
-        JsEnv(String[] pathParams, String hostName) {
+        JsEnv(String[] pathParams, String hostName, String kbAutLocation) {
 
             this.pathParams = pathParams;
             this.hostName = hostName;
+            this.kbAutLocation = kbAutLocation;
         }
     }
 }

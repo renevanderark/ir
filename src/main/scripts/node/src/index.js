@@ -17,7 +17,7 @@ if (urlToken !== null) {
     localStorage.setItem("authToken", urlToken);
     location.href = "/";
 } else if (token === null) {
-    location.href = "https://kbaut.kb.nl/request?id=dare2&application=ir-objectharvester&return_url=" +
+    location.href = `${globals.kbAutLocation}?id=dare2&application=ir-objectharvester&return_url=` +
             encodeURIComponent(`http://${globals.hostName}/authenticate`);
 } else {
     localStorage.setItem("authToken", token);

@@ -27,6 +27,8 @@ class Config extends Configuration {
 
     @JsonProperty
     private Boolean authEnabled;
+    @JsonProperty
+    private String kbAutLocation;
 
 
     @JsonProperty("database")
@@ -77,5 +79,9 @@ class Config extends Configuration {
 
     public boolean getAuthEnabled() {
         return authEnabled;
+    }
+
+    public String getKbAutLocation() {
+        return kbAutLocation;
     }
 }
