@@ -15,7 +15,7 @@ import {
 
 import {fetchInitialData} from "./bootstrap";
 import {handleResponse} from "./actions/response-handler";
-
+import ActionTypes from "./action-types";
 
 const startOaiRecordFetcher = () => (dispatch) =>
     xhr({url: "/workers/start", "method": "PUT", headers: { 'Authorization': localStorage.getItem("authToken") }},
@@ -26,6 +26,17 @@ const disableOaiRecordFetcher = () => (dispatch) =>
     xhr({url: "/workers/disable", "method": "PUT", headers: { 'Authorization': localStorage.getItem("authToken") }},
         (err, resp, body) => handleResponse(resp));
 
+
+const findRecords = (query) => (dispatch) => {
+    dispatch({type: ActionTypes.FIND_RESULT_PENDING});
+
+    xhr({url: `/records/find?q=${encodeURIComponent(query)}`, "method": "GET", headers: {
+        'Authorization': localStorage.getItem("authToken") }}, (err, resp, body) => handleResponse(resp, () => {
+        dispatch({type: ActionTypes.RECEIVE_FIND_RESULT});
+
+        console.log(body);
+    }));
+};
 
 export default function actionsMaker(navigateTo, dispatch) {
     return {
@@ -40,5 +51,7 @@ export default function actionsMaker(navigateTo, dispatch) {
 
         onStartOaiRecordFetcher: () => dispatch(startOaiRecordFetcher()),
         onDisableOaiRecordFetcher: () => dispatch(disableOaiRecordFetcher()),
+
+        onFindRecords: (query) => dispatch(findRecords(query))
     };
 }

@@ -6,18 +6,34 @@ import { urls } from "../../router";
 import RepositoryRow from "./repository-row";
 import EnableToggle from "../widgets/enable-toggle";
 import {FetcherRunState, RunState} from "../../enums";
+import FindField from "../forms/find-field";
 
 class Repositories extends React.Component {
 
     render() {
         return (
             <Panel title="Harvest definities">
-                Object Harvester ({this.props.fetcherRunstate}){" "}
-                <EnableToggle
-                    enabled={this.props.fetcherRunstate === FetcherRunState.RUNNING || this.props.fetcherRunstate === FetcherRunState.DISABLING}
-                    toggleEnabled={this.props.fetcherRunstate !== FetcherRunState.DISABLING}
-                    onEnableClick={this.props.onStartOaiRecordFetcher}
-                    onDisableClick={this.props.onDisableOaiRecordFetcher}/>
+                <div>
+                    <span className="col-md-6">
+                        Publicatie opzoeken
+                    </span>
+
+                    <div className="col-md-12">
+                        <FindField onFindRecords={this.props.onFindRecords} />
+                    </div>
+                    <div className="clearfix" />
+                </div>
+                <hr />
+                <div>
+                    <span className="col-md-6">
+                        Object Harvester ({this.props.fetcherRunstate}){" "}
+                    </span>
+                    <EnableToggle
+                        enabled={this.props.fetcherRunstate === FetcherRunState.RUNNING || this.props.fetcherRunstate === FetcherRunState.DISABLING}
+                        toggleEnabled={this.props.fetcherRunstate !== FetcherRunState.DISABLING}
+                        onEnableClick={this.props.onStartOaiRecordFetcher}
+                        onDisableClick={this.props.onDisableOaiRecordFetcher}/>
+                </div>
                 <hr />
                 <Link to={urls.newRepository()}>
                     <span className="glyphicon glyphicon-plus-sign" />{" "}
