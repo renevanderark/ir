@@ -11,6 +11,7 @@ import io.dropwizard.setup.Environment;
 import nl.kb.dare.endpoints.AuthenticationEndpoint;
 import nl.kb.dare.endpoints.HarvesterEndpoint;
 import nl.kb.dare.endpoints.OaiRecordFetcherEndpoint;
+import nl.kb.dare.endpoints.RecordEndpoint;
 import nl.kb.dare.endpoints.RecordStatusEndpoint;
 import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
@@ -162,6 +163,9 @@ public class App extends Application<Config> {
 
         // CRUD operations for repositories (harvest definitions)
         register(environment, new RepositoriesEndpoint(filter, repositoryDao, repositoryValidator, repositoryController));
+
+        // Read operations for records (find, view, download)
+        register(environment, new RecordEndpoint(filter, recordDao, fileStorage));
 
         // Operational controls for repository harvesters
         register(environment, new HarvesterEndpoint(filter, repositoryDao, harvestRunner));
