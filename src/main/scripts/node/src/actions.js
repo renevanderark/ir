@@ -32,9 +32,7 @@ const findRecords = (query) => (dispatch) => {
 
     xhr({url: `/records/find?q=${encodeURIComponent(query)}`, "method": "GET", headers: {
         'Authorization': localStorage.getItem("authToken") }}, (err, resp, body) => handleResponse(resp, () => {
-        dispatch({type: ActionTypes.RECEIVE_FIND_RESULT});
-
-        console.log(body);
+        dispatch({type: ActionTypes.RECEIVE_FIND_RESULT, data: JSON.parse(body)});
     }));
 };
 
@@ -52,6 +50,8 @@ export default function actionsMaker(navigateTo, dispatch) {
         onStartOaiRecordFetcher: () => dispatch(startOaiRecordFetcher()),
         onDisableOaiRecordFetcher: () => dispatch(disableOaiRecordFetcher()),
 
-        onFindRecords: (query) => dispatch(findRecords(query))
+        onFindRecords: (query) => dispatch(findRecords(query)),
+        onClearFoundRecords: () => dispatch({type: ActionTypes.CLEAR_FOUND_RECORDS}),
+        onNavigateTo: (key, params) => navigateTo(key, params)
     };
 }

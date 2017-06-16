@@ -19,7 +19,13 @@ class Repositories extends React.Component {
                     </span>
 
                     <div className="col-md-12">
-                        <FindField onFindRecords={this.props.onFindRecords} />
+                        <FindField recordList={this.props.recordList}
+                                   repositories={this.props.repositories.list}
+                                   onFindRecords={this.props.onFindRecords}
+                                   processStatuses={this.props.processStatuses}
+                                   onClearFoundRecords={this.props.onClearFoundRecords}
+                                   onNavigateTo={this.props.onNavigateTo}
+                        />
                     </div>
                     <div className="clearfix" />
                 </div>

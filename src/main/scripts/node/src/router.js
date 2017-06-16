@@ -34,6 +34,11 @@ const urls = {
         return id
             ? `/overzicht/${id}`
             : "/overzicht/:repositoryId"
+    },
+    record(kbObjId) {
+        return kbObjId
+            ? `/publicatie/${kbObjId}`
+            : "/publicatie/:kbObjId"
     }
 };
 
@@ -51,6 +56,7 @@ export default (
                 <Route path={urls.newRepository()} component={connectComponent(editRepositoryConnector)(NewRepository)} />
                 <Route path={urls.editRepository()} components={connectComponent(editRepositoryConnector)(EditRepository)} />
                 <Route path={urls.repositoryStatus()} components={connectComponent(repositoryStatusConnector)(RepositoryStatus)}/>
+                <Route path={urls.record()} components={(props) => <div>{JSON.stringify(props)}</div>} />
             </Route>
         </Router>
     </Provider>
