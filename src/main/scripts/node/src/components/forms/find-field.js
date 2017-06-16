@@ -62,6 +62,7 @@ class FindField extends React.Component {
                 />
                 <RecordList
                     selectedIndex={selectedIndex}
+                    onHover={(idx) => this.setState({selectedIndex: idx})}
                     processStatuses={this.props.processStatuses}
                     repositories={this.props.repositories}
                     recordList={this.props.recordList} />

@@ -11,7 +11,7 @@ class RecordList extends React.Component {
                 className="list-group">
                 {this.props.recordList.map((record, i) => (
                     <li className={`list-group-item ${selectedIndex === i ? "active" : ""}`}
-
+                        onMouseOver={() => this.props.onHover(i)}
                         key={i}>
                         <Link to={urls.record(record.kbObjId)}>
                             {record.kbObjId} -{" "}
