@@ -6,6 +6,7 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 public class RecordMapper implements ResultSetMapper<Record> {
     @Override
@@ -17,7 +18,13 @@ public class RecordMapper implements ResultSetMapper<Record> {
         final String kbObjId = resultSet.getString("KBOBJID");
         final String oaiIdentifier = resultSet.getString("OAI_ID");
         final String oaiDateStamp = resultSet.getString("OAI_DATESTAMP");
+        final Timestamp dTsCreate = resultSet.getTimestamp("TS_CREATE");
+        final Timestamp dTsProcessed = resultSet.getTimestamp("TS_PROCESSED");
 
-        return new Record(id, ProcessStatus.forCode(state), kbObjId, repositoryId, oaiIdentifier, oaiDateStamp);
+        final String tsCreate = dTsCreate == null ? null : dTsCreate.toString();
+        final String tsProcessed = dTsProcessed == null ? null : dTsProcessed.toString();
+
+        return new Record(id, ProcessStatus.forCode(state), kbObjId, repositoryId, oaiIdentifier, oaiDateStamp,
+                tsCreate, tsProcessed);
     }
 }

@@ -17,18 +17,20 @@ public class Record {
 
 
     Record(Long id, ProcessStatus state, String kbObjId,  Integer repositoryId,
-           String oaiIdentifier, String oaiDateStamp) {
+           String oaiIdentifier, String oaiDateStamp, String tsCreate, String tsProcessed) {
         this.id = id;
         this.state = state;
         this.kbObjId = kbObjId;
         this.repositoryId = repositoryId;
         this.oaiIdentifier = oaiIdentifier;
         this.oaiDateStamp = oaiDateStamp;
+        this.tsCreate = tsCreate;
+        this.tsProcessed = tsProcessed;
     }
 
     private Record(ProcessStatus state, String kbObjId, Integer repositoryId,
                    String oaiIdentifier, String oaiDateStamp) {
-        this(null, state, kbObjId, repositoryId, oaiIdentifier, oaiDateStamp);
+        this(null, state, kbObjId, repositoryId, oaiIdentifier, oaiDateStamp, null, null);
     }
 
     static Record fromHeader(OaiRecordHeader header, Integer repositoryId) {
@@ -70,4 +72,13 @@ public class Record {
     }
 
     public String getOaiDateStamp() { return oaiDateStamp; }
+
+
+    public String getTsCreate() {
+        return tsCreate;
+    }
+
+    public String getTsProcessed() {
+        return tsProcessed;
+    }
 }
