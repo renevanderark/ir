@@ -57,6 +57,17 @@ class RecordStatus extends React.Component {
             )
             : null;
 
+        const downloadDiv = record.state > 10 ? (
+            <div className="row">
+                <label className="col-md-6">Download als ZIP</label>
+                <div className="col-md-26">
+                    <a href={`/records/download/${record.kbObjId}`}>
+                        Downloaden <span className="glyphicon glyphicon-download-alt" />
+                    </a>
+                </div>
+            </div>
+        ) : null;
+
         return (
             <div>
                 <Panel title="Overzicht IP">
@@ -99,6 +110,8 @@ class RecordStatus extends React.Component {
                             {record.tsProcessed || "-"}
                         </div>
                     </div>
+                    {downloadDiv}
+
                 </Panel>
                 {errorReportPanel}
             </div>
