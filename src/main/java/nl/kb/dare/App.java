@@ -165,7 +165,7 @@ public class App extends Application<Config> {
         register(environment, new RepositoriesEndpoint(filter, repositoryDao, repositoryValidator, repositoryController));
 
         // Read operations for records (find, view, download)
-        register(environment, new RecordEndpoint(filter, recordDao, fileStorage));
+        register(environment, new RecordEndpoint(filter, recordDao, errorReportDao, fileStorage));
 
         // Operational controls for repository harvesters
         register(environment, new HarvesterEndpoint(filter, repositoryDao, harvestRunner));

@@ -6,7 +6,7 @@ import nl.kb.oaipmh.OaiStatus;
 
 public class Record {
 
-    private Integer id;
+    private Long id;
     private ProcessStatus state;
     private String kbObjId;
     private String tsCreate;
@@ -16,7 +16,7 @@ public class Record {
     private final String oaiDateStamp;
 
 
-    Record(Integer id, ProcessStatus state, String kbObjId,  Integer repositoryId,
+    Record(Long id, ProcessStatus state, String kbObjId,  Integer repositoryId,
            String oaiIdentifier, String oaiDateStamp) {
         this.id = id;
         this.state = state;
@@ -61,7 +61,7 @@ public class Record {
         this.state = processStatus;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 

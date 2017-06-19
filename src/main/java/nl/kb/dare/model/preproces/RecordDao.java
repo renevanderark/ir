@@ -46,7 +46,12 @@ public interface RecordDao {
     @SqlQuery("select * from DARE_PREPROCES where OAI_ID = :oaiId")
     Record findByOaiId(@Bind("oaiId") String oaiIdentifier);
 
+    @SqlQuery("select * from DARE_PREPROCES where KBOBJID = :kbObjId")
+    Record findByKbObjId(@Bind("kbObjId") String kbObjId);
+
     @SqlQuery("select * from (select dare_preproces.*, row_number() over (order by state desc) as seqnum " +
             "      from dare_preproces where dare_preproces.kbobjid like :query) where seqnum <= 10")
     List<Record> query(@Bind("query") String query);
+
+
 }

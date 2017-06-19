@@ -36,6 +36,15 @@ const findRecords = (query) => (dispatch) => {
     }));
 };
 
+const fetchRecord = (kbObjId) => (dispatch) => {
+    dispatch({type: ActionTypes.RECORD_PENDING});
+
+    xhr({url: `/records/status/${kbObjId}`, "method": "GET", headers: {
+        'Authorization': localStorage.getItem("authToken") }}, (err, resp, body) => handleResponse(resp, () => {
+        dispatch({type: ActionTypes.RECEIVE_RECORD, data: JSON.parse(body)});
+    }));
+};
+
 export default function actionsMaker(navigateTo, dispatch) {
     return {
         onEnableRepository: (id) => dispatch(enableRepository(id)),
@@ -52,6 +61,8 @@ export default function actionsMaker(navigateTo, dispatch) {
 
         onFindRecords: (query) => dispatch(findRecords(query)),
         onClearFoundRecords: () => dispatch({type: ActionTypes.CLEAR_FOUND_RECORDS}),
-        onNavigateTo: (key, params) => navigateTo(key, params)
+        onNavigateTo: (key, params) => navigateTo(key, params),
+
+        onFetchRecord: (kbObjId) => dispatch(fetchRecord(kbObjId))
     };
 }

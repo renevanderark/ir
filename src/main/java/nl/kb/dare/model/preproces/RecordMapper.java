@@ -11,7 +11,7 @@ public class RecordMapper implements ResultSetMapper<Record> {
     @Override
     public Record map(int index, ResultSet resultSet, StatementContext ctx) throws SQLException {
 
-        final Integer id = resultSet.getInt("ID");
+        final Long id = resultSet.getLong("ID");
         final Integer repositoryId = resultSet.getInt("REPOSITORY_ID");
         final Integer state = resultSet.getInt("STATE");
         final String kbObjId = resultSet.getString("KBOBJID");

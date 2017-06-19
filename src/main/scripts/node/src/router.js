@@ -9,13 +9,14 @@ import rootConnector from "./connectors/root-connector";
 import repositoriesConnector from "./connectors/repositories-connector";
 import editRepositoryConnector from "./connectors/edit-repository-connector";
 import repositoryStatusConnector from "./connectors/repository-status";
-
+import recordStatusConnector from "./connectors/record-status-connector";
 import App from "./components/app";
 
 import Repositories from "./components/repositories/repositories";
 import NewRepository from "./components/repositories/new";
 import EditRepository from "./components/repositories/edit";
 import RepositoryStatus from "./components/repositories/repository-status";
+import RecordStatus from "./components/record-status/record-status";
 
 
 const urls = {
@@ -56,7 +57,7 @@ export default (
                 <Route path={urls.newRepository()} component={connectComponent(editRepositoryConnector)(NewRepository)} />
                 <Route path={urls.editRepository()} components={connectComponent(editRepositoryConnector)(EditRepository)} />
                 <Route path={urls.repositoryStatus()} components={connectComponent(repositoryStatusConnector)(RepositoryStatus)}/>
-                <Route path={urls.record()} components={(props) => <div>{JSON.stringify(props)}</div>} />
+                <Route path={urls.record()} components={connectComponent(recordStatusConnector)(RecordStatus)} />
             </Route>
         </Router>
     </Provider>
