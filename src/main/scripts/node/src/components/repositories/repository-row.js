@@ -34,6 +34,7 @@ class RepositoryRow extends React.Component {
                 <td>{recordStatus.processing || 0}</td>
                 <td>{recordStatus.failure || 0}</td>
                 <td>{recordStatus.processed || 0}</td>
+                <td>{recordStatus["in preproces"] || 0}</td>
                 <td>{repository.dateStamp || "- nog niet geharvest -"}</td>
                 <td>{Schedule[repository.schedule].label}</td>
                 <td>

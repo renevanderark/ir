@@ -61,6 +61,7 @@ class Repositories extends React.Component {
                             <th>Downloaden</th>
                             <th>Fout</th>
                             <th>Download klaar</th>
+                            <th>In preproces</th>
                             <th>Laatste datestamp</th>
                             <th>Harvest schema</th>
                             <th colSpan={2}>

@@ -18,7 +18,15 @@ public class Aggregations {
             final String repositoryId = String.format("%d", getRowInt(row, "repository_id"));
             final Integer statusCode = getRowInt(row, "status_code");
             final Map<String, Object> statusMap = result.getOrDefault(repositoryId, new HashMap<>());
-            statusMap.put(getCodeKey.apply(statusCode), row.get("count"));
+            final String codeKey = getCodeKey.apply(statusCode);
+            if (statusMap.containsKey(codeKey)) {
+                statusMap.put(codeKey, getRowInt(row, "count") +
+                        ((BigDecimal) statusMap.get(codeKey)).intValue());
+            } else {
+                statusMap.put(codeKey, row.get("count"));
+            }
+
+
             result.put(repositoryId, statusMap);
         }
         handle.close();
