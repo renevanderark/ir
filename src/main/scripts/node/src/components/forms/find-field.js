@@ -16,7 +16,7 @@ class FindField extends React.Component {
     onChange(ev) {
         this.setState({query: ev.target.value, selectedIndex: 0});
 
-        if (ev.target.value.length > 4) {
+        if (ev.target.value.length > 0) {
             this.props.onFindRecords(ev.target.value);
         } else {
             this.props.onClearFoundRecords();

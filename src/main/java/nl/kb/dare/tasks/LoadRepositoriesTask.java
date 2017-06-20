@@ -29,11 +29,11 @@ public class LoadRepositoriesTask extends Task {
             new Repository("http://oai.gharvester.dans.knaw.nl/", "Leiden", "nl_didl_norm", "ul:hdl_1887_4539", dateStamp, false, HarvestSchedule.DAILY),
             new Repository("http://oai.gharvester.dans.knaw.nl/", "Maastricht", "nl_didl_norm", "um:publications:withFiles", dateStamp, false, HarvestSchedule.DAILY),
             new Repository("http://oai.gharvester.dans.knaw.nl/", "Twente", "nl_didl_norm", "ut:66756C6C746578743D7075626C6963", dateStamp, false, HarvestSchedule.DAILY),
-            new Repository("http://oai.gharvester.dans.knaw.nl/", "UvA", "nl_didl_norm", "uva:publications:withFiles", dateStamp, false, HarvestSchedule.DAILY),
-            new Repository("http://oai.gharvester.dans.knaw.nl/", "Tilburg", "nl_didl_norm", "uvt:publications:withFiles", dateStamp, false, HarvestSchedule.DAILY),
+            new Repository("http://oai.gharvester.dans.knaw.nl/", "UvA", "nl_didl_norm", "uva:publications:withFiles", dateStamp, false, HarvestSchedule.DAILY),            new Repository("http://oai.gharvester.dans.knaw.nl/", "Tilburg", "nl_didl_norm", "uvt:publications:withFiles", dateStamp, false, HarvestSchedule.DAILY),
             new Repository("http://oai.gharvester.dans.knaw.nl/", "VU", "nl_didl_norm", "vu:publications:withFiles", dateStamp, false, HarvestSchedule.DAILY),
             new Repository("http://oai.gharvester.dans.knaw.nl/", "Wageningen", "nl_didl_norm", "wur:publickb", dateStamp, false, HarvestSchedule.DAILY),
-            new Repository("http://oai.gharvester.dans.knaw.nl/", "Rotterdam", "nl_didl_norm", "eur", dateStamp, false, HarvestSchedule.DAILY)
+            new Repository("http://oai.gharvester.dans.knaw.nl/", "Rotterdam", "nl_didl_norm", "eur", dateStamp, false, HarvestSchedule.DAILY),
+            new Repository("http://oai.gharvester.dans.knaw.nl/", "Eindhoven", "nl_didl_norm", "tue:KB", dateStamp, false, HarvestSchedule.DAILY)
         ).forEach(this.repositoryDao::insert);
     }
 }
