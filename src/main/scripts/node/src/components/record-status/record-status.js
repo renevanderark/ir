@@ -57,7 +57,7 @@ class RecordStatus extends React.Component {
             )
             : null;
 
-        const downloadDiv = record.state > 10 ? (
+        const downloadDiv = record.state > 10 && record.state < 1000 ? (
             <div className="row">
                 <label className="col-md-6">Download als ZIP</label>
                 <div className="col-md-26">

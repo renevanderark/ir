@@ -40,7 +40,9 @@ public class RecordEndpoint {
     @Path("/find")
     @Produces(MediaType.APPLICATION_JSON)
     public Response find(@QueryParam("q") String query, @HeaderParam("Authorization") String auth) {
-        return filter.getFilterResponse(auth).orElseGet(() -> Response.ok(recordDao.query("%" + query + "%")).build());
+        return filter.getFilterResponse(auth)
+                .orElseGet(() -> Response.ok(recordDao.query("%" + query + "%"))
+                .build());
     }
 
     @GET

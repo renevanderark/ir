@@ -5,7 +5,8 @@ public enum ProcessStatus {
     DELETED(998, "deleted"),
     PROCESSED(40, "processed"),
     PROCESSING(20, "processing"),
-    FAILED(999, "failure");
+    FAILED(999, "failure"),
+    PREPROCESS(99999, "in preproces");
 
     private final int code;
     private final String status;
@@ -29,15 +30,7 @@ public enum ProcessStatus {
                 return s;
             }
         }
-        return null;
+        return PREPROCESS;
     }
 
-    public static ProcessStatus forString(String processStatus) {
-        for (ProcessStatus s : ProcessStatus.values()) {
-            if (s.status.equalsIgnoreCase(processStatus) || s.name().equals(processStatus)) {
-                return s;
-            }
-        }
-        return null;
-    }
 }
