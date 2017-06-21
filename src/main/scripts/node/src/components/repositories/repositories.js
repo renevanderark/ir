@@ -18,7 +18,7 @@ class Repositories extends React.Component {
                         Publicatie opzoeken
                     </span>
 
-                    <div className="col-md-12">
+                    <div className="col-md-16">
                         <FindField recordList={this.props.recordList}
                                    repositories={this.props.repositories.list}
                                    onFindRecords={this.props.onFindRecords}

@@ -13,8 +13,8 @@ import java.util.List;
 @RegisterMapper(RecordMapper.class)
 public interface RecordDao {
 
-    @SqlBatch("INSERT INTO DARE_PREPROCES (ID, STATE, KBOBJID, TS_CREATE, REPOSITORY_ID, OAI_ID, OAI_DATESTAMP) " +
-            "VALUES (SEQ_DARE_PREPROCES.nextval, :state, :kbObjId, CURRENT_TIMESTAMP, :repositoryId, :oaiIdentifier, :oaiDateStamp)")
+    @SqlBatch("INSERT INTO DARE_PREPROCES (ID, STATE, KBOBJID, TS_CREATE, REPOSITORY_ID, OAI_ID, OAI_DATESTAMP, LOOKUP) " +
+            "VALUES (SEQ_DARE_PREPROCES.nextval, :state, :kbObjId, CURRENT_TIMESTAMP, :repositoryId, :oaiIdentifier, :oaiDateStamp, :kbObjId || :oaiIdentifier)")
     void insertBatch(@BindBean List<Record> recordList);
 
     @SqlQuery("select case " +
@@ -50,7 +50,7 @@ public interface RecordDao {
     Record findByKbObjId(@Bind("kbObjId") String kbObjId);
 
     @SqlQuery("select * from (select dare_preproces.*, row_number() over (order by state desc) as seqnum " +
-            "      from dare_preproces where dare_preproces.kbobjid like :query) where seqnum <= 10")
+            "      from dare_preproces where dare_preproces.lookup like :query) where seqnum <= 10")
     List<Record> query(@Bind("query") String query);
 
 

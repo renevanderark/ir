@@ -15,6 +15,7 @@ class RecordList extends React.Component {
                         key={i}>
                         <Link to={urls.record(record.kbObjId)}>
                             {record.kbObjId} -{" "}
+                            {record.oaiIdentifier} -{" "}
                             {processStatuses[record.state]} -{" "}
                             ({this.props.repositories.find(repo => repo.id === record.repositoryId).name})
                         </Link>
