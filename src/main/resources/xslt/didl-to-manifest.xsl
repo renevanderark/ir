@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 
 <xsl:stylesheet version="1.0"
+                xmlns:ghdans="http://gh.kb-dans.nl/combined/v0.9/"
                 xmlns:mets="http://www.loc.gov/METS/"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS"
@@ -16,13 +17,13 @@
                     <mets:file ID="metadata" MIMETYPE="text/xml">
                         <mets:FLocat LOCTYPE="URL" xlink:href="file://./metadata.xml" />
                     </mets:file>
-                    <xsl:apply-templates select="/didl:DIDL/didl:Item/didl:Item/didl:Descriptor/didl:Statement/rdf:type[@rdf:resource='info:eu-repo/semantics/objectFile']" />
+                    <xsl:apply-templates select="/ghdans:nl_didl_combined/ghdans:nl_didl_norm/didl:DIDL/didl:Item/didl:Item/didl:Descriptor/didl:Statement/rdf:type[@rdf:resource='info:eu-repo/semantics/objectFile']" />
                 </mets:fileGrp>
             </mets:fileSec>
         </mets:mets>
     </xsl:template>
 
-    <xsl:template match="/didl:DIDL/didl:Item/didl:Item/didl:Descriptor/didl:Statement/rdf:type[@rdf:resource='info:eu-repo/semantics/objectFile']">
+    <xsl:template match="/ghdans:nl_didl_combined/ghdans:nl_didl_norm/didl:DIDL/didl:Item/didl:Item/didl:Descriptor/didl:Statement/rdf:type[@rdf:resource='info:eu-repo/semantics/objectFile']">
         <xsl:variable name="count" select="position()" />
         <mets:file>
             <xsl:attribute name="ID">
