@@ -76,7 +76,7 @@ public class OaiCrashTest {
     public void run() throws InterruptedException, IOException {
         CrudOperations.startHarvest(1);
         CrudOperations.startHarvest(2);
-        Thread.sleep(500L);
+        Thread.sleep(1000L);
 
         assertHarvestersHaveStopped();
         assertRepositoriesHaveBeenDisabled();
