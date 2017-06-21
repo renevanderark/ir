@@ -1,4 +1,4 @@
-package nl.kb.dare.integrationtest;
+package nl.kb.dare.integrationtest.util;
 
 import org.apache.commons.io.IOUtils;
 
@@ -10,7 +10,7 @@ public class IntegrationTestUtil {
     public static final String APP_ADMIN_URL = "http://localhost:4568";
 
 
-    static String getRepositoryPayload() throws IOException {
-        return IOUtils.toString(IntegrationTestUtil.class.getResourceAsStream("/integrationtest/payloads/repository.json"), "UTF-8");
+    public static String getRepositoryPayload(String filename) throws IOException {
+        return IOUtils.toString(IntegrationTestUtil.class.getResourceAsStream(filename), "UTF-8");
     }
 }

@@ -41,6 +41,9 @@ public interface RepositoryDao {
             "where id = :id")
     void disable(@Bind("id") Integer id);
 
+    @SqlUpdate("update repositories set enabled = 0 ")
+    void disableAll();
+
     @SqlUpdate("update repositories " +
             "set schedule = :scheduleEnumValue " +
             "where id = :id")
@@ -51,4 +54,6 @@ public interface RepositoryDao {
 
     @SqlUpdate("update repositories set lastHarvest=CURRENT_TIMESTAMP where id = :id")
     void setLastHarvest(@Bind("id") Integer id);
+
+
 }

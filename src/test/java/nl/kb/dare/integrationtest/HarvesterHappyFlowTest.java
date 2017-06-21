@@ -5,6 +5,7 @@ import nl.kb.dare.App;
 import nl.kb.dare.integrationtest.crud.CrudOperations;
 import nl.kb.dare.integrationtest.numbers.NumbersTestServer;
 import nl.kb.dare.integrationtest.oai.OaiTestServer;
+import nl.kb.dare.integrationtest.util.IntegrationTestUtil;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.preproces.RecordMapper;
 import nl.kb.dare.model.repository.HarvestSchedule;
@@ -78,7 +79,7 @@ public class HarvesterHappyFlowTest {
     @Test
     public void run() throws InterruptedException, IOException {
 
-        final String location = CrudOperations.createRepository(IntegrationTestUtil.getRepositoryPayload());
+        final String location = CrudOperations.createRepository(IntegrationTestUtil.getRepositoryPayload("/integrationtest/payloads/repository.json"));
         assertRepositoryCreated(location);
 
         final int enableRepoStatusCode = CrudOperations.enableRepository(1);

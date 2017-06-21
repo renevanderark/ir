@@ -137,8 +137,7 @@ public class ListIdentifiers {
 
             onHarvestComplete.accept(lastDateStamp);
         } catch (MalformedURLException e) {
-            // SEVERE!!
-            throw new RuntimeException(e);
+            onException.accept(e);
         }
     }
 

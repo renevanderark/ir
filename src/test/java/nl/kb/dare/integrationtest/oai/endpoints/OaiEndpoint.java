@@ -11,9 +11,10 @@ import javax.ws.rs.core.StreamingOutput;
 import java.io.InputStream;
 
 
-@Path("/oai")
+@Path("/")
 public class OaiEndpoint {
 
+    @Path("/oai")
     @GET
     @Produces("text/xml")
     public Response get(
@@ -39,4 +40,33 @@ public class OaiEndpoint {
         final StreamingOutput responseData = output -> IOUtils.copy(in, output);
         return Response.ok(responseData).build();
     }
+
+    @Path("/oai-infinite")
+    @GET
+    @Produces("text/xml")
+    public Response getInfinite(
+            @QueryParam("verb") String verb,
+            @QueryParam("resumptionToken") String resumptionToken,
+            @QueryParam("from") String from,
+            @QueryParam("identifier") String identifier
+    ) {
+
+        final InputStream in = OaiEndpoint.class.getResourceAsStream("/integrationtest/oairesponses/ListIdentifiersWithResumptionToken.xml");
+        final StreamingOutput responseData = output -> IOUtils.copy(in, output);
+        return Response.ok(responseData).build();
+    }
+
+    @Path("/oai-fail")
+    @GET
+    @Produces("text/xml")
+    public Response getFail(
+            @QueryParam("verb") String verb,
+            @QueryParam("resumptionToken") String resumptionToken,
+            @QueryParam("from") String from,
+            @QueryParam("identifier") String identifier
+    ) {
+
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+
 }

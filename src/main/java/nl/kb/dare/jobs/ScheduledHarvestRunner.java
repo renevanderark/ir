@@ -8,6 +8,8 @@ import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,6 +17,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class ScheduledHarvestRunner extends AbstractScheduledService {
+    private static final Logger LOG = LoggerFactory.getLogger(ScheduledHarvestRunner.class);
 
     private static final Map<Integer, RepositoryHarvester> harvesters = Collections.synchronizedMap(new HashMap<>());
     private final RepositoryController repositoryController;
@@ -47,7 +50,8 @@ public class ScheduledHarvestRunner extends AbstractScheduledService {
             final RepositoryHarvester harvester = new RepositoryHarvester(
                     repositoryId, repositoryController,
                     recordBatchLoader, httpFetcher, responseHandlerFactory,
-                    repositoryDao, (RunState runState) -> notifyStateChange()
+                    repositoryDao, (RunState runState) -> notifyStateChange(),
+                    this::handleException
             );
 
             harvesters.put(repositoryId, harvester);
@@ -59,6 +63,13 @@ public class ScheduledHarvestRunner extends AbstractScheduledService {
         if (repositoryHarvester.getRunState() == RunState.WAITING) {
             repositoryHarvester.setRunState(RunState.QUEUED);
         }
+    }
+
+    private void handleException(Exception ex) {
+        for (Map.Entry<Integer, RepositoryHarvester> entry : harvesters.entrySet()) {
+            entry.getValue().sendInterrupt();
+        }
+        LOG.error("SEVERE: Harvester failed to reach OAI endpoint", ex);
     }
 
     public RunState getHarvesterRunstate(int repositoryId) {

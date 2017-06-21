@@ -29,7 +29,10 @@ public class RepositoryController {
     }
 
     public void onHarvestException(Integer id, Exception exception) {
-        /* TODO handle harvester exception? */
+        synchronized (repositoryDao) {
+            repositoryDao.disableAll();
+        }
+        notifyUpdate();
     }
 
     public void onHarvestProgress(Integer id, String dateStamp) {

@@ -24,6 +24,7 @@ public class RepositoryHarvester implements Runnable {
     private final ResponseHandlerFactory responseHandlerFactory;
     private final RepositoryDao repositoryDao;
     private final Consumer<RunState> stateChangeNotifier;
+    private final Consumer<Exception> onException;
 
     private ListIdentifiers runningInstance = null;
     private RunState runState = RunState.WAITING;
@@ -35,7 +36,8 @@ public class RepositoryHarvester implements Runnable {
             HttpFetcher httpFetcher,
             ResponseHandlerFactory responseHandlerFactory,
             RepositoryDao repositoryDao,
-            Consumer<RunState> stateChangeNotifier
+            Consumer<RunState> stateChangeNotifier,
+            Consumer<Exception> onException
     ) {
 
         this.repositoryId = repositoryId;
@@ -45,6 +47,7 @@ public class RepositoryHarvester implements Runnable {
         this.responseHandlerFactory = responseHandlerFactory;
         this.repositoryDao = repositoryDao;
         this.stateChangeNotifier = stateChangeNotifier;
+        this.onException = onException;
     }
 
     @Override
@@ -66,7 +69,10 @@ public class RepositoryHarvester implements Runnable {
                     repositoryController.onHarvestComplete(repository.getId(), dateStamp);
                     recordBatchLoader.flushBatch(repository.getId());
                 },
-                exception -> repositoryController.onHarvestException(repository.getId(), exception),
+                exception -> {
+                    repositoryController.onHarvestException(repository.getId(), exception);
+                    onException.accept(exception);
+                },
                 oaiRecordHeader -> { // onRecord
                     recordBatchLoader.addToBatch(repository.getId(), oaiRecordHeader);
                 },
