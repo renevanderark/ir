@@ -12,7 +12,7 @@ import java.util.List;
 @RegisterMapper(RecordMapper.class)
 public abstract class H2RecordDao implements RecordDao {
 
-    @SqlBatch("INSERT INTO DARE_PREPROCES (STATE, KBOBJID, TS_CREATE, REPOSITORY_ID, OAI_ID, OAI_DATESTAMP) " +
-            "VALUES (:state, :kbObjId, CURRENT_TIMESTAMP, :repositoryId, :oaiIdentifier, :oaiDateStamp)")
+    @SqlBatch("INSERT INTO DARE_PREPROCES (STATE, KBOBJID, TS_CREATE, REPOSITORY_ID, OAI_ID, OAI_DATESTAMP, LOOKUP) " +
+            "VALUES (:state, :kbObjId, CURRENT_TIMESTAMP, :repositoryId, :oaiIdentifier, :oaiDateStamp, :kbObjId || :oaiIdentifier)")
     public abstract void insertBatch(@BindBean List<Record> recordList);
 }
