@@ -8,3 +8,4 @@ src/main/scripts/node/node_modules
 reload-shemas.sh
 restart-database.sh
 test.yaml
+dependency-reduced-pom.xml
