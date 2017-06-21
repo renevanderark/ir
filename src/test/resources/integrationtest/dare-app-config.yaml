@@ -40,7 +40,7 @@ numbersEndpoint: http://localhost:18083/numbers/nbn
 
 fileStorage:
   storageType: local
-  storageDir: ../../dare2-files
+  storageDir: ./
   sampleFileDir: "/tmp"
 
 maxParallelHarvests: 3
