@@ -36,7 +36,7 @@ databaseProvider: h2
 
 hostName: localhost:4567
 
-numbersEndpoint: http://numbersa.wpakb.kb.nl:8080/numbers/nbn
+numbersEndpoint: http://localhost:18083/numbers/nbn
 
 fileStorage:
   storageType: local

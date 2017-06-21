@@ -3,6 +3,7 @@ package nl.kb.dare.integrationtest;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import nl.kb.dare.App;
 import nl.kb.dare.integrationtest.crud.CrudOperations;
+import nl.kb.dare.integrationtest.numbers.NumbersTestServer;
 import nl.kb.dare.integrationtest.oai.OaiTestServer;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.preproces.RecordMapper;
@@ -41,12 +42,18 @@ public class HarvesterHappyFlowTest {
     @ClassRule
     public static final TestRule oaiRule;
 
+    @ClassRule
+    public static final TestRule numbersRule;
+
     static  {
         try {
             instanceRule  = new DropwizardAppRule<>(App.class, Paths.get(HarvesterHappyFlowTest.class
                     .getResource("/integrationtest/dare-app-config.yaml").toURI()).toString());
             oaiRule = new DropwizardAppRule<>(OaiTestServer.class, Paths.get(HarvesterHappyFlowTest.class.
                     getResource("/integrationtest/oai-test-server.yaml").toURI()).toString());
+
+            numbersRule = new DropwizardAppRule<>(NumbersTestServer.class, Paths.get(HarvesterHappyFlowTest.class.
+                    getResource("/integrationtest/numbers-test-server.yaml").toURI()).toString());
 
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
@@ -95,6 +102,7 @@ public class HarvesterHappyFlowTest {
                         hasProperty("id", is(1L)),
                         hasProperty("repositoryId", is(1)),
                         hasProperty("oaiIdentifier", is("ru:oai:repository.ubn.ru.nl:2066/162830")),
+                        hasProperty("kbObjId", is(instanceOf(String.class))),
                         hasProperty("state", is(ProcessStatus.DELETED.getCode())),
                         hasProperty("tsCreate", is(instanceOf(String.class))),
                         hasProperty("tsProcessed", is(instanceOf(String.class)))
@@ -103,6 +111,7 @@ public class HarvesterHappyFlowTest {
                         hasProperty("id", is(2L)),
                         hasProperty("repositoryId", is(1)),
                         hasProperty("oaiIdentifier", is("ru:oai:repository.ubn.ru.nl:2066/162526")),
+                        hasProperty("kbObjId", is(instanceOf(String.class))),
                         hasProperty("state", is(ProcessStatus.PENDING.getCode())),
                         hasProperty("tsCreate", is(instanceOf(String.class))),
                         hasProperty("tsProcessed", is(nullValue()))
@@ -111,6 +120,7 @@ public class HarvesterHappyFlowTest {
                         hasProperty("id", is(3L)),
                         hasProperty("repositoryId", is(1)),
                         hasProperty("oaiIdentifier", is("ru:oai:repository.ubn.ru.nl:2066/161830")),
+                        hasProperty("kbObjId", is(instanceOf(String.class))),
                         hasProperty("state", is(ProcessStatus.PENDING.getCode())),
                         hasProperty("tsCreate", is(instanceOf(String.class))),
                         hasProperty("tsProcessed", is(nullValue()))
@@ -119,6 +129,7 @@ public class HarvesterHappyFlowTest {
                         hasProperty("id", is(4L)),
                         hasProperty("repositoryId", is(1)),
                         hasProperty("oaiIdentifier", is("ru:oai:repository.ubn.ru.nl:2066/161841")),
+                        hasProperty("kbObjId", is(instanceOf(String.class))),
                         hasProperty("state", is(ProcessStatus.PENDING.getCode())),
                         hasProperty("tsCreate", is(instanceOf(String.class))),
                         hasProperty("tsProcessed", is(nullValue()))
