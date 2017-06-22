@@ -69,7 +69,7 @@ public class ScheduledHarvestRunner extends AbstractScheduledService {
         for (Map.Entry<Integer, RepositoryHarvester> entry : harvesters.entrySet()) {
             entry.getValue().sendInterrupt();
         }
-        LOG.error("SEVERE: Harvester failed to reach OAI endpoint", ex);
+        LOG.error("SEVERE: Harvester failed due to failing service", ex);
     }
 
     public RunState getHarvesterRunstate(int repositoryId) {

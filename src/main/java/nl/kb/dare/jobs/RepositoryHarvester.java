@@ -66,19 +66,25 @@ public class RepositoryHarvester implements Runnable {
                 httpFetcher,
                 responseHandlerFactory,
                 dateStamp -> { // onHarvestComplete
-                    repositoryController.onHarvestComplete(repository.getId(), dateStamp);
-                    recordBatchLoader.flushBatch(repository.getId());
+                    try {
+                        recordBatchLoader.flushBatch(repository.getId());
+                        repositoryController.onHarvestComplete(repository.getId(), dateStamp);
+                    } catch (Exception exception) {
+                        handleHarvestException(repository, exception);
+                    }
+
                 },
-                exception -> {
-                    repositoryController.onHarvestException(repository.getId(), exception);
-                    onException.accept(exception);
-                },
+                exception -> handleHarvestException(repository, exception),
                 oaiRecordHeader -> { // onRecord
                     recordBatchLoader.addToBatch(repository.getId(), oaiRecordHeader);
                 },
                 dateStamp -> { // onProgress
-                    repositoryController.onHarvestProgress(repository.getId(), dateStamp);
-                    recordBatchLoader.flushBatch(repository.getId());
+                    try {
+                        recordBatchLoader.flushBatch(repository.getId());
+                        repositoryController.onHarvestProgress(repository.getId(), dateStamp);
+                    } catch (Exception exception) {
+                        handleHarvestException(repository, exception);
+                    }
                 }, (String logMessage) -> { // onLogMessage
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("{} {}", repository.getName(), logMessage);
@@ -90,6 +96,11 @@ public class RepositoryHarvester implements Runnable {
 
         runningInstance = null;
         this.setRunState(RunState.WAITING);
+    }
+
+    private void handleHarvestException(Repository repository, Exception exception) {
+        repositoryController.onHarvestException(repository.getId(), exception);
+        onException.accept(exception);
     }
 
     void sendInterrupt() {

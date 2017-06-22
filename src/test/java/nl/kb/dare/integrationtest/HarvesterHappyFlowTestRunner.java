@@ -35,7 +35,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 
-public class HarvesterHappyFlowTest {
+public class HarvesterHappyFlowTestRunner {
 
     @ClassRule
     public static final TestRule instanceRule;
@@ -48,12 +48,12 @@ public class HarvesterHappyFlowTest {
 
     static  {
         try {
-            instanceRule  = new DropwizardAppRule<>(App.class, Paths.get(HarvesterHappyFlowTest.class
+            instanceRule  = new DropwizardAppRule<>(App.class, Paths.get(HarvesterHappyFlowTestRunner.class
                     .getResource("/integrationtest/dare-app-config.yaml").toURI()).toString());
-            oaiRule = new DropwizardAppRule<>(OaiTestServer.class, Paths.get(HarvesterHappyFlowTest.class.
+            oaiRule = new DropwizardAppRule<>(OaiTestServer.class, Paths.get(HarvesterHappyFlowTestRunner.class.
                     getResource("/integrationtest/oai-test-server.yaml").toURI()).toString());
 
-            numbersRule = new DropwizardAppRule<>(NumbersTestServer.class, Paths.get(HarvesterHappyFlowTest.class.
+            numbersRule = new DropwizardAppRule<>(NumbersTestServer.class, Paths.get(HarvesterHappyFlowTestRunner.class.
                     getResource("/integrationtest/numbers-test-server.yaml").toURI()).toString());
 
         } catch (URISyntaxException e) {
@@ -69,6 +69,9 @@ public class HarvesterHappyFlowTest {
         CrudOperations.createH2Schema();
         db = new DBI("jdbc:h2:mem:dareintegration", "daredev", "daredev");
         dbh = db.open();
+        dbh.execute("TRUNCATE TABLE DARE_PREPROCES");
+        dbh.execute("TRUNCATE TABLE REPOSITORIES");
+
     }
 
     @After

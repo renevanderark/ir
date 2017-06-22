@@ -3,9 +3,12 @@ package nl.kb.dare.model.preproces;
 import nl.kb.dare.model.SocketNotifier;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.nbn.NumbersController;
+import nl.kb.http.HttpResponseException;
 import nl.kb.oaipmh.OaiRecordHeader;
 import nl.kb.oaipmh.OaiStatus;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,7 +57,7 @@ public class RecordBatchLoader {
         }
     }
 
-    public void flushBatch(Integer repositoryId) {
+    public void flushBatch(Integer repositoryId) throws SAXException, IOException, HttpResponseException {
         if (!batchMap.containsKey(repositoryId) || batchMap.get(repositoryId).size() == 0) {
             return;
         }
