@@ -10,8 +10,8 @@ import repositoriesConnector from "./connectors/repositories-connector";
 import editRepositoryConnector from "./connectors/edit-repository-connector";
 import repositoryStatusConnector from "./connectors/repository-status";
 import recordStatusConnector from "./connectors/record-status-connector";
-import App from "./components/app";
 
+import App from "./components/app";
 import Repositories from "./components/repositories/repositories";
 import NewRepository from "./components/repositories/new";
 import EditRepository from "./components/repositories/edit";

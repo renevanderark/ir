@@ -1,66 +1,33 @@
-import store from "./store";
-import {fetchRepositories} from "./actions/repositories";
-import {fetchErrorStatus, fetchRecordStatus, fetchStatusCodes } from "./actions/record-status";
-import {fetchCredentials} from "./actions/credentials"
+import {connectSocket} from "./actions/socket-listener";
+import {fetchInitialData} from "./actions/fetch-initial-data";
 
-import ActionTypes from "./action-types";
-import {fetchHarvesterStatus} from "./actions/harvesters";
-
-const connectSocket = () => {
-    const webSocket = new WebSocket("ws://" + globals.hostName + "/status-socket");
-
-    webSocket.onmessage = ({ data: msg}) => {
-        const {type, data} = JSON.parse(msg);
-        // console.log(`${type} - ${new Date().getTime()}`);
-        switch (type) {
-            case "repository-change":
-                store.dispatch({type: ActionTypes.RECEIVE_REPOSITORIES, data: data});
-                break;
-            case "record-change":
-                store.dispatch({type: ActionTypes.RECEIVE_RECORD_STATUS, data: data});
-                break;
-            case "error-change":
-                store.dispatch({type: ActionTypes.RECEIVE_ERROR_STATUS, data: data});
-                break;
-            case "record-fetcher":
-                store.dispatch({type: ActionTypes.ON_FETCHER_RUNSTATE_CHANGE, data: data});
-                break;
-            case "harvester-runstate":
-                store.dispatch({type: ActionTypes.RECEIVE_HARVESTER_RUNSTATE, data: data});
-                break;
-            default:
-                break;
-        }
-    };
-
-    // Keep the websocket alive
-    const pingWs = () => {
-        store.dispatch({type: ActionTypes.ON_STATUS_UPDATE});
-
-        webSocket.send("* ping! *");
-        window.setTimeout(pingWs, 8000);
-    };
-
-    webSocket.onclose = () => {
-        store.dispatch({type: ActionTypes.ON_SOCKET_CLOSED});
-        window.setTimeout(connectSocket, 500);
-    };
-
-    webSocket.onopen = pingWs;
+// Checks for exsistence of authentication token
+const checkForAuthToken = (token, urlToken) => {
+    if (urlToken !== null) {
+        // If part of the URL redirect to root
+        localStorage.setItem("authToken", urlToken);
+        location.href = "/";
+        return false;
+    } else if (token === null) {
+        // If not present at all, redirect to kbaut
+        location.href = `${globals.kbAutLocation}?id=dare2&application=ir-objectharvester&return_url=` +
+            encodeURIComponent(`http://${globals.hostName}/authenticate`);
+        return false;
+    }
+    return true;
 };
 
-const fetchInitialData = (onInitialize) => {
-    store.dispatch(fetchRepositories(() =>
-        store.dispatch(fetchHarvesterStatus(() =>
-            store.dispatch(fetchStatusCodes(() =>
-                store.dispatch(fetchRecordStatus(() =>
-                    store.dispatch(fetchErrorStatus(onInitialize))
-                ))
-            ))
-        ))
-    ));
+const authenticateAndInitialize = (onInitialize) => {
+    const tokenFromUrl = () => {
+        return location.href.indexOf("token=") < 0 ?
+            null :
+            location.href.replace(/^.+token=/, "");
+    };
 
-    store.dispatch(fetchCredentials());
+    if (checkForAuthToken(localStorage.getItem("authToken"), tokenFromUrl())) {
+        fetchInitialData(onInitialize);
+        connectSocket();
+    }
 };
 
-export { connectSocket, fetchInitialData };
+export { authenticateAndInitialize };
