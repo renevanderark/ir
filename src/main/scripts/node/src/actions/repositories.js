@@ -1,6 +1,6 @@
 import xhr from "xhr";
-import ActionTypes from "../action-types";
-import { Schedule } from "../enums";
+import ActionTypes from "./action-types";
+import { Schedule } from "../etc/enums";
 import {handleResponse} from "./response-handler";
 
 const fetchRepositories = (next = () => {}) => (dispatch) => {

@@ -1,5 +1,5 @@
-import ActionTypes from "../action-types";
-import { FetcherRunState } from "../enums";
+import ActionTypes from "../actions/action-types";
+import { FetcherRunState } from "../etc/enums";
 
 const initialState = FetcherRunState.DISABLED;
 

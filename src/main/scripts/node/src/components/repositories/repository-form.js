@@ -5,7 +5,7 @@ import DatestampField from "../forms/datestamp-field";
 import ValidationMarker from "../widgets/validation-marker";
 import { validateDateStamp } from "../forms/datestamp-field";
 import ButtonWithModalWarning from "../modals/button-with-modal-warning";
-import { Schedule } from "../../enums";
+import { Schedule } from "../../etc/enums";
 
 class RepositoryForm extends React.Component {
     constructor(props) {

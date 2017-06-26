@@ -1,4 +1,4 @@
-import {RunState} from "../enums";
+import {RunState} from "../etc/enums";
 export default (state, routed) => {
     const { repositoryId } = routed.params;
     const { errorStatus, recordStatus, list: repositoryList, harvesterRunStates } =  state.repositories;

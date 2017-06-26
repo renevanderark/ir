@@ -1,6 +1,6 @@
 import React from "react";
 import Panel from "../layout/panel";
-import {RunState} from "../../enums";
+import {RunState} from "../../etc/enums";
 import EnableToggle from "../widgets/enable-toggle";
 import StartStopButton from "../widgets/start-stop-button";
 

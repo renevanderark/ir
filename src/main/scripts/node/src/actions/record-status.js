@@ -1,5 +1,5 @@
 import xhr from "xhr";
-import ActionTypes from "../action-types";
+import ActionTypes from "./action-types";
 import {handleResponse} from "./response-handler";
 
 const fetchRecordStatus = (next = () => {}) => (dispatch) => {

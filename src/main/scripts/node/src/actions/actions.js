@@ -1,15 +1,15 @@
-import {fetchInitialData} from "./actions/fetch-initial-data";
+import {fetchInitialData} from "./fetch-initial-data";
 import {
     enableRepository,
     disableRepository,
     validateNewRepository,
     saveRepository,
     deleteRepository
-} from "./actions/repositories";
+} from "./repositories";
 
-import { startHarvest, interruptHarvest } from "./actions/harvesters";
-import { disableOaiRecordFetcher, startOaiRecordFetcher } from "./actions/oai-record-fetcher";
-import { fetchRecord, findRecords } from "./actions/records";
+import { startHarvest, interruptHarvest } from "./harvesters";
+import { disableOaiRecordFetcher, startOaiRecordFetcher } from "./oai-record-fetcher";
+import { fetchRecord, findRecords } from "./records";
 
 import ActionTypes from "./action-types";
 

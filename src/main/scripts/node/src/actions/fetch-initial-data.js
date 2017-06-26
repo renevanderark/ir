@@ -1,4 +1,4 @@
-import store from "../store";
+import store from "../store/store";
 import {fetchRepositories} from "./repositories";
 import {fetchErrorStatus, fetchRecordStatus, fetchStatusCodes } from "./record-status";
 import {fetchCredentials} from "./credentials"

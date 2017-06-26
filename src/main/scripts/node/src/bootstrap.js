@@ -17,6 +17,7 @@ const checkForAuthToken = (token, urlToken) => {
     return true;
 };
 
+// Renders the app when token is present
 const authenticateAndInitialize = (onInitialize) => {
     const tokenFromUrl = () => {
         return location.href.indexOf("token=") < 0 ?
@@ -25,7 +26,9 @@ const authenticateAndInitialize = (onInitialize) => {
     };
 
     if (checkForAuthToken(localStorage.getItem("authToken"), tokenFromUrl())) {
+        // Fetches initial render data via xhr and will invoke onInitialize callback when received
         fetchInitialData(onInitialize);
+        // Connects to websocket, which receives updates on render data
         connectSocket();
     }
 };

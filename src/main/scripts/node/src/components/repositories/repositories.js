@@ -2,10 +2,10 @@ import React from "react";
 import Panel from "../layout/panel";
 
 import { Link } from "react-router";
-import { urls } from "../../router";
+import { urls } from "../../etc/urls";
 import RepositoryRow from "./repository-row";
 import EnableToggle from "../widgets/enable-toggle";
-import {FetcherRunState, RunState} from "../../enums";
+import {FetcherRunState, RunState} from "../../etc/enums";
 import FindField from "../forms/find-field";
 
 class Repositories extends React.Component {

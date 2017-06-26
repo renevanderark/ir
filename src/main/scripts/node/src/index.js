@@ -6,6 +6,5 @@ import router from "./router";
 
 import { authenticateAndInitialize } from "./bootstrap";
 
-authenticateAndInitialize(() => {
-    ReactDOM.render(router, document.getElementById("app"))
-});
+// Authenticate, initialize render data and then render the app to the DOM, registering the router
+authenticateAndInitialize(() => ReactDOM.render(router, document.getElementById("app")));

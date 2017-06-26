@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
-import { urls } from "../../router";
+import { urls } from "../../etc/urls";
 
 class RecordList extends React.Component {
 

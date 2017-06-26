@@ -1,5 +1,5 @@
 import React from "react";
-import {RunState} from "../../enums";
+import {RunState} from "../../etc/enums";
 import PropTypes from "prop-types";
 
 class StartStopButton extends React.Component {

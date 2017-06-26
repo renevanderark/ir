@@ -1,12 +1,12 @@
 import React from "react";
 import EnableToggle from "../widgets/enable-toggle";
-import { RunState } from "../../enums";
+import { RunState } from "../../etc/enums";
 import StartStopButton from "../widgets/start-stop-button";
 
 import { Link } from "react-router";
-import { urls } from "../../router";
+import { urls } from "../../etc/urls";
 
-import { Schedule } from "../../enums";
+import { Schedule } from "../../etc/enums";
 
 
 class RepositoryRow extends React.Component {

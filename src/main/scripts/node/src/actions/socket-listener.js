@@ -1,5 +1,5 @@
-import store from "../store";
-import ActionTypes from "../action-types";
+import store from "../store/store";
+import ActionTypes from "./action-types";
 
 const connectSocket = () => {
     const webSocket = new WebSocket("ws://" + globals.hostName + "/status-socket");
