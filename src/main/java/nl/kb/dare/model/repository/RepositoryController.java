@@ -1,8 +1,12 @@
 package nl.kb.dare.model.repository;
 
 import nl.kb.dare.model.SocketNotifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RepositoryController {
+    private static final Logger LOG = LoggerFactory.getLogger(RepositoryController.class);
+
     private final RepositoryDao repositoryDao;
     private final SocketNotifier socketNotifier;
 
@@ -24,6 +28,7 @@ public class RepositoryController {
     }
 
     public void onHarvestException(Integer id, Exception exception) {
+        LOG.error("Harvest failed for repository with id {}", id, exception);
         synchronized (repositoryDao) {
             repositoryDao.disableAll();
         }

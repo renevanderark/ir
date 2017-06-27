@@ -21,6 +21,7 @@ import java.util.zip.ZipOutputStream;
 class LocalFileStorageHandle implements FileStorageHandle {
     private static final int MAX_ENTRIES = 10_000;
     private static final LinkedHashMap<String, LocalFileStorageHandle> instances = new LinkedHashMap<String, LocalFileStorageHandle>(){
+        @Override
         protected boolean removeEldestEntry(Map.Entry<String, LocalFileStorageHandle> eldest) {
             return size() > MAX_ENTRIES;
         }
@@ -56,7 +57,7 @@ class LocalFileStorageHandle implements FileStorageHandle {
                         URLEncoder.encode(identifier, StandardCharsets.UTF_8.name()));
             }
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Panic!! unsupported encoding UTF-8", e);
+            throw new IllegalStateException("Panic!! unsupported encoding UTF-8", e);
         }
     }
 

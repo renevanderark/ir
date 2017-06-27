@@ -16,19 +16,15 @@ import java.util.Map;
 
 class SaxParsingResponseHandler extends ErrorReportingResponseHandler {
     private final SAXParser saxParser;
+    private final DefaultHandler xmlHandler;
 
-    {
+    SaxParsingResponseHandler(DefaultHandler xmlHandler) {
+        this.xmlHandler = xmlHandler;
         try {
             saxParser = SAXParserFactory.newInstance().newSAXParser();
         } catch (Exception e) {
             throw new ExceptionInInitializerError("Failed to initialize sax parser");
         }
-    }
-
-    private final DefaultHandler xmlHandler;
-
-    SaxParsingResponseHandler(DefaultHandler xmlHandler) {
-        this.xmlHandler = xmlHandler;
     }
 
     @Override

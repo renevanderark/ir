@@ -4,7 +4,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Arrays;
 
-public class CrappyUrlFixingHelper {
+class CrappyUrlFixingHelper {
+
+    private CrappyUrlFixingHelper() {
+
+    }
+
     static String fixCrappyLocationHeaderValue(URL originalUrl, String redirectLocation) throws UnsupportedEncodingException {
 
         final boolean usePercents = originalUrl.toString().contains("%20");
@@ -17,7 +22,7 @@ public class CrappyUrlFixingHelper {
 
     private static String fix(String locationWithProtocolAndHost, boolean usePercents)
             throws UnsupportedEncodingException {
-        final int lastIndexOfSlash = locationWithProtocolAndHost.lastIndexOf("/");
+        final int lastIndexOfSlash = locationWithProtocolAndHost.lastIndexOf('/');
 
         final String pathBit = locationWithProtocolAndHost.substring(0, lastIndexOfSlash + 1);
         final String nameAndQueryBit = locationWithProtocolAndHost.substring(lastIndexOfSlash + 1);
