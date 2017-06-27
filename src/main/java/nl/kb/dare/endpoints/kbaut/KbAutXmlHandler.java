@@ -41,7 +41,7 @@ class KbAutXmlHandler extends DefaultHandler {
     }
 
     @Override
-    public void characters(char ch[], int start, int length) {
+    public void characters(char[] ch, int start, int length) {
         if (inStatus) {
             statusBuilder.append(getStrippedText(ch, start, length));
         } else if (inUsername) {

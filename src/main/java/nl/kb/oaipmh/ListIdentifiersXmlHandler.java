@@ -44,7 +44,7 @@ public class ListIdentifiersXmlHandler extends DefaultHandler {
     }
 
     @Override
-    public void characters(char ch[], int start, int length) {
+    public void characters(char[] ch, int start, int length) {
         if (inResumptionToken) {
             handleResumptionToken(ch, start, length);
         } else if (inDateStamp) {

@@ -15,7 +15,7 @@ public class ByteCountOutputStream extends ByteArrayOutputStream {
     }
 
     @Override
-    public synchronized void write(byte b[], int off, int len) {
+    public synchronized void write(byte[] b, int off, int len) {
         byteCount.getAndAdd((long) len);
     }
 

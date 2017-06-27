@@ -31,7 +31,7 @@ class NumbersXmlHandler extends DefaultHandler {
     }
 
     @Override
-    public void characters(char ch[], int start, int length) {
+    public void characters(char[] ch, int start, int length) {
         if (inNBNnode) {
             currentNBN.append(new String(ch, start, length));
         }

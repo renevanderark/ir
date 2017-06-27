@@ -69,7 +69,7 @@ public class RepositoryValidator {
         }
 
         @Override
-        public void characters(char ch[], int start, int length) {
+        public void characters(char[] ch, int start, int length) {
             if (inSetSpec && new String(ch, start, length).trim().equalsIgnoreCase(expectedSet)) {
                 validationResult.setExists = true;
             }
@@ -103,7 +103,7 @@ public class RepositoryValidator {
         }
 
         @Override
-        public void characters(char ch[], int start, int length) {
+        public void characters(char[] ch, int start, int length) {
             if (inMetadataPrefix && new String(ch, start, length).trim().equalsIgnoreCase(expectedMetadataPrefix)) {
                 validationResult.metadataFormatSupported = true;
             }

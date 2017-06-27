@@ -29,7 +29,7 @@ public class ChecksumOutputStream extends ByteArrayOutputStream {
     }
 
     @Override
-    public synchronized void write(byte b[], int off, int len) {
+    public synchronized void write(byte[] b, int off, int len) {
         digest.update(b, off, len);
     }
 
