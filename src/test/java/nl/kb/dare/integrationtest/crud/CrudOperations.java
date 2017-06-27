@@ -13,6 +13,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,7 +66,7 @@ public class CrudOperations {
 
         final HttpResponse response = httpClient.execute(httpGet);
         return mapper.readValue(
-            IOUtils.toString(response.getEntity().getContent(), "UTF8"),
+            IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8.name()),
             new TypeReference<HashMap<String, HashMap<String, String>>>() {}
         );
     }

@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -46,13 +47,13 @@ class LocalFileStorageHandle implements FileStorageHandle {
             if (reversedId.length() < 3) {
                 // code not expected to be reached, all identifiers are expected to be greater than 3 characters
                 return String.format("%s/%s__short_id", basePath,
-                        URLEncoder.encode(identifier, "UTF-8"));
+                        URLEncoder.encode(identifier, StandardCharsets.UTF_8.name()));
             } else {
                 return String.format("%s/%s/%s/%s/%s", basePath,
-                        URLEncoder.encode(reversedId.substring(0, 1), "UTF-8"),
-                        URLEncoder.encode(reversedId.substring(1, 2), "UTF-8"),
-                        URLEncoder.encode(reversedId.substring(2, 3), "UTF-8"),
-                        URLEncoder.encode(identifier, "UTF-8"));
+                        URLEncoder.encode(reversedId.substring(0, 1), StandardCharsets.UTF_8.name()),
+                        URLEncoder.encode(reversedId.substring(1, 2), StandardCharsets.UTF_8.name()),
+                        URLEncoder.encode(reversedId.substring(2, 3), StandardCharsets.UTF_8.name()),
+                        URLEncoder.encode(identifier, StandardCharsets.UTF_8.name()));
             }
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Panic!! unsupported encoding UTF-8", e);

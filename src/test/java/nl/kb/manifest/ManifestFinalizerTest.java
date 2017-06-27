@@ -19,13 +19,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 
 import static nl.kb.manifest.ManifestFinalizer.METS_NS;
 import static nl.kb.manifest.ManifestFinalizer.XLINK_NS;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 
 public class ManifestFinalizerTest {
     private static final DocumentBuilder docBuilder;
@@ -58,7 +58,7 @@ public class ManifestFinalizerTest {
         instance.writeResourcesToManifest(metadataResource, objectResources, metadata, manifest);
 
 
-        final Document resultDoc = docBuilder.parse(new InputSource(new InputStreamReader(new ByteArrayInputStream(out.toByteArray()), "UTF8")));
+        final Document resultDoc = docBuilder.parse(new InputSource(new InputStreamReader(new ByteArrayInputStream(out.toByteArray()), StandardCharsets.UTF_8.name())));
         final NodeList fileNodes = resultDoc.getElementsByTagNameNS(METS_NS, "file");
         final List<String> checksums = Lists.newArrayList();
         final List<String> checksumTypes = Lists.newArrayList();

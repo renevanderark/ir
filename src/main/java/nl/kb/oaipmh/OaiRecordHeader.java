@@ -5,9 +5,6 @@ public class OaiRecordHeader {
     private String dateStamp;
     private OaiStatus oaiStatus;
 
-    public OaiRecordHeader() {
-    }
-
     public String getIdentifier() {
         return identifier;
     }
@@ -28,7 +25,7 @@ public class OaiRecordHeader {
         return oaiStatus;
     }
 
-    public void setOaiStatus(OaiStatus oaiStatus) {
+    void setOaiStatus(OaiStatus oaiStatus) {
         this.oaiStatus = oaiStatus;
     }
 }

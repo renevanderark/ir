@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,7 +93,7 @@ public class ManifestFinalizer {
 
         xlinkHrefAttribute.setNodeValue(
                 "file://./resources/" +
-                        URLEncoder.encode(currentResource.getLocalFilename(), "UTF8")
+                        URLEncoder.encode(currentResource.getLocalFilename(), StandardCharsets.UTF_8.name())
                                 .replaceAll("\\+", "%20")
         );
     }

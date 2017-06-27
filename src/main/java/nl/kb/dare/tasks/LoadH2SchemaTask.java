@@ -9,6 +9,7 @@ import org.skife.jdbi.v2.Handle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 public class LoadH2SchemaTask extends Task {
     private final DBI db;
@@ -31,7 +32,7 @@ public class LoadH2SchemaTask extends Task {
 
     private void runSQL(String resourceLocation, Handle h) throws IOException {
         final InputStream resource = LoadOracleSchemaTask.class.getResourceAsStream(resourceLocation);
-        final String schemaSql = IOUtils.toString(resource, "UTF8");
+        final String schemaSql = IOUtils.toString(resource, StandardCharsets.UTF_8.name());
 
         h.update(schemaSql);
     }

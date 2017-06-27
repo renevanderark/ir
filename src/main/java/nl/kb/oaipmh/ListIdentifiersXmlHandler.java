@@ -39,6 +39,7 @@ public class ListIdentifiersXmlHandler extends DefaultHandler {
             case DATE_STAMP_ELEMENT: startDateStamp(); break;
             case HEADER_ELEMENT: startOaiRecord(attributes); break;
             case IDENTIFIER_ELEMENT: startIdentifier(); break;
+            default: break;
         }
     }
 
@@ -60,7 +61,7 @@ public class ListIdentifiersXmlHandler extends DefaultHandler {
             case DATE_STAMP_ELEMENT: endDateStamp(); break;
             case HEADER_ELEMENT: endOaiRecord(); break;
             case IDENTIFIER_ELEMENT: endIdentifier(); break;
-
+            default: break;
         }
     }
 

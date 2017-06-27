@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.stream.Stream;
@@ -98,7 +99,7 @@ class GetRecordResourceOperations {
     }
 
     static String createFilename(String objectFile) throws MalformedURLException, UnsupportedEncodingException {
-        final String decodedFilename = URLDecoder.decode(new URL(objectFile).getPath().replaceAll("/$", ""), "UTF8");
+        final String decodedFilename = URLDecoder.decode(new URL(objectFile).getPath().replaceAll("/$", ""), StandardCharsets.UTF_8.name());
 
         return FilenameUtils.getName(decodedFilename);
     }
@@ -111,9 +112,9 @@ class GetRecordResourceOperations {
     }
 
     private String encodeName(String name, boolean plusToPercent) throws UnsupportedEncodingException {
-        final String encodedName = name.equals(URLDecoder.decode(name, "UTF8"))
-                ? URLEncoder.encode(name, "UTF8")
-                : URLEncoder.encode(URLDecoder.decode(name, "UTF8"), "UTF8");
+        final String encodedName = name.equals(URLDecoder.decode(name, StandardCharsets.UTF_8.name()))
+                ? URLEncoder.encode(name, StandardCharsets.UTF_8.name())
+                : URLEncoder.encode(URLDecoder.decode(name, StandardCharsets.UTF_8.name()), StandardCharsets.UTF_8.name());
 
         return plusToPercent
                 ? encodedName.replaceAll("\\+", "%20")

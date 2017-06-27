@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 public class KbAuthFilter {
@@ -76,7 +77,7 @@ public class KbAuthFilter {
             final String kbAutXml = new String(decoder.decodeBuffer(authHeader));
             final KbAutXmlHandler kbAutXmlHandler = new KbAutXmlHandler();
             synchronized (saxParser) {
-                saxParser.parse(IOUtils.toInputStream(kbAutXml, "UTF-8"), kbAutXmlHandler);
+                saxParser.parse(IOUtils.toInputStream(kbAutXml, StandardCharsets.UTF_8.name()), kbAutXmlHandler);
             }
             return Optional.of(kbAutXmlHandler);
         } catch (IOException | SAXException e) {

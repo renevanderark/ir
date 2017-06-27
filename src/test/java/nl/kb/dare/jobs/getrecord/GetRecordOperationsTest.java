@@ -237,11 +237,8 @@ public class GetRecordOperationsTest {
         inOrder.verify(fileStorageHandle).getOutputStream("manifest.initial.xml");
         inOrder.verify(xsltTransformer).transform(argThat(is(in)), argThat(allOf(
                 is(instanceOf(StreamResult.class)),
-                hasProperty("writer", allOf(
-                        is(instanceOf(OutputStreamWriter.class)),
-                        hasProperty("encoding", is("UTF8"))
-                ))
-        )));
+                hasProperty("writer", is(instanceOf(OutputStreamWriter.class))
+        ))));
 
         assertThat(result, is(true));
     }
@@ -462,8 +459,8 @@ public class GetRecordOperationsTest {
         inOrder.verify(manifestFinalizer).writeResourcesToManifest(
                 argThat(is(metadataResource)),
                 argThat(is(objectResources)),
-                argThat(allOf(is(instanceOf(InputStreamReader.class)), hasProperty("encoding", is("UTF8")))),
-                argThat(allOf(is(instanceOf(OutputStreamWriter.class)), hasProperty("encoding", is("UTF8"))))
+                argThat(is(instanceOf(InputStreamReader.class))),
+                argThat(is(instanceOf(OutputStreamWriter.class)))
         );
         verifyNoMoreInteractions(manifestFinalizer);
         verifyNoMoreInteractions(handle);

@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -95,7 +96,7 @@ public class PipedXsltTransformer implements XsltTransformer {
             }
         }
 
-        final Reader reader = new InputStreamReader(in,"UTF-8");
+        final Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8.name());
 
         endChain.setResult(out);
         transformer.transform(new StreamSource(reader), new SAXResult(startChain));

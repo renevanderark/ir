@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -26,9 +27,9 @@ public class StreamCopyingResponseHandlerTest {
 
         instance.onResponseData(200, StreamCopyingResponseHandler.class.getResourceAsStream("/http/text.txt"), null);
 
-        assertThat(new String(out1.toByteArray(), Charset.forName("UTF8")), is("testing"));
-        assertThat(new String(out2.toByteArray(), Charset.forName("UTF8")), is("testing"));
-        assertThat(new String(out3.toByteArray(), Charset.forName("UTF8")), is("testing"));
+        assertThat(new String(out1.toByteArray(), Charset.forName(StandardCharsets.UTF_8.name())), is("testing"));
+        assertThat(new String(out2.toByteArray(), Charset.forName(StandardCharsets.UTF_8.name())), is("testing"));
+        assertThat(new String(out3.toByteArray(), Charset.forName(StandardCharsets.UTF_8.name())), is("testing"));
     }
 
     @Test

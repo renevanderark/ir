@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ class SaxParsingResponseHandler extends ErrorReportingResponseHandler {
     @Override
     public void onResponseData(Integer status, InputStream responseData, Map<String, List<String>> headerFields) {
         try {
-            final Reader reader = new InputStreamReader(responseData,"UTF-8");
+            final Reader reader = new InputStreamReader(responseData, StandardCharsets.UTF_8.name());
             final InputSource inputSource = new InputSource(reader);
             saxParser.parse(inputSource, xmlHandler);
         } catch (SAXException e) {

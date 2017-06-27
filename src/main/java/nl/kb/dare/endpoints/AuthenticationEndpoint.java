@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Path("/authenticate")
 public class AuthenticationEndpoint {
@@ -54,7 +55,7 @@ public class AuthenticationEndpoint {
         try {
             return  String.format("%s?id=dare2&application=ir-objectharvester&return_url=%s",
                     kbAutLocation,
-                    URLEncoder.encode("http://" + hostName + "/authenticate", "UTF-8"));
+                    URLEncoder.encode("http://" + hostName + "/authenticate", StandardCharsets.UTF_8.name()));
         } catch (UnsupportedEncodingException e) {
             return "#";
         }

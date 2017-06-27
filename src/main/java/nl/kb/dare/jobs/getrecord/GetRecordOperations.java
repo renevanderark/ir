@@ -32,6 +32,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +42,9 @@ class GetRecordOperations {
     private static final Logger LOG = LoggerFactory.getLogger(GetRecordOperations.class);
 
     private static final SAXParser saxParser;
+    private static final String METADATA_XML = "metadata.xml";
+    private static final String MANIFEST_INITIAL_XML = "manifest.initial.xml";
+    private static final String MANIFEST_XML = "manifest.xml";
 
     static {
         try {
@@ -95,7 +99,7 @@ class GetRecordOperations {
             final String urlStr = String.format("%s?verb=GetRecord&metadataPrefix=%s&identifier=%s",
                     repository.getUrl(), repository.getMetadataPrefix(), record.getOaiIdentifier());
 
-            final OutputStream out = fileStorageHandle.getOutputStream("metadata.xml");
+            final OutputStream out = fileStorageHandle.getOutputStream(METADATA_XML);
             final ChecksumOutputStream checksumOut = new ChecksumOutputStream("SHA-512");
             final ByteCountOutputStream byteCountOut = new ByteCountOutputStream();
 
@@ -111,7 +115,7 @@ class GetRecordOperations {
             ErrorReport.fromExceptionList(responseHandler.getExceptions()).forEach(onError);
 
             final ObjectResource objectResource = new ObjectResource();
-            objectResource.setLocalFilename("metadata.xml");
+            objectResource.setLocalFilename(METADATA_XML);
             objectResource.setChecksum(checksumOut.getChecksumString());
             objectResource.setId("metadata");
             objectResource.setChecksumType("SHA-512");
@@ -127,9 +131,9 @@ class GetRecordOperations {
 
     boolean generateManifest(FileStorageHandle handle) {
         try {
-            final InputStream metadata = handle.getFile("metadata.xml");
-            final OutputStream out = handle.getOutputStream("manifest.initial.xml");
-            final Writer outputStreamWriter = new OutputStreamWriter(out, "UTF8");
+            final InputStream metadata = handle.getFile(METADATA_XML);
+            final OutputStream out = handle.getOutputStream(MANIFEST_INITIAL_XML);
+            final Writer outputStreamWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8.name());
 
             xsltTransformer.transform(metadata, new StreamResult(outputStreamWriter));
 
@@ -148,7 +152,7 @@ class GetRecordOperations {
         try {
             final ManifestXmlHandler manifestXmlHandler = new ManifestXmlHandler();
             synchronized (saxParser) {
-                saxParser.parse(fileStorageHandle.getFile("manifest.initial.xml"), manifestXmlHandler);
+                saxParser.parse(fileStorageHandle.getFile(MANIFEST_INITIAL_XML), manifestXmlHandler);
             }
             return manifestXmlHandler.getObjectResources();
         } catch (SAXException e) {
@@ -183,10 +187,10 @@ class GetRecordOperations {
     boolean writeFilenamesAndChecksumsToMetadata(FileStorageHandle handle, List<ObjectResource> objectResources,
                                                  ObjectResource metadataResource) {
         try {
-            final InputStream in = handle.getFile("manifest.initial.xml");
-            final OutputStream out = handle.getOutputStream("manifest.xml");
-            final Reader metadata = new InputStreamReader(in,"UTF-8");
-            final Writer manifest = new OutputStreamWriter(out, "UTF-8");
+            final InputStream in = handle.getFile(MANIFEST_INITIAL_XML);
+            final OutputStream out = handle.getOutputStream(MANIFEST_XML);
+            final Reader metadata = new InputStreamReader(in,StandardCharsets.UTF_8.name());
+            final Writer manifest = new OutputStreamWriter(out, StandardCharsets.UTF_8.name());
 
             manifestFinalizer.writeResourcesToManifest(metadataResource, objectResources, metadata, manifest);
 
