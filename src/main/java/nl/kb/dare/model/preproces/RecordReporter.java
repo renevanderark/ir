@@ -26,7 +26,7 @@ public class RecordReporter {
     private String codeToHumanKey(int statusCode) {
         final ProcessStatus processStatus = ProcessStatus.forCode(statusCode);
         if (processStatus == null) {
-            return "" + statusCode;
+            return Integer.toString(statusCode);
         }
         return processStatus.getStatus();
     }

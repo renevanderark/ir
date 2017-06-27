@@ -23,6 +23,6 @@ public class ErrorReporter {
     }
 
     private String codeToHumanKey(int statusCode) {
-        return "" + statusCode;
+        return Integer.toString(statusCode);
     }
 }
