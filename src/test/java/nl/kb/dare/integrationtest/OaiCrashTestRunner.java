@@ -11,6 +11,7 @@ import nl.kb.dare.model.repository.RepositoryMapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.skife.jdbi.v2.DBI;
@@ -38,11 +39,11 @@ public class OaiCrashTestRunner {
 
     static  {
         try {
-            instanceRule  = new DropwizardAppRule<>(App.class, Paths.get(HarvesterHappyFlowTestRunner.class
+            instanceRule  = new DropwizardAppRule<>(App.class, Paths.get(HarvesterHappyFlowTest.class
                     .getResource("/integrationtest/dare-app-config-with-oai-crash.yaml").toURI()).toString());
-            oaiRule = new DropwizardAppRule<>(OaiTestServer.class, Paths.get(HarvesterHappyFlowTestRunner.class.
+            oaiRule = new DropwizardAppRule<>(OaiTestServer.class, Paths.get(HarvesterHappyFlowTest.class.
                     getResource("/integrationtest/oai-test-server.yaml").toURI()).toString());
-            numbersRule = new DropwizardAppRule<>(NumbersTestServer.class, Paths.get(HarvesterHappyFlowTestRunner.class.
+            numbersRule = new DropwizardAppRule<>(NumbersTestServer.class, Paths.get(HarvesterHappyFlowTest.class.
                     getResource("/integrationtest/numbers-test-server.yaml").toURI()).toString());
 
         } catch (URISyntaxException e) {
@@ -75,6 +76,7 @@ public class OaiCrashTestRunner {
     }
 
     @Test
+    @Ignore
     public void run() throws InterruptedException, IOException {
         CrudOperations.startHarvest(1);
         CrudOperations.startHarvest(2);

@@ -58,7 +58,7 @@ public class RecordBatchLoader {
     }
 
     public void flushBatch(Integer repositoryId) throws SAXException, IOException, HttpResponseException {
-        if (!batchMap.containsKey(repositoryId) || batchMap.get(repositoryId).size() == 0) {
+        if (!batchMap.containsKey(repositoryId) || batchMap.get(repositoryId).isEmpty()) {
             return;
         }
 

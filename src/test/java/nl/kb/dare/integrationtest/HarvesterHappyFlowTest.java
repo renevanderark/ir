@@ -35,7 +35,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 
-public class HarvesterHappyFlowTestRunner {
+public class HarvesterHappyFlowTest {
 
     @ClassRule
     public static final TestRule instanceRule;
@@ -48,12 +48,12 @@ public class HarvesterHappyFlowTestRunner {
 
     static  {
         try {
-            instanceRule  = new DropwizardAppRule<>(App.class, Paths.get(HarvesterHappyFlowTestRunner.class
+            instanceRule  = new DropwizardAppRule<>(App.class, Paths.get(HarvesterHappyFlowTest.class
                     .getResource("/integrationtest/dare-app-config.yaml").toURI()).toString());
-            oaiRule = new DropwizardAppRule<>(OaiTestServer.class, Paths.get(HarvesterHappyFlowTestRunner.class.
+            oaiRule = new DropwizardAppRule<>(OaiTestServer.class, Paths.get(HarvesterHappyFlowTest.class.
                     getResource("/integrationtest/oai-test-server.yaml").toURI()).toString());
 
-            numbersRule = new DropwizardAppRule<>(NumbersTestServer.class, Paths.get(HarvesterHappyFlowTestRunner.class.
+            numbersRule = new DropwizardAppRule<>(NumbersTestServer.class, Paths.get(HarvesterHappyFlowTest.class.
                     getResource("/integrationtest/numbers-test-server.yaml").toURI()).toString());
 
         } catch (URISyntaxException e) {

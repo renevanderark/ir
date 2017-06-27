@@ -171,7 +171,7 @@ class GetRecordOperations {
                 final List<ErrorReport> reports = resourceOperations
                         .downloadResource(objectResource, fileStorageHandle);
 
-                if (reports.size() > 0) {
+                if (!reports.isEmpty()) {
                     onError.accept(reports.get(0));
                     return false;
                 }
