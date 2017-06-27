@@ -20,8 +20,7 @@ class CrappyUrlFixingHelper {
         return fix(locationWithProtocolAndHost, usePercents);
     }
 
-    private static String fix(String locationWithProtocolAndHost, boolean usePercents)
-            throws UnsupportedEncodingException {
+    private static String fix(String locationWithProtocolAndHost, boolean usePercents) {
         final int lastIndexOfSlash = locationWithProtocolAndHost.lastIndexOf('/');
 
         final String pathBit = locationWithProtocolAndHost.substring(0, lastIndexOfSlash + 1);

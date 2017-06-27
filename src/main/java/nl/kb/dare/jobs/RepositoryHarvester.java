@@ -75,9 +75,7 @@ public class RepositoryHarvester implements Runnable {
 
                 },
                 exception -> handleHarvestException(repository, exception),
-                oaiRecordHeader -> { // onRecord
-                    recordBatchLoader.addToBatch(repository.getId(), oaiRecordHeader);
-                },
+                oaiRecordHeader ->  recordBatchLoader.addToBatch(repository.getId(), oaiRecordHeader), // onRecord
                 dateStamp -> { // onProgress
                     try {
                         recordBatchLoader.flushBatch(repository.getId());

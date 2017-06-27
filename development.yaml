@@ -42,7 +42,6 @@ numbersEndpoint: http://numbersa.wpakb.kb.nl:8080/numbers/nbn
 fileStorage:
   storageType: local
   storageDir: ../../dare2-files
-  sampleFileDir: "/tmp"
 
 maxParallelHarvests: 3
 maxParallelDownloads: 20

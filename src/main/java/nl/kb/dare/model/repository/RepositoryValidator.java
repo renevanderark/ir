@@ -50,7 +50,7 @@ public class RepositoryValidator {
     }
 
     private static class ListSetsXmlHandler extends DefaultHandler {
-        private final String SET_SPEC = "setSpec";
+        private static final String SET_SPEC = "setSpec";
         private final String expectedSet;
         private ValidationResult validationResult;
 

@@ -12,7 +12,7 @@ public class StatusSocketRegistrations {
     private static StatusSocketRegistrations instance;
     private Set<StatusSocket> registrations = Sets.newConcurrentHashSet();
 
-    static public StatusSocketRegistrations getInstance() {
+    public static StatusSocketRegistrations getInstance() {
         if (instance == null) {
             instance = new StatusSocketRegistrations();
         }

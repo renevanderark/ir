@@ -77,7 +77,7 @@ class GetRecordResourceOperations {
     private void writeChecksumAndFilename(ObjectResource objectResource,
                                           ChecksumOutputStream checksumOut,
                                           ByteCountOutputStream byteCountOut,
-                                          String filename) throws UnsupportedEncodingException {
+                                          String filename)  {
 
         objectResource.setChecksum(checksumOut.getChecksumString());
         objectResource.setChecksumType("SHA-512");
@@ -87,7 +87,7 @@ class GetRecordResourceOperations {
 
     private List<ErrorReport> attemptDownload(OutputStream objectOut, OutputStream checksumOut,
                                               ByteCountOutputStream byteCountOut,
-                                              String preparedUrl) throws UnsupportedEncodingException, MalformedURLException {
+                                              String preparedUrl) throws MalformedURLException {
         final HttpResponseHandler responseHandler = responseHandlerFactory
                 .getStreamCopyingResponseHandler(objectOut, checksumOut, byteCountOut);
 
