@@ -4,20 +4,19 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-import sun.misc.BASE64Decoder;
 
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Optional;
 
 public class KbAuthFilter {
     private static final Logger LOG = LoggerFactory.getLogger(KbAuthFilter.class);
 
     private final boolean enabled;
-    private final BASE64Decoder decoder = new BASE64Decoder();
     private static final SAXParser saxParser;
 
     static {
@@ -74,7 +73,7 @@ public class KbAuthFilter {
         }
 
         try {
-            final String kbAutXml = new String(decoder.decodeBuffer(authHeader));
+            final String kbAutXml = new String(Base64.getDecoder().decode(authHeader));
             final KbAutXmlHandler kbAutXmlHandler = new KbAutXmlHandler();
             synchronized (saxParser) {
                 saxParser.parse(IOUtils.toInputStream(kbAutXml, StandardCharsets.UTF_8.name()), kbAutXmlHandler);

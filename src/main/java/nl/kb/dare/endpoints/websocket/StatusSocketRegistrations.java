@@ -1,10 +1,14 @@
 package nl.kb.dare.endpoints.websocket;
 
 import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
 public class StatusSocketRegistrations {
+    private static final Logger LOG = LoggerFactory.getLogger(StatusSocketRegistrations.class);
+
     private static StatusSocketRegistrations instance;
     private Set<StatusSocket> registrations = Sets.newConcurrentHashSet();
 
@@ -31,7 +35,10 @@ public class StatusSocketRegistrations {
         StatusSocketRegistrations.getInstance().get().forEach(registration -> {
             try {
                 registration.session.getRemote().sendString(msg);
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Failed to send websocket message", e);
+                }
             }
         });
     }

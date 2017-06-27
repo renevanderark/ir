@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.function.IntFunction;
 
 public class Aggregations {
+    private Aggregations() {
+
+    }
 
     public static Map<String, Map<String, Object>> getAggregateCounts(DBI db, String sql, IntFunction<String> getCodeKey) {
         final Map<String, Map<String, Object>> result = new HashMap<>();

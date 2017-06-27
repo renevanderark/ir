@@ -32,7 +32,7 @@ public class RootEndpoint {
         try (BufferedReader buffer = new BufferedReader(new InputStreamReader(resource))) {
             HTML_TEMPLATE = buffer.lines().collect(Collectors.joining("\n"));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ExceptionInInitializerError(e);
         }
     }
 
