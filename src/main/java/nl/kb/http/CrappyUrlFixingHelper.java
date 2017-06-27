@@ -1,6 +1,5 @@
 package nl.kb.http;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Arrays;
 
@@ -10,7 +9,7 @@ class CrappyUrlFixingHelper {
 
     }
 
-    static String fixCrappyLocationHeaderValue(URL originalUrl, String redirectLocation) throws UnsupportedEncodingException {
+    static String fixCrappyLocationHeaderValue(URL originalUrl, String redirectLocation) {
 
         final boolean usePercents = originalUrl.toString().contains("%20");
         final String locationWithProtocolAndHost = redirectLocation.startsWith("/")
