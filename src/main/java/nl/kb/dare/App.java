@@ -81,9 +81,10 @@ public class App extends Application<Config> {
 
 
         // Data access objects
-        final RepositoryDao repositoryDao = config.getDatabaseProvider().equals("oracle")
-                ? db.onDemand(OracleRepositoryDao.class)
-                : db.onDemand(RepositoryDao.class);
+        final RepositoryDao repositoryDao =
+                config.getDatabaseProvider() == null || config.getDatabaseProvider().equals("oracle")
+                        ? db.onDemand(OracleRepositoryDao.class)
+                        : db.onDemand(RepositoryDao.class);
 
         final RecordDao recordDao = config.getDatabaseProvider().equalsIgnoreCase("h2")
                 ? db.onDemand(H2RecordDao.class)

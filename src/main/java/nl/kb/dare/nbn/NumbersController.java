@@ -4,8 +4,6 @@ import nl.kb.http.HttpFetcher;
 import nl.kb.http.HttpResponseException;
 import nl.kb.http.HttpResponseHandler;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -13,8 +11,6 @@ import java.net.URL;
 import java.util.List;
 
 public class NumbersController {
-    private static final Logger LOG = LoggerFactory.getLogger(NumbersController.class);
-
     private final String numbersEndpoint;
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;

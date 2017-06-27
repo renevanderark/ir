@@ -128,7 +128,7 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
                 .filter(Repository::getEnabled)
                 .map(Repository::getId).collect(toList());
 
-        final int dividedLimit = new Double(Math.ceil(((float) limit / (float) repositoryIds.size()))).intValue();
+        final int dividedLimit = (int) Math.ceil(((float) limit / (float) repositoryIds.size()));
 
         for (Integer repositoryId : repositoryIds) {
             final List<Record> processing = recordDao.fetchNextWithProcessStatusByRepositoryId(

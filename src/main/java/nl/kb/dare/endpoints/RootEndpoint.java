@@ -4,6 +4,8 @@ package nl.kb.dare.endpoints;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @Path("/")
 @Produces(MediaType.TEXT_HTML)
 public class RootEndpoint {
+    private static final Logger LOG = LoggerFactory.getLogger(RootEndpoint.class);
 
     private static final String HTML_TEMPLATE;
 
@@ -80,7 +83,7 @@ public class RootEndpoint {
             return HTML_TEMPLATE
                     .replace("<%= JS_ENVIRONMENT %>", String.format("var globals = %s;", jsEnv));
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            LOG.error("Failed to serialize js env as json", e);
             return HTML_TEMPLATE
                     .replace("<%= JS_ENVIRONMENT %>", String.format("var globals = %s;", "{}"));
         }
