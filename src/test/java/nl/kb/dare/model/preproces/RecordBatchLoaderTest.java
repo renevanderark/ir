@@ -10,6 +10,7 @@ import org.mockito.InOrder;
 
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
@@ -78,7 +79,7 @@ public class RecordBatchLoaderTest {
 
         final InOrder inOrder = inOrder(existing, recordDao);
         inOrder.verify(recordDao).findByOaiId(theId);
-        inOrder.verify(existing).getState();
+        inOrder.verify(existing, times(2)).getState();
         verifyNoMoreInteractions(existing);
         verifyNoMoreInteractions(recordDao);
     }

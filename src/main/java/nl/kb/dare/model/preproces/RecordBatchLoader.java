@@ -48,7 +48,10 @@ public class RecordBatchLoader {
         // DARE2017-9 when a record exists as PENDING or FAILED, which is later deleted, set the status to deleted
         if (oaiRecordHeader.getOaiStatus() == OaiStatus.DELETED) {
             final Record existing = recordDao.findByOaiId(oaiRecordHeader.getIdentifier());
-            if (existing != null && existing.getState() != ProcessStatus.PROCESSED.getCode()) {
+            if (existing != null && (
+                    existing.getState() == ProcessStatus.PENDING.getCode() ||
+                    existing.getState() == ProcessStatus.FAILED.getCode()
+            )) {
                 existing.setState(ProcessStatus.DELETED);
                 synchronized (recordDao) {
                     recordDao.updateState(existing);
