@@ -118,7 +118,7 @@ public class ListIdentifiers {
                 final Optional<String> optResumptionToken = xmlHandler.getResumptionToken();
                 final Optional<String> optDateStamp = xmlHandler.getLastDateStamp();
 
-                if (responseHandler.getExceptions().size() > 0) {
+                if (!responseHandler.getExceptions().isEmpty()) {
                     responseHandler.getExceptions().forEach(onException);
                     break;
                 }

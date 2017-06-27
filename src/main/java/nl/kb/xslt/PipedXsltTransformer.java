@@ -44,7 +44,7 @@ public class PipedXsltTransformer implements XsltTransformer {
         if (!transformerConfigurationExceptions.isEmpty()) {
             throw transformerConfigurationExceptions.get(0);
         }
-        if (templates.size() == 0) {
+        if (templates.isEmpty()) {
             throw new IOException("Must provide at least one xslt stream source");
         }
     }

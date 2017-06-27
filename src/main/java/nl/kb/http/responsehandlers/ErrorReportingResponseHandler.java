@@ -41,13 +41,13 @@ public abstract class ErrorReportingResponseHandler implements HttpResponseHandl
 
     @Override
     public void throwAnyException() throws IOException, SAXException, HttpResponseException {
-        if (ioExceptions.size() > 0) {
+        if (!ioExceptions.isEmpty()) {
             throw ioExceptions.get(0);
         }
-        if (saxExceptions.size() > 0) {
+        if (!saxExceptions.isEmpty()) {
             throw saxExceptions.get(0);
         }
-        if (httpResponseExceptions.size() > 0) {
+        if (!httpResponseExceptions.isEmpty()) {
             throw httpResponseExceptions.get(0);
         }
     }
