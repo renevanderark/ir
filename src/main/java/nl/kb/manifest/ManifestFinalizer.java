@@ -34,7 +34,7 @@ public class ManifestFinalizer {
             docBuilder = documentBuilderFactory.newDocumentBuilder();
             transformerFactory = TransformerFactory.newInstance();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to initialize sax parser", e);
+            throw new ExceptionInInitializerError("Failed to initialize sax parser");
         }
     }
 

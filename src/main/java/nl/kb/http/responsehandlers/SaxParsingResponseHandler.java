@@ -21,7 +21,7 @@ class SaxParsingResponseHandler extends ErrorReportingResponseHandler {
         try {
             saxParser = SAXParserFactory.newInstance().newSAXParser();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to initialize sax parser", e);
+            throw new ExceptionInInitializerError("Failed to initialize sax parser");
         }
     }
 
