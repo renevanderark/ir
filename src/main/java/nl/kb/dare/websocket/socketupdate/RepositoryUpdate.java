@@ -1,15 +1,16 @@
-package nl.kb.dare.model.repository;
+package nl.kb.dare.websocket.socketupdate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import nl.kb.dare.model.SocketUpdate;
+import nl.kb.dare.model.repository.Repository;
+import nl.kb.dare.websocket.SocketUpdate;
 
 import java.util.List;
 
-class RepositoryUpdate implements SocketUpdate {
+public class RepositoryUpdate implements SocketUpdate {
     @JsonProperty
     final List<Repository> data;
 
-    RepositoryUpdate(List<Repository> list) {
+    public RepositoryUpdate(List<Repository> list) {
         this.data = list;
     }
 

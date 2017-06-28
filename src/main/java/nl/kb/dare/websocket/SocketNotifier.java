@@ -1,8 +1,7 @@
-package nl.kb.dare.model;
+package nl.kb.dare.websocket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.kb.dare.endpoints.websocket.StatusSocketRegistrations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

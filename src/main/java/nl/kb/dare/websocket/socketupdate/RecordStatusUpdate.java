@@ -1,12 +1,12 @@
-package nl.kb.dare.model.preproces;
+package nl.kb.dare.websocket.socketupdate;
 
-import nl.kb.dare.model.SocketUpdate;
+import nl.kb.dare.websocket.SocketUpdate;
 
 public class RecordStatusUpdate implements SocketUpdate {
 
     private final Object data;
 
-    RecordStatusUpdate(Object data) {
+    public RecordStatusUpdate(Object data) {
         this.data = data;
     }
 

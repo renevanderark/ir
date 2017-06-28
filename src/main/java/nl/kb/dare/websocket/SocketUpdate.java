@@ -1,4 +1,4 @@
-package nl.kb.dare.model;
+package nl.kb.dare.websocket;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

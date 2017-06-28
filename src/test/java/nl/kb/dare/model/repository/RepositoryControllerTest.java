@@ -1,6 +1,7 @@
 package nl.kb.dare.model.repository;
 
-import nl.kb.dare.model.SocketNotifier;
+import nl.kb.dare.websocket.SocketNotifier;
+import nl.kb.dare.websocket.socketupdate.RepositoryUpdate;
 import org.junit.Test;
 import org.mockito.InOrder;
 

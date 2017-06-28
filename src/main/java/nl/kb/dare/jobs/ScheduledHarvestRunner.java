@@ -2,10 +2,11 @@ package nl.kb.dare.jobs;
 
 import com.google.common.util.concurrent.AbstractScheduledService;
 import nl.kb.dare.model.RunState;
-import nl.kb.dare.model.SocketNotifier;
+import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryDao;
+import nl.kb.dare.websocket.socketupdate.HarvesterStatusUpdate;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
 import org.slf4j.Logger;

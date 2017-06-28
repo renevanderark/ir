@@ -20,7 +20,7 @@ import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
 import nl.kb.dare.jobs.ScheduledHarvestRunner;
 import nl.kb.dare.jobs.ScheduledOaiRecordFetcher;
 import nl.kb.dare.jobs.ScheduledRepositoryHarvester;
-import nl.kb.dare.model.SocketNotifier;
+import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;

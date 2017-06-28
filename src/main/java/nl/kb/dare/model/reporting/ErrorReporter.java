@@ -1,5 +1,6 @@
 package nl.kb.dare.model.reporting;
 
+import nl.kb.dare.websocket.socketupdate.ErrorStatusUpdate;
 import org.skife.jdbi.v2.DBI;
 
 import static nl.kb.dare.model.Aggregations.getAggregateCounts;

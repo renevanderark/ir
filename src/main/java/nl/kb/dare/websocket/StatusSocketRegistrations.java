@@ -1,6 +1,7 @@
-package nl.kb.dare.endpoints.websocket;
+package nl.kb.dare.websocket;
 
 import com.google.common.collect.Sets;
+import nl.kb.dare.endpoints.websocket.StatusSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +20,11 @@ public class StatusSocketRegistrations {
         return instance;
     }
 
-    void add(StatusSocket socket) {
+    public void add(StatusSocket socket) {
         registrations.add(socket);
     }
 
-    void remove(StatusSocket socket) {
+    public void remove(StatusSocket socket) {
         registrations.remove(socket);
     }
 
@@ -34,7 +35,7 @@ public class StatusSocketRegistrations {
     public void broadcast(String msg) {
         StatusSocketRegistrations.getInstance().get().forEach(registration -> {
             try {
-                registration.session.getRemote().sendString(msg);
+                registration.getSession().getRemote().sendString(msg);
             } catch (Exception e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Failed to send websocket message", e);

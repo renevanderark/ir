@@ -1,6 +1,6 @@
 package nl.kb.dare.model.preproces;
 
-import nl.kb.dare.model.SocketNotifier;
+import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.nbn.NumbersController;
 import nl.kb.oaipmh.OaiRecordHeader;

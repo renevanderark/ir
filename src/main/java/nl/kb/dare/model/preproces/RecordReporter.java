@@ -1,6 +1,7 @@
 package nl.kb.dare.model.preproces;
 
 import nl.kb.dare.model.statuscodes.ProcessStatus;
+import nl.kb.dare.websocket.socketupdate.RecordStatusUpdate;
 import org.skife.jdbi.v2.DBI;
 
 import static nl.kb.dare.model.Aggregations.getAggregateCounts;
