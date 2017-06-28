@@ -27,7 +27,7 @@ public class StatusSocketRegistrations {
         registrations.remove(socket);
     }
 
-    Set<StatusSocket> get() {
+    private Set<StatusSocket> get() {
         return registrations;
     }
 
