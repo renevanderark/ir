@@ -67,13 +67,14 @@ public class RecordBatchLoader {
 
         final List<Record> records = batchMap.get(repositoryId);
         final List<Long> numbers = numbersController.getNumbers(records.size());
+
         IntStream.range(0, records.size()).forEach(idx ->
                 records.get(idx).setKbObjId(numbers.get(idx)));
 
         synchronized (recordDao) {
             recordDao.insertBatch(records);
         }
-        records.clear();
+        batchMap.put(repositoryId, new ArrayList<>());
 
         socketNotifier.notifyUpdate(recordReporter.getStatusUpdate());
     }
