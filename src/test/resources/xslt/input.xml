@@ -1,0 +1,9 @@
+<values>
+    <keep>
+        <value>Kept</value>
+    </keep>
+
+    <discard>
+        <value>Discarded</value>
+    </discard>
+</values>
