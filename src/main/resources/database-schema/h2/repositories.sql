@@ -1,7 +1,5 @@
-DROP TABLE IF EXISTS repositories;
-
 CREATE TABLE repositories (
-  id number(10) AUTO_INCREMENT,
+  id number(10),
   name VARCHAR2(255) DEFAULT NULL,
   url varchar2(255) DEFAULT NULL,
   metadataPrefix varchar2(255) DEFAULT NULL,
@@ -12,3 +10,11 @@ CREATE TABLE repositories (
   lastHarvest TIMESTAMP(6) DEFAULT NULL,
   PRIMARY KEY (id)
 );
+
+CREATE SEQUENCE repositories_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER repositories_seq_tr
+BEFORE INSERT ON repositories FOR EACH ROW
+WHEN (NEW.id IS NULL)
+  SELECT repositories_seq.NEXTVAL INTO :NEW.id FROM DUAL;
+

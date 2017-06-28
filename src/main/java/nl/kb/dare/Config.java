@@ -11,8 +11,7 @@ class Config extends Configuration {
 
     @JsonProperty
     private String hostName;
-    @JsonProperty
-    private String databaseProvider;
+
     @JsonProperty
     private String numbersEndpoint;
 
@@ -51,11 +50,6 @@ class Config extends Configuration {
         this.fileStorageFactory = fileStorageFactory;
     }
 
-
-
-    String getDatabaseProvider() {
-        return databaseProvider;
-    }
 
     public String getHostName() {
         return hostName;

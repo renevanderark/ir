@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 
 public class LoadRepositoriesTask extends Task {
     private static final String URL = "http://oai.gharvester.dans.knaw.nl/";
-    public static final String NL_DIDL_COMBINED = "nl_didl_combined";
+    private static final String NL_DIDL_COMBINED = "nl_didl_combined";
     private final RepositoryDao repositoryDao;
 
     public LoadRepositoriesTask(RepositoryDao repositoryDao) {

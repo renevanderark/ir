@@ -33,7 +33,6 @@ database:
 
   # the JDBC URL 127.0.0.1:3306
   url: jdbc:oracle:thin:system/oracle@localhost:49161:xe
-databaseProvider: oracle
 
 hostName: ${HOST}:${PORT}
 

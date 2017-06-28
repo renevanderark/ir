@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
@@ -43,16 +42,12 @@ public class RepositoriesEndpointTest {
         final RepositoryController repositoryController = mock(RepositoryController.class);
         final RepositoriesEndpoint instance = new RepositoriesEndpoint(filter, dao,  mock(RepositoryValidator.class), repositoryController);
         final Repository repositoryConfig = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY);
-        final Integer id = 123;
-        when(dao.insert(repositoryConfig)).thenReturn(id);
-
         final Response response = instance.create(repositoryConfig,"");
 
         verify(dao).insert(repositoryConfig);
         verify(repositoryController).notifyUpdate();
         assertThat(response.getStatus(), equalTo(Response.Status.CREATED.getStatusCode()));
-        assertThat(response.getHeaderString("Location"), equalTo("/repositories/" + id));
-        assertThat(response.getEntity(), is(String.format("{\"id\": %d}", id)));
+        assertThat(response.getHeaderString("Location"), equalTo("/repositories"));
     }
 
     @Test

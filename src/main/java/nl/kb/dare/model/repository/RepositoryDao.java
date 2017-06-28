@@ -2,7 +2,6 @@ package nl.kb.dare.model.repository;
 
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
-import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
@@ -12,10 +11,9 @@ import java.util.List;
 @RegisterMapper(RepositoryMapper.class)
 public interface RepositoryDao {
 
-    @SqlUpdate("insert into repositories (name, url, metadataPrefix, oai_set, datestamp, schedule) " +
-            "values (:name, :url, :metadataPrefix, :set, :dateStamp, :scheduleCode)")
-    @GetGeneratedKeys
-    Integer insert(@BindBean Repository repositoryConfig);
+    @SqlUpdate("insert into repositories (id, name, url, metadataPrefix, oai_set, datestamp, schedule) " +
+            "values (repositories_seq.nextval, :name, :url, :metadataPrefix, :set, :dateStamp, :scheduleCode)")
+    void insert(@BindBean Repository repositoryConfig);
 
     @SqlQuery("select * from repositories where id = :id")
     Repository findById(@Bind("id") int id);
@@ -43,11 +41,6 @@ public interface RepositoryDao {
 
     @SqlUpdate("update repositories set enabled = 0 ")
     void disableAll();
-
-    @SqlUpdate("update repositories " +
-            "set schedule = :scheduleEnumValue " +
-            "where id = :id")
-    void setSchedule(@Bind("id") Integer id, @Bind("scheduleEnumValue") Integer scheduleEnumValue);
 
     @SqlUpdate("update repositories set datestamp = :dateStamp where id = :id")
     void setDateStamp(@Bind("id") Integer id, @Bind("dateStamp") String dateStamp);

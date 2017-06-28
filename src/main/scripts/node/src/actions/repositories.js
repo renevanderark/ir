@@ -41,9 +41,8 @@ const saveRepository = (next) => (dispatch, getState) => {
             schedule: Schedule[underEdit.schedule].enumValue
         })
     }, (err, resp, body) => handleResponse(resp, () => {
-            const {id} = JSON.parse(body);
             dispatch({type: ActionTypes.ON_SAVE_REPOSITORY});
-            next(id);
+            next();
         })
     );
 };

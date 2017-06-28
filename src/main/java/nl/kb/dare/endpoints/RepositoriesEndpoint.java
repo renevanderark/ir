@@ -52,10 +52,9 @@ public class RepositoriesEndpoint {
     public Response create(Repository repositoryConfig, @HeaderParam("Authorization") String auth) {
 
         return filter.getFilterResponse(auth).orElseGet(() -> {
-            final Integer id = dao.insert(repositoryConfig);
+            dao.insert(repositoryConfig);
             repositoryController.notifyUpdate();
-            return Response.created(URI.create("/repositories/" + id))
-                    .entity(String.format("{\"id\": %d}", id))
+            return Response.created(URI.create("/repositories"))
                     .build();
         });
     }
