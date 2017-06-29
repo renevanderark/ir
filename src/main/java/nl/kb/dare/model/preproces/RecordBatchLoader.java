@@ -1,8 +1,8 @@
 package nl.kb.dare.model.preproces;
 
-import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.nbn.NumbersController;
+import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.http.HttpResponseException;
 import nl.kb.oaipmh.OaiRecordHeader;
 import nl.kb.oaipmh.OaiStatus;
@@ -71,11 +71,13 @@ public class RecordBatchLoader {
         IntStream.range(0, records.size()).forEach(idx ->
                 records.get(idx).setKbObjId(numbers.get(idx)));
 
+
         synchronized (recordDao) {
-            recordDao.insertBatch(records);
+            recordDao.insertBatch(new ArrayList<>(records));
         }
-        batchMap.put(repositoryId, new ArrayList<>());
+        records.clear();
 
         socketNotifier.notifyUpdate(recordReporter.getStatusUpdate());
     }
+
 }
