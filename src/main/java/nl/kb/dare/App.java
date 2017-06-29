@@ -139,7 +139,7 @@ public class App extends Application<Config> {
         // Fix potential data problems caused by hard termination of application
         try {
             // Reset all records which have PROCESSING state to PENDING
-            recordDao.fetchAllByProcessStatus(ProcessStatus.PROCESSING.getCode()).forEach(record -> {
+            recordDao.fetchAllByProcessStatus(ProcessStatus.PROCESSING.getCode()).forEachRemaining(record -> {
                 record.setState(ProcessStatus.PENDING);
                 recordDao.updateState(record);
             });

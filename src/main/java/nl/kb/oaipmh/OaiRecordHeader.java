@@ -25,7 +25,7 @@ public class OaiRecordHeader {
         return oaiStatus;
     }
 
-    void setOaiStatus(OaiStatus oaiStatus) {
+    public void setOaiStatus(OaiStatus oaiStatus) {
         this.oaiStatus = oaiStatus;
     }
 }

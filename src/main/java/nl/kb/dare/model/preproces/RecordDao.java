@@ -8,6 +8,7 @@ import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import java.util.Iterator;
 import java.util.List;
 
 @RegisterMapper(RecordMapper.class)
@@ -41,7 +42,7 @@ public interface RecordDao {
     void updateState(@BindBean Record record);
 
     @SqlQuery("select * from DARE_PREPROCES where STATE = :process_status_code")
-    List<Record> fetchAllByProcessStatus(@Bind("process_status_code") Integer processStatusCode);
+    Iterator<Record> fetchAllByProcessStatus(@Bind("process_status_code") Integer processStatusCode);
 
     @SqlQuery("select * from DARE_PREPROCES where OAI_ID = :oaiId")
     Record findByOaiId(@Bind("oaiId") String oaiIdentifier);
