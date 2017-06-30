@@ -72,21 +72,13 @@ public class ListIdentifiersTest {
     @Test
     public void harvestShouldHarvestUntilThereAreNoMoreResumptionTokens() {
         final MockHttpFetcher httpFetcher = new MockHttpFetcher(withResumptionToken, withoutResumptionToken);
-        final Consumer<String> datestampConsumer = (datestamp) -> { };
-        final Consumer<Exception> errorConsumer = (err) -> { };
-        final Consumer<OaiRecordHeader> onOaiRecordHeader = (oaiRecord) -> { };
-        final Consumer<String> onProgress = (str) -> { };
-        final ListIdentifiers instance = new ListIdentifiers(
-                "http://oai-endpoint.org",
-                "setName",
-                "md:pref",
-                null,
-                httpFetcher,
-                new ResponseHandlerFactory(),
-                datestampConsumer,
-                errorConsumer,
-                onOaiRecordHeader,
-                onProgress, logMsg -> {});
+        final ListIdentifiers instance = new ListIdentifiers.ListIdentifiersBuilder()
+                .setOaiUrl("http://oai-endpoint.org")
+                .setOaiSet("setName")
+                .setOaiMetadataPrefix("md:pref")
+                .setHttpFetcher(httpFetcher)
+                .setResponseHandlerFactory(new ResponseHandlerFactory())
+                .createListIdentifiers();
 
         instance.harvest();
 
@@ -98,20 +90,14 @@ public class ListIdentifiersTest {
         final List<String> dateStamps = new ArrayList<>();
         final MockHttpFetcher httpFetcher = new MockHttpFetcher(withResumptionToken, withoutResumptionToken);
         final Consumer<String> datestampConsumer = dateStamps::add;
-        final Consumer<Exception> errorConsumer = (err) -> { };
-        final Consumer<OaiRecordHeader> onOaiRecordHeader = (oaiRecord) -> { };
-        final Consumer<String> onProgress = (str) -> { };
-        final ListIdentifiers instance = new ListIdentifiers(
-                "http://oai-endpoint.org",
-                "setName",
-                "md:pref",
-                null,
-                httpFetcher,
-                new ResponseHandlerFactory(),
-                datestampConsumer,
-                errorConsumer,
-                onOaiRecordHeader,
-                onProgress, logMsg -> {});
+        final ListIdentifiers instance = new ListIdentifiers.ListIdentifiersBuilder()
+                .setOaiUrl("http://oai-endpoint.org")
+                .setOaiSet("setName")
+                .setOaiMetadataPrefix("md:pref")
+                .setHttpFetcher(httpFetcher)
+                .setResponseHandlerFactory(new ResponseHandlerFactory())
+                .setOnHarvestComplete(datestampConsumer)
+                .createListIdentifiers();
 
 
         instance.harvest();
@@ -129,19 +115,16 @@ public class ListIdentifiersTest {
         final List<Exception> exceptions = new ArrayList<>();
         final Consumer<String> datestampConsumer = dateStamps::add;
         final Consumer<Exception> errorConsumer = exceptions::add;
-        final Consumer<OaiRecordHeader> onOaiRecordHeader = (oaiRecord) -> { };
-        final Consumer<String> onProgress = (str) -> { };
-        final ListIdentifiers instance = new ListIdentifiers(
-                "http://oai-endpoint.org",
-                "setName",
-                "md:pref",
-                orignalDateStamp,
-                httpFetcher,
-                new ResponseHandlerFactory(),
-                datestampConsumer,
-                errorConsumer,
-                onOaiRecordHeader,
-                onProgress, logMsg -> {});
+        final ListIdentifiers instance = new ListIdentifiers.ListIdentifiersBuilder()
+                .setOaiUrl("http://oai-endpoint.org")
+                .setOaiSet("setName")
+                .setOaiMetadataPrefix("md:pref")
+                .setOaiDatestamp(orignalDateStamp)
+                .setHttpFetcher(httpFetcher)
+                .setResponseHandlerFactory(new ResponseHandlerFactory())
+                .setOnHarvestComplete(datestampConsumer)
+                .setOnException(errorConsumer)
+                .createListIdentifiers();
 
 
         instance.harvest();
@@ -159,21 +142,16 @@ public class ListIdentifiersTest {
         final List<OaiRecordHeader> oaiRecords = new ArrayList<>();
         final String orignalDateStamp = "initialDatestampValue";
         final MockHttpFetcher httpFetcher = new MockHttpFetcher(withResumptionToken, withoutResumptionToken);
-        final Consumer<String> datestampConsumer = (datestamp) -> { };
-        final Consumer<Exception> errorConsumer = (err) -> { };
         final Consumer<OaiRecordHeader> onOaiRecordHeader = oaiRecords::add;
-        final Consumer<String> onProgress = (str) -> { };
-        final ListIdentifiers instance = new ListIdentifiers(
-                "http://oai-endpoint.org",
-                "setName",
-                "md:pref",
-                orignalDateStamp,
-                httpFetcher,
-                new ResponseHandlerFactory(),
-                datestampConsumer,
-                errorConsumer,
-                onOaiRecordHeader,
-                onProgress, logMsg -> {});
+        final ListIdentifiers instance = new ListIdentifiers.ListIdentifiersBuilder()
+                .setOaiUrl("http://oai-endpoint.org")
+                .setOaiSet("setName")
+                .setOaiMetadataPrefix("md:pref")
+                .setOaiDatestamp(orignalDateStamp)
+                .setHttpFetcher(httpFetcher)
+                .setResponseHandlerFactory(new ResponseHandlerFactory())
+                .setOnOaiRecordHeader(onOaiRecordHeader)
+                .createListIdentifiers();
 
         instance.harvest();
 

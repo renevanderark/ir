@@ -54,19 +54,18 @@ public class IdentifierHarvester implements Runnable {
 
         repositoryController.storeHarvestStartTime(repository.getId());
 
-        runningInstance = new ListIdentifiers(
-                repository.getUrl(),
-                repository.getSet(),
-                repository.getMetadataPrefix(),
-                repository.getDateStamp(),
-                httpFetcher,
-                responseHandlerFactory,
-                oaiDateStamp -> this.storeOaiDateStampAndNewRecords(repository, oaiDateStamp),
-                exception -> this.onHarvestException(repository, exception),
-                oaiRecordHeader ->  recordBatchLoader.addToBatch(repository.getId(), oaiRecordHeader),
-                oaiDateStamp -> this.storeOaiDateStampAndNewRecords(repository, oaiDateStamp),
-                logMessage -> { /* ignore log message */ }
-        );
+        runningInstance = new ListIdentifiers.ListIdentifiersBuilder()
+                .setOaiUrl(repository.getUrl())
+                .setOaiSet(repository.getSet())
+                .setOaiMetadataPrefix(repository.getMetadataPrefix())
+                .setOaiDatestamp(repository.getDateStamp())
+                .setHttpFetcher(httpFetcher)
+                .setResponseHandlerFactory(responseHandlerFactory)
+                .setOnHarvestComplete(oaiDateStamp -> this.storeOaiDateStampAndNewRecords(repository, oaiDateStamp))
+                .setOnException(exception -> this.onHarvestException(repository, exception))
+                .setOnOaiRecordHeader(oaiRecordHeader -> recordBatchLoader.addToBatch(repository.getId(), oaiRecordHeader))
+                .setOnProgress(oaiDateStamp -> this.storeOaiDateStampAndNewRecords(repository, oaiDateStamp))
+                .createListIdentifiers();
 
         runningInstance.harvest();
 

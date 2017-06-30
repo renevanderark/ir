@@ -13,6 +13,7 @@ import java.util.function.Consumer;
  * Harvester for the ListIdentifiers verb
  */
 public class ListIdentifiers {
+    private static final String VERB = "ListIdentifiers";
 
     private final String oaiUrl;
     private final String oaiSet;
@@ -29,54 +30,27 @@ public class ListIdentifiers {
     private boolean interrupted = false;
     private String lastDateStamp;
     private final Consumer<String> onLogMessage;
-    private String verb = "ListIdentifiers";
 
 
-    /**
-     * Constructor is meant for a single harvest, either from start, or from oaiDatestamp
-     * @param oaiUrl the endpoint
-     * @param oaiSet the set
-     * @param oaiMetadataPrefix the metadataPrefix
-     * @param oaiDatestamp the date stamp that will be used for the from parameter (i.e. last record from last harvest)
-     * @param httpFetcher the implementor of the GET requests
-     * @param responseHandlerFactory the provider of the ResponseHandler
-     * @param onHarvestComplete callback invoked after harvest with the latest datestamp encountered
-     * @param onException callback invoked when encountering exceptions during harvest
-     * @param onOaiRecordHeader callback invoked for each encountered OAI/PMH record header
-     * @param onProgress callback invoked for each new request to the endpoint
-     * @param onLogMessage log handler
-     */
-    public ListIdentifiers(
-            String oaiUrl,
-            String oaiSet,
-            String oaiMetadataPrefix,
-            String oaiDatestamp,
-            HttpFetcher httpFetcher,
-            ResponseHandlerFactory responseHandlerFactory,
-            Consumer<String> onHarvestComplete,
-            Consumer<Exception> onException,
-            Consumer<OaiRecordHeader> onOaiRecordHeader,
-            Consumer<String> onProgress,
-            Consumer<String> onLogMessage) {
+    private ListIdentifiers(ListIdentifiersBuilder listIdentifiersBuilder) {
 
-        this.oaiUrl = oaiUrl;
-        this.oaiSet = oaiSet;
-        this.oaiMetadataPrefix = oaiMetadataPrefix;
-        this.httpFetcher = httpFetcher;
-        this.responseHandlerFactory = responseHandlerFactory;
-        this.onHarvestComplete = onHarvestComplete;
-        this.onException = onException;
-        this.onOaiRecordHeader = onOaiRecordHeader;
-        this.oaiDatestamp = oaiDatestamp;
-        this.onProgress = onProgress;
-
-        lastDateStamp = oaiDatestamp;
-        this.onLogMessage = onLogMessage;
+        this.oaiUrl = listIdentifiersBuilder.oaiUrl;
+        this.oaiSet = listIdentifiersBuilder.oaiSet;
+        this.oaiMetadataPrefix = listIdentifiersBuilder.oaiMetadataPrefix;
+        this.httpFetcher = listIdentifiersBuilder.httpFetcher;
+        this.responseHandlerFactory = listIdentifiersBuilder.responseHandlerFactory;
+        this.onHarvestComplete = listIdentifiersBuilder.onHarvestComplete;
+        this.onException = listIdentifiersBuilder.onException;
+        this.onOaiRecordHeader = listIdentifiersBuilder.onOaiRecordHeader;
+        this.oaiDatestamp = listIdentifiersBuilder.oaiDatestamp;
+        this.onProgress = listIdentifiersBuilder.onProgress;
+        this.lastDateStamp = listIdentifiersBuilder.oaiDatestamp;
+        this.onLogMessage = listIdentifiersBuilder.onLogMessage;
     }
 
     private URL makeRequestUrl(String resumptionToken) throws MalformedURLException {
         final StringBuilder urlBuilder = new StringBuilder();
-        urlBuilder.append(oaiUrl).append("?").append("verb=").append(verb);
+        urlBuilder.append(oaiUrl).append("?").append("verb=").append(VERB);
 
         if (resumptionToken != null) {
             urlBuilder.append("&").append(String.format("resumptionToken=%s", resumptionToken));
@@ -148,8 +122,76 @@ public class ListIdentifiers {
         interrupted = true;
     }
 
-    public ListIdentifiers setVerb(String verb) {
-        this.verb = verb;
-        return this;
+    public static class ListIdentifiersBuilder {
+        private String oaiUrl;
+        private String oaiSet;
+        private String oaiMetadataPrefix;
+        private String oaiDatestamp = null;
+        private HttpFetcher httpFetcher;
+        private ResponseHandlerFactory responseHandlerFactory;
+        private Consumer<String> onHarvestComplete = dateStamp -> { /* default failsafe */ };
+        private Consumer<Exception> onException = ex -> { /* default failsafe */  };
+        private Consumer<OaiRecordHeader> onOaiRecordHeader = record -> { /* default failsafe */   };
+        private Consumer<String> onProgress = dateStamp -> { /* default failsafe */  };
+        private Consumer<String> onLogMessage = msg -> { /* default failsafe */  };
+
+        public ListIdentifiersBuilder setOaiUrl(String oaiUrl) {
+            this.oaiUrl = oaiUrl;
+            return this;
+        }
+
+        public ListIdentifiersBuilder setOaiSet(String oaiSet) {
+            this.oaiSet = oaiSet;
+            return this;
+        }
+
+        public ListIdentifiersBuilder setOaiMetadataPrefix(String oaiMetadataPrefix) {
+            this.oaiMetadataPrefix = oaiMetadataPrefix;
+            return this;
+        }
+
+        public ListIdentifiersBuilder setOaiDatestamp(String oaiDatestamp) {
+            this.oaiDatestamp = oaiDatestamp;
+            return this;
+        }
+
+        public ListIdentifiersBuilder setHttpFetcher(HttpFetcher httpFetcher) {
+            this.httpFetcher = httpFetcher;
+            return this;
+        }
+
+        public ListIdentifiersBuilder setResponseHandlerFactory(ResponseHandlerFactory responseHandlerFactory) {
+            this.responseHandlerFactory = responseHandlerFactory;
+            return this;
+        }
+
+        public ListIdentifiersBuilder setOnHarvestComplete(Consumer<String> onHarvestComplete) {
+            this.onHarvestComplete = onHarvestComplete;
+            return this;
+        }
+
+        public ListIdentifiersBuilder setOnException(Consumer<Exception> onException) {
+            this.onException = onException;
+            return this;
+        }
+
+        public ListIdentifiersBuilder setOnOaiRecordHeader(Consumer<OaiRecordHeader> onOaiRecordHeader) {
+            this.onOaiRecordHeader = onOaiRecordHeader;
+            return this;
+        }
+
+        public ListIdentifiersBuilder setOnProgress(Consumer<String> onProgress) {
+            this.onProgress = onProgress;
+            return this;
+        }
+
+        public ListIdentifiersBuilder setOnLogMessage(Consumer<String> onLogMessage) {
+            this.onLogMessage = onLogMessage;
+            return this;
+        }
+
+        public ListIdentifiers createListIdentifiers() {
+            return new ListIdentifiers(this);
+        }
     }
 }
