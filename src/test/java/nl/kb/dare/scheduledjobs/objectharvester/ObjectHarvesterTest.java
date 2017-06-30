@@ -20,13 +20,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class GetRecordTest {
+public class ObjectHarvesterTest {
 
     @Test
     public void fetchShouldReturnFailedWhenNoFileStorageHandleCouldBeCreated()  {
-        final GetRecordOperations getRecordOperations = mock(GetRecordOperations.class);
+        final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
-        final GetRecord instance = new GetRecord(getRecordOperations, oaiRecord);
+        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations, oaiRecord);
         when(getRecordOperations.getFileStorageHandle(any())).thenReturn(Optional.empty());
 
         final ProcessStatus result = instance.fetch();
@@ -38,10 +38,10 @@ public class GetRecordTest {
 
     @Test
     public void fetchShouldReturnFailedWhenDownloadMetadataFails()  {
-        final GetRecordOperations getRecordOperations = mock(GetRecordOperations.class);
+        final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
-        final GetRecord instance = new GetRecord(getRecordOperations, oaiRecord);
+        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations, oaiRecord);
         when(getRecordOperations.getFileStorageHandle(any())).thenReturn(Optional.of(fileStorageHandle));
         when(getRecordOperations.downloadMetadata(any(), any())).thenReturn(Optional.empty());
 
@@ -57,10 +57,10 @@ public class GetRecordTest {
 
     @Test
     public void fetchShouldReturnFailedWhenGenerateManifestFails() {
-        final GetRecordOperations getRecordOperations = mock(GetRecordOperations.class);
+        final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
-        final GetRecord instance = new GetRecord(getRecordOperations, oaiRecord);
+        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations, oaiRecord);
         when(getRecordOperations.getFileStorageHandle(any())).thenReturn(Optional.of(fileStorageHandle));
         when(getRecordOperations.downloadMetadata(any(), any())).thenReturn(Optional.of(mock(ObjectResource.class)));
         when(getRecordOperations.generateManifest(fileStorageHandle)).thenReturn(false);
@@ -79,11 +79,11 @@ public class GetRecordTest {
 
     @Test
     public void fetchShouldReturnFailedWhenDownloadResourcesFails()  {
-        final GetRecordOperations getRecordOperations = mock(GetRecordOperations.class);
+        final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
-        final GetRecord instance = new GetRecord(getRecordOperations, oaiRecord);
+        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations, oaiRecord);
 
         when(getRecordOperations.getFileStorageHandle(any())).thenReturn(Optional.of(fileStorageHandle));
         when(getRecordOperations.generateManifest(fileStorageHandle)).thenReturn(true);
@@ -106,11 +106,11 @@ public class GetRecordTest {
 
     @Test
     public void fetchShouldReturnFailedWhenWriteFilenamesAndChecksumsToMetadataFails()  {
-        final GetRecordOperations getRecordOperations = mock(GetRecordOperations.class);
+        final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
-        final GetRecord instance = new GetRecord(getRecordOperations, oaiRecord);
+        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations, oaiRecord);
         final ObjectResource metadataResource = mock(ObjectResource.class);
 
         when(getRecordOperations.getFileStorageHandle(any())).thenReturn(Optional.of(fileStorageHandle));
@@ -138,12 +138,12 @@ public class GetRecordTest {
 
     @Test
     public void fetchShouldReturnProcessedWhenAllOperationsSucceed()  {
-        final GetRecordOperations getRecordOperations = mock(GetRecordOperations.class);
+        final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
         final ObjectResource metadataResource = mock(ObjectResource.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
-        final GetRecord instance = new GetRecord(getRecordOperations, oaiRecord);
+        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations, oaiRecord);
         when(getRecordOperations.getFileStorageHandle(any())).thenReturn(Optional.of(fileStorageHandle));
         when(getRecordOperations.downloadMetadata(any(), any())).thenReturn(Optional.of(metadataResource));
         when(getRecordOperations.generateManifest(fileStorageHandle)).thenReturn(true);

@@ -3,7 +3,7 @@ package nl.kb.dare.scheduledjobs;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractScheduledService;
-import nl.kb.dare.scheduledjobs.objectharvester.GetRecord;
+import nl.kb.dare.scheduledjobs.objectharvester.ObjectHarvester;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
@@ -89,7 +89,7 @@ public class ObjectHarvesterDaemon extends AbstractScheduledService {
             final Thread worker = new Thread(() -> {
                 final Stopwatch timer = Stopwatch.createStarted();
 
-                ProcessStatus result = GetRecord.getAndRun(
+                ProcessStatus result = ObjectHarvester.getAndRun(
                         repositoryDao, record, httpFetcher, responseHandlerFactory, fileStorage, xsltTransformer,
                         (ErrorReport errorReport) -> saveErrorReport(errorReport, record) // on error
                 );

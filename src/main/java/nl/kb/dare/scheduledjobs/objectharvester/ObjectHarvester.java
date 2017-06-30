@@ -20,14 +20,14 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 
-public class GetRecord {
-    private static final Logger LOG = LoggerFactory.getLogger(GetRecord.class);
+public class ObjectHarvester {
+    private static final Logger LOG = LoggerFactory.getLogger(ObjectHarvester.class);
 
 
     private final Record record;
-    private final GetRecordOperations getRecordOperations;
+    private final ObjectHarvesterOperations getRecordOperations;
 
-    GetRecord(GetRecordOperations getRecordOperations, Record record) {
+    ObjectHarvester(ObjectHarvesterOperations getRecordOperations, Record record) {
         this.getRecordOperations = getRecordOperations;
         this.record = record;
     }
@@ -44,15 +44,15 @@ public class GetRecord {
             return ProcessStatus.FAILED;
         }
 
-        final GetRecordResourceOperations resourceOperations = new GetRecordResourceOperations(
+        final ObjectHarvesterResourceOperations resourceOperations = new ObjectHarvesterResourceOperations(
                 httpFetcher, responseHandlerFactory);
 
-        final GetRecordOperations getRecordOperations = new GetRecordOperations(
+        final ObjectHarvesterOperations getRecordOperations = new ObjectHarvesterOperations(
                 fileStorage, httpFetcher, responseHandlerFactory, xsltTransformer,
                 repositoryConfig, resourceOperations, new ManifestFinalizer(),
                 onError);
 
-        return new GetRecord(getRecordOperations, record).fetch();
+        return new ObjectHarvester(getRecordOperations, record).fetch();
     }
 
     ProcessStatus fetch() {

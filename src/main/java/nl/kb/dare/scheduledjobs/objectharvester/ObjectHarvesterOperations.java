@@ -38,8 +38,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-class GetRecordOperations {
-    private static final Logger LOG = LoggerFactory.getLogger(GetRecordOperations.class);
+class ObjectHarvesterOperations {
+    private static final Logger LOG = LoggerFactory.getLogger(ObjectHarvesterOperations.class);
 
     private static final SAXParser saxParser;
     private static final String METADATA_XML = "metadata.xml";
@@ -60,17 +60,17 @@ class GetRecordOperations {
     private final XsltTransformer xsltTransformer;
     private final Repository repository;
     private final Consumer<ErrorReport> onError;
-    private final GetRecordResourceOperations resourceOperations;
+    private final ObjectHarvesterResourceOperations resourceOperations;
     private final ManifestFinalizer manifestFinalizer;
 
-    GetRecordOperations(FileStorage fileStorage,
-                        HttpFetcher httpFetcher,
-                        ResponseHandlerFactory responseHandlerFactory,
-                        XsltTransformer xsltTransformer,
-                        Repository repository,
-                        GetRecordResourceOperations resourceOperations,
-                        ManifestFinalizer manifestFinalizer,
-                        Consumer<ErrorReport> onError) {
+    ObjectHarvesterOperations(FileStorage fileStorage,
+                              HttpFetcher httpFetcher,
+                              ResponseHandlerFactory responseHandlerFactory,
+                              XsltTransformer xsltTransformer,
+                              Repository repository,
+                              ObjectHarvesterResourceOperations resourceOperations,
+                              ManifestFinalizer manifestFinalizer,
+                              Consumer<ErrorReport> onError) {
 
         this.fileStorage = fileStorage;
         this.httpFetcher = httpFetcher;

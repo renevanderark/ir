@@ -25,11 +25,11 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
-class GetRecordResourceOperations {
+class ObjectHarvesterResourceOperations {
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
 
-    GetRecordResourceOperations(HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory) {
+    ObjectHarvesterResourceOperations(HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory) {
         this.httpFetcher = httpFetcher;
         this.responseHandlerFactory = responseHandlerFactory;
     }

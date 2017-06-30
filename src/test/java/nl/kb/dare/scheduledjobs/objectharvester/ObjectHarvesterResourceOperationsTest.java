@@ -31,7 +31,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
-public class GetRecordResourceOperationsTest {
+public class ObjectHarvesterResourceOperationsTest {
 
     private static final String BASE_URL = "http://example.com/path/";
     private static final String ORIG_ENCODED_FILENAME = "file%201.ext";
@@ -46,7 +46,7 @@ public class GetRecordResourceOperationsTest {
         final ResponseHandlerFactory responseHandlerFactory = mock(ResponseHandlerFactory.class);
         final ObjectResource objectResource = getObjectResource(FULL_URL);
         final HttpFetcher httpFetcher = mock(HttpFetcher.class);
-        final GetRecordResourceOperations instance = new GetRecordResourceOperations(httpFetcher, responseHandlerFactory);
+        final ObjectHarvesterResourceOperations instance = new ObjectHarvesterResourceOperations(httpFetcher, responseHandlerFactory);
         final HttpResponseHandler responseHandler = mock(HttpResponseHandler.class);
         when(responseHandlerFactory.getStreamCopyingResponseHandler(any(), any(ChecksumOutputStream.class),
                 any(ByteCountOutputStream.class))).thenReturn(responseHandler);
@@ -89,7 +89,7 @@ public class GetRecordResourceOperationsTest {
         final ResponseHandlerFactory responseHandlerFactory = mock(ResponseHandlerFactory.class);
         final ObjectResource objectResource = getObjectResource(FULL_URL);
         final HttpFetcher httpFetcher = mock(HttpFetcher.class);
-        final GetRecordResourceOperations instance = new GetRecordResourceOperations(httpFetcher, responseHandlerFactory);
+        final ObjectHarvesterResourceOperations instance = new ObjectHarvesterResourceOperations(httpFetcher, responseHandlerFactory);
         final HttpResponseHandler responseHandler = mock(HttpResponseHandler.class);
         when(responseHandlerFactory.getStreamCopyingResponseHandler(any(), any(), any()))
                 .thenReturn(responseHandler);
@@ -130,7 +130,7 @@ public class GetRecordResourceOperationsTest {
         final ResponseHandlerFactory responseHandlerFactory = mock(ResponseHandlerFactory.class);
         final ObjectResource objectResource = getObjectResource(FULL_URL);
         final HttpFetcher httpFetcher = mock(HttpFetcher.class);
-        final GetRecordResourceOperations instance = new GetRecordResourceOperations(httpFetcher, responseHandlerFactory);
+        final ObjectHarvesterResourceOperations instance = new ObjectHarvesterResourceOperations(httpFetcher, responseHandlerFactory);
         final HttpResponseHandler responseHandler = mock(HttpResponseHandler.class);
 
         when(responseHandlerFactory.getStreamCopyingResponseHandler(any(), any(), any()))
@@ -154,9 +154,9 @@ public class GetRecordResourceOperationsTest {
 
     @Test
     public void createFilenameShouldStripAnyTrailingSlashes() throws MalformedURLException, UnsupportedEncodingException {
-        final String filename = GetRecordResourceOperations.createFilename("http://che.surfsharekit.nl:8080/fedora/get/smpid%3A64412/DS1/");
+        final String filename = ObjectHarvesterResourceOperations.createFilename("http://che.surfsharekit.nl:8080/fedora/get/smpid%3A64412/DS1/");
 
-        final String filename2 = GetRecordResourceOperations.createFilename("http://che.surfsharekit.nl:8080/fedora/get/smpid%3A64412/DS1.pdf");
+        final String filename2 = ObjectHarvesterResourceOperations.createFilename("http://che.surfsharekit.nl:8080/fedora/get/smpid%3A64412/DS1.pdf");
 
         assertThat(filename, is("DS1"));
         assertThat(filename2, is("DS1.pdf"));
