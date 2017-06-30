@@ -146,11 +146,11 @@ public class ObjectHarvesterDaemon extends AbstractScheduledService {
                     repositoryId
             );
 
-            int remainingLimit = dividedLimit - processing.size();
-            if (remainingLimit <= 0) { continue; }
+            int remainingSlots = dividedLimit - processing.size();
+            if (remainingSlots <= 0) { continue; }
             final List<Record> pending = recordDao.fetchNextWithProcessStatusByRepositoryId(
                     ProcessStatus.PENDING.getCode(),
-                    remainingLimit,
+                    remainingSlots,
                     repositoryId
             );
 

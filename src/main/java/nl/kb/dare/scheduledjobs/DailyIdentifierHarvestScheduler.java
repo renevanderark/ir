@@ -18,13 +18,13 @@ import java.util.concurrent.TimeUnit;
  * Elke dag wordt er gekeken welke harvests moeten draaien op basis van hun harvest schema,
  * wanneer er voor het laatst gedraaid is (startdatum laatste harvest) en of de harvest actief is.
  */
-public class DailyRepositoryIdentifierHarvestScheduler extends AbstractScheduledService {
-    private static final Logger LOG = LoggerFactory.getLogger(DailyRepositoryIdentifierHarvestScheduler.class);
+public class DailyIdentifierHarvestScheduler extends AbstractScheduledService {
+    private static final Logger LOG = LoggerFactory.getLogger(DailyIdentifierHarvestScheduler.class);
 
     private final RepositoryDao repositoryDao;
-    private final IdentifierHarvestRunScheduler harvestRunner;
+    private final IdentifierHarvesterDaemon harvestRunner;
 
-    public DailyRepositoryIdentifierHarvestScheduler(RepositoryDao repositoryDao, IdentifierHarvestRunScheduler harvestRunner) {
+    public DailyIdentifierHarvestScheduler(RepositoryDao repositoryDao, IdentifierHarvesterDaemon harvestRunner) {
         this.repositoryDao = repositoryDao;
         this.harvestRunner = harvestRunner;
     }

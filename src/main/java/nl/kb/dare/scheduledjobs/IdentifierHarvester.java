@@ -12,7 +12,7 @@ import nl.kb.oaipmh.ListIdentifiers;
 
 import java.util.function.Consumer;
 
-public class RepositoryIdentifierHarvester implements Runnable {
+public class IdentifierHarvester implements Runnable {
     private final Integer repositoryId;
     private final RepositoryController repositoryController;
     private final RecordBatchLoader recordBatchLoader;
@@ -25,7 +25,7 @@ public class RepositoryIdentifierHarvester implements Runnable {
     private ListIdentifiers runningInstance = null;
     private RunState runState = RunState.WAITING;
 
-    RepositoryIdentifierHarvester(
+    IdentifierHarvester(
             Integer repositoryId,
             RepositoryController repositoryController,
             RecordBatchLoader recordBatchLoader,

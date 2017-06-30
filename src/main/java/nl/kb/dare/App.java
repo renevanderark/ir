@@ -17,9 +17,9 @@ import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
 import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
-import nl.kb.dare.scheduledjobs.IdentifierHarvestRunScheduler;
+import nl.kb.dare.scheduledjobs.IdentifierHarvesterDaemon;
 import nl.kb.dare.scheduledjobs.ObjectHarvesterDaemon;
-import nl.kb.dare.scheduledjobs.DailyRepositoryIdentifierHarvestScheduler;
+import nl.kb.dare.scheduledjobs.DailyIdentifierHarvestScheduler;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.preproces.RecordDao;
@@ -108,7 +108,7 @@ public class App extends Application<Config> {
         final PipedXsltTransformer xsltTransformer = PipedXsltTransformer.newInstance(stripOaiXslt, didlToManifestXslt);
 
         // Process that manages the amount of running harvesters every 200ms
-        final IdentifierHarvestRunScheduler harvestRunner = new IdentifierHarvestRunScheduler(
+        final IdentifierHarvesterDaemon harvestRunner = new IdentifierHarvesterDaemon(
                 repositoryController,
                 recordBatchLoader,
                 httpFetcher,
@@ -186,7 +186,7 @@ public class App extends Application<Config> {
         environment.lifecycle().manage(new ManagedPeriodicTask(harvestRunner));
 
         // Process that starts harvests daily, weekly or monthly
-        environment.lifecycle().manage(new ManagedPeriodicTask(new DailyRepositoryIdentifierHarvestScheduler(
+        environment.lifecycle().manage(new ManagedPeriodicTask(new DailyIdentifierHarvestScheduler(
                 repositoryDao,
                 harvestRunner
         )));
