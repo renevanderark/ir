@@ -31,7 +31,6 @@ import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.nbn.NumbersController;
-import nl.kb.dare.taskmanagers.ManagedPeriodicTask;
 import nl.kb.dare.databasetasks.LoadOracleSchemaTask;
 import nl.kb.dare.databasetasks.LoadRepositoriesTask;
 import nl.kb.filestorage.FileStorage;

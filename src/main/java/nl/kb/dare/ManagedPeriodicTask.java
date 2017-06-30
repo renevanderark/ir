@@ -1,4 +1,4 @@
-package nl.kb.dare.taskmanagers;
+package nl.kb.dare;
 
 import com.google.common.util.concurrent.AbstractScheduledService;
 import io.dropwizard.lifecycle.Managed;
