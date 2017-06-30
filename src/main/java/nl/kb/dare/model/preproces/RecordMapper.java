@@ -24,7 +24,14 @@ public class RecordMapper implements ResultSetMapper<Record> {
         final String tsCreate = dTsCreate == null ? null : dTsCreate.toString();
         final String tsProcessed = dTsProcessed == null ? null : dTsProcessed.toString();
 
-        return new Record(id, ProcessStatus.forCode(state), kbObjId, repositoryId, oaiIdentifier, oaiDateStamp,
-                tsCreate, tsProcessed);
+        return new Record.RecordBuilder()
+                .setId(id)
+                .setState(ProcessStatus.forCode(state))
+                .setKbObjId(kbObjId)
+                .setRepositoryId(repositoryId)
+                .setOaiIdentifier(oaiIdentifier)
+                .setOaiDateStamp(oaiDateStamp)
+                .setTsCreate(tsCreate)
+                .setTsProcessed(tsProcessed).createRecord();
     }
 }

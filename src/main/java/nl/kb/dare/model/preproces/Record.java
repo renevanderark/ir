@@ -15,32 +15,25 @@ public class Record {
     private String oaiIdentifier;
     private final String oaiDateStamp;
 
-
-    Record(Long id, ProcessStatus state, String kbObjId,  Integer repositoryId,
-           String oaiIdentifier, String oaiDateStamp, String tsCreate, String tsProcessed) {
-        this.id = id;
-        this.state = state;
-        this.kbObjId = kbObjId;
-        this.repositoryId = repositoryId;
-        this.oaiIdentifier = oaiIdentifier;
-        this.oaiDateStamp = oaiDateStamp;
-        this.tsCreate = tsCreate;
-        this.tsProcessed = tsProcessed;
-    }
-
-    private Record(ProcessStatus state, String kbObjId, Integer repositoryId,
-                   String oaiIdentifier, String oaiDateStamp) {
-        this(null, state, kbObjId, repositoryId, oaiIdentifier, oaiDateStamp, null, null);
+    private Record(RecordBuilder recordBuilder) {
+        this.id = recordBuilder.id;
+        this.state = recordBuilder.state;
+        this.kbObjId = recordBuilder.kbObjId;
+        this.repositoryId = recordBuilder.repositoryId;
+        this.oaiIdentifier = recordBuilder.oaiIdentifier;
+        this.oaiDateStamp = recordBuilder.oaiDateStamp;
+        this.tsCreate = recordBuilder.tsCreate;
+        this.tsProcessed = recordBuilder.tsProcessed;
     }
 
     static Record fromHeader(OaiRecordHeader header, Integer repositoryId) {
-        return new Record(
-                header.getOaiStatus() == OaiStatus.AVAILABLE ? ProcessStatus.PENDING : ProcessStatus.DELETED,
-                null,
-                repositoryId,
-                header.getIdentifier(),
-                header.getDateStamp()
-        );
+        return new RecordBuilder()
+                .setState(header.getOaiStatus() == OaiStatus.AVAILABLE ? ProcessStatus.PENDING : ProcessStatus.DELETED)
+                .setKbObjId(null)
+                .setRepositoryId(repositoryId)
+                .setOaiIdentifier(header.getIdentifier())
+                .setOaiDateStamp(header.getDateStamp())
+                .createRecord();
     }
 
     public Integer getState() {
@@ -80,5 +73,92 @@ public class Record {
 
     public String getTsProcessed() {
         return tsProcessed;
+    }
+
+    static class RecordBuilder {
+        private Long id = null;
+        private ProcessStatus state;
+        private String kbObjId;
+        private Integer repositoryId;
+        private String oaiIdentifier;
+        private String oaiDateStamp;
+        private String tsCreate = null;
+        private String tsProcessed = null;
+
+        RecordBuilder setId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        RecordBuilder setState(ProcessStatus state) {
+            this.state = state;
+            return this;
+        }
+
+        RecordBuilder setKbObjId(String kbObjId) {
+            this.kbObjId = kbObjId;
+            return this;
+        }
+
+        RecordBuilder setRepositoryId(Integer repositoryId) {
+            this.repositoryId = repositoryId;
+            return this;
+        }
+
+        RecordBuilder setOaiIdentifier(String oaiIdentifier) {
+            this.oaiIdentifier = oaiIdentifier;
+            return this;
+        }
+
+        RecordBuilder setOaiDateStamp(String oaiDateStamp) {
+            this.oaiDateStamp = oaiDateStamp;
+            return this;
+        }
+
+        RecordBuilder setTsCreate(String tsCreate) {
+            this.tsCreate = tsCreate;
+            return this;
+        }
+
+        RecordBuilder setTsProcessed(String tsProcessed) {
+            this.tsProcessed = tsProcessed;
+            return this;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public ProcessStatus getState() {
+            return state;
+        }
+
+        public String getKbObjId() {
+            return kbObjId;
+        }
+
+        public Integer getRepositoryId() {
+            return repositoryId;
+        }
+
+        public String getOaiIdentifier() {
+            return oaiIdentifier;
+        }
+
+        public String getOaiDateStamp() {
+            return oaiDateStamp;
+        }
+
+        public String getTsCreate() {
+            return tsCreate;
+        }
+
+        public String getTsProcessed() {
+            return tsProcessed;
+        }
+
+        Record createRecord() {
+            return new Record(this);
+        }
     }
 }
