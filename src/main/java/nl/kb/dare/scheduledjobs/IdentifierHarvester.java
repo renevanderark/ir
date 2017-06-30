@@ -25,25 +25,16 @@ public class IdentifierHarvester implements Runnable {
     private ListIdentifiers runningInstance = null;
     private RunState runState = RunState.WAITING;
 
-    IdentifierHarvester(
-            Integer repositoryId,
-            RepositoryController repositoryController,
-            RecordBatchLoader recordBatchLoader,
-            HttpFetcher httpFetcher,
-            ResponseHandlerFactory responseHandlerFactory,
-            RepositoryDao repositoryDao,
-            Consumer<RunState> stateChangeNotifier,
-            Consumer<Exception> onException
-    ) {
+    private IdentifierHarvester(Builder identifierHarvesterBuilder) {
 
-        this.repositoryId = repositoryId;
-        this.repositoryController = repositoryController;
-        this.recordBatchLoader = recordBatchLoader;
-        this.httpFetcher = httpFetcher;
-        this.responseHandlerFactory = responseHandlerFactory;
-        this.repositoryDao = repositoryDao;
-        this.stateChangeNotifier = stateChangeNotifier;
-        this.onException = onException;
+        this.repositoryId = identifierHarvesterBuilder.repositoryId;
+        this.repositoryController = identifierHarvesterBuilder.repositoryController;
+        this.recordBatchLoader = identifierHarvesterBuilder.recordBatchLoader;
+        this.httpFetcher = identifierHarvesterBuilder.httpFetcher;
+        this.responseHandlerFactory = identifierHarvesterBuilder.responseHandlerFactory;
+        this.repositoryDao = identifierHarvesterBuilder.repositoryDao;
+        this.stateChangeNotifier = identifierHarvesterBuilder.stateChangeNotifier;
+        this.onException = identifierHarvesterBuilder.onException;
     }
 
     @Override
@@ -106,5 +97,49 @@ public class IdentifierHarvester implements Runnable {
     void setRunState(RunState runState) {
         this.runState = runState;
         stateChangeNotifier.accept(this.runState);
+    }
+
+    public static class Builder {
+        private final RepositoryController repositoryController;
+        private final RecordBatchLoader recordBatchLoader;
+        private final HttpFetcher httpFetcher;
+        private final ResponseHandlerFactory responseHandlerFactory;
+        private final RepositoryDao repositoryDao;
+        private Integer repositoryId;
+        private Consumer<RunState> stateChangeNotifier;
+        private Consumer<Exception> onException;
+
+        public Builder(RepositoryController repositoryController,
+                       RecordBatchLoader recordBatchLoader,
+                       HttpFetcher httpFetcher,
+                       ResponseHandlerFactory responseHandlerFactory,
+                       RepositoryDao repositoryDao) {
+
+            this.repositoryController = repositoryController;
+            this.recordBatchLoader = recordBatchLoader;
+            this.httpFetcher = httpFetcher;
+            this.responseHandlerFactory = responseHandlerFactory;
+            this.repositoryDao = repositoryDao;
+        }
+
+        Builder setRepositoryId(Integer repositoryId) {
+            this.repositoryId = repositoryId;
+            return this;
+        }
+
+
+        Builder setStateChangeNotifier(Consumer<RunState> stateChangeNotifier) {
+            this.stateChangeNotifier = stateChangeNotifier;
+            return this;
+        }
+
+        Builder setOnException(Consumer<Exception> onException) {
+            this.onException = onException;
+            return this;
+        }
+
+        IdentifierHarvester createIdentifierHarvester() {
+            return new IdentifierHarvester(this);
+        }
     }
 }

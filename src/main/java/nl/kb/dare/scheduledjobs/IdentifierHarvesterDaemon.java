@@ -3,13 +3,9 @@ package nl.kb.dare.scheduledjobs;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import nl.kb.dare.mail.Mailer;
 import nl.kb.dare.model.RunState;
-import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.repository.RepositoryController;
-import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.websocket.socketupdate.HarvesterStatusUpdate;
-import nl.kb.http.HttpFetcher;
-import nl.kb.http.responsehandlers.ResponseHandlerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,42 +14,34 @@ import java.util.concurrent.TimeUnit;
 
 public class IdentifierHarvesterDaemon extends AbstractScheduledService {
     private static final Map<Integer, IdentifierHarvester> harvesters = Collections.synchronizedMap(new HashMap<>());
-    private final RepositoryController repositoryController;
-    private final RecordBatchLoader recordBatchLoader;
-    private final HttpFetcher httpFetcher;
-    private final ResponseHandlerFactory responseHandlerFactory;
     private final SocketNotifier socketNotifier;
     private final IdentifierHarvesterErrorFlowHandler errorFlowHandler;
     private final int maxParallel;
-    private RepositoryDao repositoryDao;
+    private final IdentifierHarvester.Builder harvesterBuilder;
 
-    public IdentifierHarvesterDaemon(RepositoryController repositoryController,
-                                     RecordBatchLoader recordBatchLoader,
-                                     HttpFetcher httpFetcher,
-                                     ResponseHandlerFactory responseHandlerFactory,
-                                     RepositoryDao repositoryDao,
-                                     SocketNotifier socketNotifier,
-                                     Mailer mailer, int maxParallel) {
+    public IdentifierHarvesterDaemon(
+            RepositoryController repositoryController,
+            IdentifierHarvester.Builder harvesterBuilder,
+            SocketNotifier socketNotifier,
+            Mailer mailer,
+            int maxParallel
+    ) {
 
-        this.repositoryController = repositoryController;
-        this.recordBatchLoader = recordBatchLoader;
-        this.httpFetcher = httpFetcher;
-        this.responseHandlerFactory = responseHandlerFactory;
-        this.repositoryDao = repositoryDao;
         this.socketNotifier = socketNotifier;
         this.maxParallel = maxParallel;
         this.errorFlowHandler = new IdentifierHarvesterErrorFlowHandler(
                 repositoryController, this, mailer);
+
+        this.harvesterBuilder = harvesterBuilder;
     }
 
     public void startHarvest(int repositoryId) {
         if (!harvesters.containsKey(repositoryId)) {
-            final IdentifierHarvester harvester = new IdentifierHarvester(
-                    repositoryId, repositoryController,
-                    recordBatchLoader, httpFetcher, responseHandlerFactory,
-                    repositoryDao, (RunState runState) -> notifyStateChange(),
-                    errorFlowHandler::handlerIdentifierHarvestException
-            );
+            final IdentifierHarvester harvester = harvesterBuilder
+                    .setRepositoryId(repositoryId)
+                    .setStateChangeNotifier((RunState runState) -> notifyStateChange())
+                    .setOnException(errorFlowHandler::handlerIdentifierHarvestException)
+                    .createIdentifierHarvester();
 
             harvesters.put(repositoryId, harvester);
         }

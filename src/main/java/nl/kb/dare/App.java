@@ -32,6 +32,7 @@ import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.nbn.NumbersController;
 import nl.kb.dare.scheduledjobs.DailyIdentifierHarvestScheduler;
+import nl.kb.dare.scheduledjobs.IdentifierHarvester;
 import nl.kb.dare.scheduledjobs.IdentifierHarvesterDaemon;
 import nl.kb.dare.scheduledjobs.ObjectHarvesterDaemon;
 import nl.kb.dare.websocket.SocketNotifier;
@@ -118,13 +119,14 @@ public class App extends Application<Config> {
 
         final PipedXsltTransformer xsltTransformer = PipedXsltTransformer.newInstance(stripOaiXslt, didlToManifestXslt);
 
+        // Builder for new instances of identifier harvesters
+        final IdentifierHarvester.Builder harvesterBuilder = new IdentifierHarvester.Builder(repositoryController,
+                recordBatchLoader, httpFetcherForIdentifierHarvest, responseHandlerFactory, repositoryDao);
+
         // Process that manages the amount of running identifier harvesters every 200ms
         final IdentifierHarvesterDaemon identifierHarvesterDaemon = new IdentifierHarvesterDaemon(
                 repositoryController,
-                recordBatchLoader,
-                httpFetcherForIdentifierHarvest,
-                responseHandlerFactory,
-                repositoryDao,
+                harvesterBuilder,
                 socketNotifier,
                 config.getMailerFactory() == null ? new StubbedMailer() : config.getMailerFactory().getMailer(),
                 config.getMaxParallelHarvests()
