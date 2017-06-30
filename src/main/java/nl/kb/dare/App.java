@@ -54,8 +54,10 @@ public class App extends Application<Config> {
 
     @Override
     public void initialize(Bootstrap<Config> bootstrap) {
+        // Serve static files
         bootstrap.addBundle(new AssetsBundle("/assets", "/assets"));
 
+        // Support ENV variables in configuration yaml files.
         bootstrap.setConfigurationSourceProvider(
                 new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
                         new EnvironmentVariableSubstitutor(false))
@@ -67,10 +69,10 @@ public class App extends Application<Config> {
         final DBIFactory factory = new DBIFactory();
         final DBI db = factory.build(environment, config.getDataSourceFactory(), "datasource");
 
-        // GET request class for harvesting
-        final HttpFetcher httpFetcher = new LenientHttpFetcher(true);
-        final HttpFetcher downloader = new LenientHttpFetcher(false);
-        final HttpFetcher numbersGetter = new LenientHttpFetcher(false);
+        // Fault tolerant HTTP GET clients
+        final HttpFetcher httpFetcherForIdentifierHarvest = new LenientHttpFetcher(true);
+        final HttpFetcher httpFetcherForObjectHarvest = new LenientHttpFetcher(false);
+        final HttpFetcher httpFetcherForNumberGenerator = new LenientHttpFetcher(false);
 
         // Handler factory for responses from httpFetcher
         final ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory();
@@ -78,26 +80,30 @@ public class App extends Application<Config> {
 
         // Data access objects
         final RepositoryDao repositoryDao = db.onDemand(RepositoryDao.class);
-
         final RecordDao recordDao = db.onDemand(RecordDao.class);
-
         final ErrorReportDao errorReportDao = db.onDemand(ErrorReportDao.class);
 
         // File storage access
         final FileStorage fileStorage = config.getFileStorageFactory().getFileStorage();
 
 
-        // Cross process exchange utilities (reporters and notifiers)
+        // Handler for websocket broadcasts to the browser
         final SocketNotifier socketNotifier = new SocketNotifier();
+
+
+        // Generates database aggregation of record (publication) statuses
         final RecordReporter recordReporter = new RecordReporter(db);
+        // Generates database aggregation of reported errors
         final ErrorReporter errorReporter = new ErrorReporter(db);
 
 
-        // Data mutation controllers
-        final NumbersController numbersController = new NumbersController(config.getNumbersEndpoint(), numbersGetter,
-                responseHandlerFactory);
-
+        // Data transfer controllers
+        // Fetches track numbers for new records using the number generator service
+        final NumbersController numbersController = new NumbersController(
+                config.getNumbersEndpoint(), httpFetcherForNumberGenerator, responseHandlerFactory);
+        // Stores harvest states for the repositories in the database
         final RepositoryController repositoryController = new RepositoryController(repositoryDao, socketNotifier);
+        // Stores batches of new records and updates ~oai deleted~ existing records in the database
         final RecordBatchLoader recordBatchLoader = new RecordBatchLoader(recordDao, numbersController, recordReporter, socketNotifier);
 
         // Xslt processors
@@ -106,11 +112,11 @@ public class App extends Application<Config> {
 
         final PipedXsltTransformer xsltTransformer = PipedXsltTransformer.newInstance(stripOaiXslt, didlToManifestXslt);
 
-        // Process that manages the amount of running harvesters every 200ms
-        final IdentifierHarvesterDaemon harvestRunner = new IdentifierHarvesterDaemon(
+        // Process that manages the amount of running identifier harvesters every 200ms
+        final IdentifierHarvesterDaemon identifierHarvesterDaemon = new IdentifierHarvesterDaemon(
                 repositoryController,
                 recordBatchLoader,
-                httpFetcher,
+                httpFetcherForIdentifierHarvest,
                 responseHandlerFactory,
                 repositoryDao,
                 socketNotifier,
@@ -118,13 +124,15 @@ public class App extends Application<Config> {
         );
 
         // Initialize wrapped services (injected in endpoints)
-        final RepositoryValidator repositoryValidator = new RepositoryValidator(httpFetcher, responseHandlerFactory);
 
-        // Process that starts record downloads every 200ms
-        final ObjectHarvesterDaemon recordFetcher = new ObjectHarvesterDaemon(
+        // Validator for OAI/PMH settings of a repository
+        final RepositoryValidator repositoryValidator = new RepositoryValidator(httpFetcherForIdentifierHarvest, responseHandlerFactory);
+
+        // Process that starts publication downloads every n miliseconds
+        final ObjectHarvesterDaemon objectHarvesterDaemon = new ObjectHarvesterDaemon(
                 recordDao,
                 repositoryDao,
-                downloader,
+                httpFetcherForObjectHarvest,
                 responseHandlerFactory,
                 fileStorage,
                 xsltTransformer,
@@ -160,10 +168,10 @@ public class App extends Application<Config> {
         register(environment, new RecordEndpoint(filter, recordDao, errorReportDao, fileStorage));
 
         // Operational controls for repository harvesters
-        register(environment, new HarvesterEndpoint(filter, repositoryDao, harvestRunner));
+        register(environment, new HarvesterEndpoint(filter, repositoryDao, identifierHarvesterDaemon));
 
         // Operational controls for record fetcher
-        register(environment, new OaiRecordFetcherEndpoint(filter, recordFetcher));
+        register(environment, new OaiRecordFetcherEndpoint(filter, objectHarvesterDaemon));
 
         // Record status endpoint
         register(environment, new RecordStatusEndpoint(filter, recordReporter, errorReporter));
@@ -178,20 +186,20 @@ public class App extends Application<Config> {
         registerServlet(environment, new StatusWebsocketServlet(), "statusWebsocket");
 
         // Lifecycle (scheduled databasetasks/deamons)
-        // Process that starts record downloads every 200ms
-        environment.lifecycle().manage(new ManagedPeriodicTask(recordFetcher));
+        // Process that starts publication downloads every 200ms
+        environment.lifecycle().manage(new ManagedPeriodicTask(objectHarvesterDaemon));
 
-        // Process that manages the amount of running harvesters every 200ms
-        environment.lifecycle().manage(new ManagedPeriodicTask(harvestRunner));
+        // Process that manages the amount of running identifier harvesters every 200ms
+        environment.lifecycle().manage(new ManagedPeriodicTask(identifierHarvesterDaemon));
 
         // Process that starts harvests daily, weekly or monthly
         environment.lifecycle().manage(new ManagedPeriodicTask(new DailyIdentifierHarvestScheduler(
                 repositoryDao,
-                harvestRunner
+                identifierHarvesterDaemon
         )));
 
 
-        // Task endpoints
+        // Database task endpoints
         environment.admin().addTask(new LoadOracleSchemaTask(db));
         environment.admin().addTask(new LoadRepositoriesTask(repositoryDao));
     }
