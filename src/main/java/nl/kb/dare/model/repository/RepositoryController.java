@@ -21,14 +21,7 @@ public class RepositoryController {
         socketNotifier.notifyUpdate(new RepositoryUpdate(repositoryDao.list()));
     }
 
-    public void onHarvestComplete(Integer id, String dateStamp) {
-        synchronized (repositoryDao) {
-            repositoryDao.setDateStamp(id, dateStamp);
-        }
-        notifyUpdate();
-    }
-
-    public void onHarvestException(Integer id, Exception exception) {
+    public void disableAllRepositories(Integer id, Exception exception) {
         LOG.error("Harvest failed for repository with id {}", id, exception);
         synchronized (repositoryDao) {
             repositoryDao.disableAll();
@@ -36,14 +29,14 @@ public class RepositoryController {
         notifyUpdate();
     }
 
-    public void onHarvestProgress(Integer id, String dateStamp) {
+    public void storeHarvestDateStamp(Integer id, String dateStamp) {
         synchronized (repositoryDao) {
             repositoryDao.setDateStamp(id, dateStamp);
         }
         notifyUpdate();
     }
 
-    public void beforeHarvest(Integer id) {
+    public void storeHarvestStartTime(Integer id) {
         synchronized (repositoryDao) {
             repositoryDao.setLastHarvest(id);
         }

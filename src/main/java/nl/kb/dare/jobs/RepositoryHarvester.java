@@ -56,7 +56,7 @@ public class RepositoryHarvester implements Runnable {
 
         final Repository repository = repositoryDao.findById(repositoryId);
 
-        repositoryController.beforeHarvest(repository.getId());
+        repositoryController.storeHarvestStartTime(repository.getId());
 
         runningInstance = new ListIdentifiers(
                 repository.getUrl(),
@@ -68,7 +68,7 @@ public class RepositoryHarvester implements Runnable {
                 dateStamp -> { // onHarvestComplete
                     try {
                         recordBatchLoader.flushBatch(repository.getId());
-                        repositoryController.onHarvestComplete(repository.getId(), dateStamp);
+                        repositoryController.storeHarvestDateStamp(repository.getId(), dateStamp);
                     } catch (Exception exception) {
                         handleHarvestException(repository, exception);
                     }
@@ -79,7 +79,7 @@ public class RepositoryHarvester implements Runnable {
                 dateStamp -> { // onProgress
                     try {
                         recordBatchLoader.flushBatch(repository.getId());
-                        repositoryController.onHarvestProgress(repository.getId(), dateStamp);
+                        repositoryController.storeHarvestDateStamp(repository.getId(), dateStamp);
                     } catch (Exception exception) {
                         handleHarvestException(repository, exception);
                     }
@@ -97,7 +97,7 @@ public class RepositoryHarvester implements Runnable {
     }
 
     private void handleHarvestException(Repository repository, Exception exception) {
-        repositoryController.onHarvestException(repository.getId(), exception);
+        repositoryController.disableAllRepositories(repository.getId(), exception);
         onException.accept(exception);
     }
 

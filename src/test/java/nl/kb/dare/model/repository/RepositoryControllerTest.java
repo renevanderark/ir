@@ -42,26 +42,12 @@ public class RepositoryControllerTest {
     }
 
     @Test
-    public void onHarvestCompleteShouldSetTheDatestampAndNotifyUpdate() {
+    public void disableAllRepositoriesShouldDisableAllRepositoriesAndNotifyUpdate() {
         final SocketNotifier socketNotifier = mock(SocketNotifier.class);
         final RepositoryDao repositoryDao = mock(RepositoryDao.class);
         final RepositoryController instance = new RepositoryController(repositoryDao, socketNotifier);
 
-        instance.onHarvestComplete(2, THE_DATESTAMP);
-
-        final InOrder inOrder = inOrder(repositoryDao, socketNotifier);
-        inOrder.verify(repositoryDao).setDateStamp(2, THE_DATESTAMP);
-        inOrder.verify(socketNotifier).notifyUpdate(any());
-        inOrder.verifyNoMoreInteractions();
-    }
-
-    @Test
-    public void onHarvestExceptionShouldDisableAllRepositoriesAndNotifyUpdate() {
-        final SocketNotifier socketNotifier = mock(SocketNotifier.class);
-        final RepositoryDao repositoryDao = mock(RepositoryDao.class);
-        final RepositoryController instance = new RepositoryController(repositoryDao, socketNotifier);
-
-        instance.onHarvestException(2, mock(Exception.class));
+        instance.disableAllRepositories(2, mock(Exception.class));
 
         final InOrder inOrder = inOrder(repositoryDao, socketNotifier);
         inOrder.verify(repositoryDao).disableAll();
@@ -70,12 +56,12 @@ public class RepositoryControllerTest {
     }
 
     @Test
-    public void onHarvestProgressShouldSetTheDatestampAndNotifyUpdate() {
+    public void storeHarvestDateStampShouldSetTheDatestampAndNotifyUpdate() {
         final SocketNotifier socketNotifier = mock(SocketNotifier.class);
         final RepositoryDao repositoryDao = mock(RepositoryDao.class);
         final RepositoryController instance = new RepositoryController(repositoryDao, socketNotifier);
 
-        instance.onHarvestProgress(2, THE_DATESTAMP);
+        instance.storeHarvestDateStamp(2, THE_DATESTAMP);
 
         final InOrder inOrder = inOrder(repositoryDao, socketNotifier);
         inOrder.verify(repositoryDao).setDateStamp(2, THE_DATESTAMP);
@@ -84,12 +70,12 @@ public class RepositoryControllerTest {
     }
 
     @Test
-    public void beforeHarvestShouldStoreANewLastHarvestDate() {
+    public void storeHarvestStartTimeShouldStoreANewLastHarvestDate() {
         final SocketNotifier socketNotifier = mock(SocketNotifier.class);
         final RepositoryDao repositoryDao = mock(RepositoryDao.class);
         final RepositoryController instance = new RepositoryController(repositoryDao, socketNotifier);
 
-        instance.beforeHarvest(2);
+        instance.storeHarvestStartTime(2);
 
         final InOrder inOrder = inOrder(repositoryDao, socketNotifier);
         inOrder.verify(repositoryDao).setLastHarvest(2);

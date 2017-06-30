@@ -52,7 +52,7 @@ public class ScheduledHarvestRunner extends AbstractScheduledService {
                     repositoryId, repositoryController,
                     recordBatchLoader, httpFetcher, responseHandlerFactory,
                     repositoryDao, (RunState runState) -> notifyStateChange(),
-                    this::handleException
+                    this::interruptAllHarvests
             );
 
             harvesters.put(repositoryId, harvester);
@@ -66,7 +66,7 @@ public class ScheduledHarvestRunner extends AbstractScheduledService {
         }
     }
 
-    private void handleException(Exception ex) {
+    private void interruptAllHarvests(Exception ex) {
         for (Map.Entry<Integer, RepositoryHarvester> entry : harvesters.entrySet()) {
             entry.getValue().sendInterrupt();
         }
