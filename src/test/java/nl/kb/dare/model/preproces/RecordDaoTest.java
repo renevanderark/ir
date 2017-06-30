@@ -39,7 +39,7 @@ public class RecordDaoTest {
         dataSource = JdbcConnectionPool.create("jdbc:h2:mem:test", "username", "password");
         final DBI dbi = new DBI(dataSource);
         handle = dbi.open();
-        SchemaLoader.runSQL("/database-schema/h2/dare_preproces.sql", handle);
+        SchemaLoader.runSQL("/database/dare_preproces.sql", handle);
         instance = dbi.onDemand(RecordDao.class);
 
     }

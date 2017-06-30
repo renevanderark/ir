@@ -33,7 +33,7 @@ public class RepositoryDaoTest {
         dataSource = JdbcConnectionPool.create("jdbc:h2:mem:test", "username", "password");
         final DBI dbi = new DBI(dataSource);
         handle = dbi.open();
-        SchemaLoader.runSQL("/database-schema/h2/repositories.sql", handle);
+        SchemaLoader.runSQL("/database/repositories.sql", handle);
         instance = dbi.onDemand(RepositoryDao.class);
         insertTwo();
     }
