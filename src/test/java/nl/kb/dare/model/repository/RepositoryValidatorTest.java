@@ -52,7 +52,7 @@ public class RepositoryValidatorTest {
     public void validateShouldSucceedWhetherRepositoryConfigIsSupportedByEndpoint() throws Exception {
         final HttpFetcher mockHttpFetcher = getMockHttpFetcher(listSetsXml, mdFormatsXml);
         final RepositoryValidator instance = new RepositoryValidator(mockHttpFetcher, new ResponseHandlerFactory());
-        final Repository validConfig = new Repository("http://example.com", "name", "nl_didl_norm", "uvt:withfulltext:yes", null, true, HarvestSchedule.DAILY);
+        final Repository validConfig = new Repository.RepositoryBuilder().setUrl("http://example.com").setName("name").setMetadataPrefix("nl_didl_norm").setSet("uvt:withfulltext:yes").setDateStamp(null).setEnabled(true).setSchedule(HarvestSchedule.DAILY).createRepository();
 
         final RepositoryValidator.ValidationResult validationResult = instance.validate(validConfig);
 
@@ -64,7 +64,7 @@ public class RepositoryValidatorTest {
     public void validateShouldFailWhetherRepositoryConfigIsSupportedByEndpoint() throws Exception {
         final HttpFetcher mockHttpFetcher = getMockHttpFetcher(listSetsXml, mdFormatsXml);
         final RepositoryValidator instance = new RepositoryValidator(mockHttpFetcher, new ResponseHandlerFactory());
-        final Repository validConfig = new Repository("http://example.com", "name", "unsupported_Md", "nonexistent_set", null, true, HarvestSchedule.DAILY);
+        final Repository validConfig = new Repository.RepositoryBuilder().setUrl("http://example.com").setName("name").setMetadataPrefix("unsupported_Md").setSet("nonexistent_set").setDateStamp(null).setEnabled(true).setSchedule(HarvestSchedule.DAILY).createRepository();
 
         final RepositoryValidator.ValidationResult validationResult = instance.validate(validConfig);
 
@@ -76,7 +76,7 @@ public class RepositoryValidatorTest {
     public void validateShouldThrowWhenXmlParsingFails() throws IOException, SAXException, HttpResponseException {
         final HttpFetcher mockHttpFetcher = getMockHttpFetcher(corruptXml, mdFormatsXml);
         final RepositoryValidator instance = new RepositoryValidator(mockHttpFetcher, new ResponseHandlerFactory());
-        final Repository validConfig = new Repository("http://example.com", "name", "nl_didl_norm", "uvt:withfulltext:yes", null, true, HarvestSchedule.DAILY);
+        final Repository validConfig = new Repository.RepositoryBuilder().setUrl("http://example.com").setName("name").setMetadataPrefix("nl_didl_norm").setSet("uvt:withfulltext:yes").setDateStamp(null).setEnabled(true).setSchedule(HarvestSchedule.DAILY).createRepository();
 
         instance.validate(validConfig);
     }
@@ -84,7 +84,7 @@ public class RepositoryValidatorTest {
     @Test(expected = HttpResponseException.class)
     public void validateShouldThrowWhenHttpRequestFails() throws IOException, SAXException, HttpResponseException {
         final HttpFetcher failingFetcher = (url, responseHandler) -> responseHandler.onRequestError(new Exception("fails"));
-        final Repository validConfig = new Repository("http://example.com", "name", "nl_didl_norm", "uvt:withfulltext:yes", null, true, HarvestSchedule.DAILY);
+        final Repository validConfig = new Repository.RepositoryBuilder().setUrl("http://example.com").setName("name").setMetadataPrefix("nl_didl_norm").setSet("uvt:withfulltext:yes").setDateStamp(null).setEnabled(true).setSchedule(HarvestSchedule.DAILY).createRepository();
         final RepositoryValidator instance = new RepositoryValidator(failingFetcher, new ResponseHandlerFactory());
 
         instance.validate(validConfig);

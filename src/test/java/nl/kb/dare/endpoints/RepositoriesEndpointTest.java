@@ -40,9 +40,9 @@ public class RepositoriesEndpointTest {
     public void createShouldCreateANewRpository() {
         final RepositoryDao dao = mock(RepositoryDao.class);
         final RepositoryController repositoryController = mock(RepositoryController.class);
-        final RepositoriesEndpoint instance = new RepositoriesEndpoint(filter, dao,  mock(RepositoryValidator.class), repositoryController);
-        final Repository repositoryConfig = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY);
-        final Response response = instance.create(repositoryConfig,"");
+        final RepositoriesEndpoint instance = new RepositoriesEndpoint(filter, dao, mock(RepositoryValidator.class), repositoryController);
+        final Repository repositoryConfig = new Repository.RepositoryBuilder().setUrl("http://example.com").setName("name").setMetadataPrefix("prefix").setSet("setname").setDateStamp("123").setEnabled(true).setSchedule(HarvestSchedule.DAILY).createRepository();
+        final Response response = instance.create(repositoryConfig, "");
 
         verify(dao).insert(repositoryConfig);
         verify(repositoryController).notifyUpdate();
@@ -57,7 +57,7 @@ public class RepositoriesEndpointTest {
         final RepositoriesEndpoint instance = new RepositoriesEndpoint(filter, dao, mock(RepositoryValidator.class), repositoryController);
         final Integer id = 123;
 
-        final Response response = instance.delete(id,"");
+        final Response response = instance.delete(id, "");
 
         final InOrder inOrder = inOrder(dao, repositoryController);
         inOrder.verify(dao).remove(id);
@@ -72,10 +72,10 @@ public class RepositoriesEndpointTest {
         final RepositoryDao dao = mock(RepositoryDao.class);
         final RepositoryController repositoryController = mock(RepositoryController.class);
         final RepositoriesEndpoint instance = new RepositoriesEndpoint(filter, dao, mock(RepositoryValidator.class), repositoryController);
-        final Repository repositoryConfig = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY);
+        final Repository repositoryConfig = new Repository.RepositoryBuilder().setUrl("http://example.com").setName("name").setMetadataPrefix("prefix").setSet("setname").setDateStamp("123").setEnabled(true).setSchedule(HarvestSchedule.DAILY).createRepository();
         final Integer id = 123;
 
-        final Response response = instance.update(id, repositoryConfig,"");
+        final Response response = instance.update(id, repositoryConfig, "");
 
         verify(dao).update(id, repositoryConfig);
         verify(repositoryController).notifyUpdate();
@@ -91,7 +91,7 @@ public class RepositoriesEndpointTest {
         final RepositoriesEndpoint instance = new RepositoriesEndpoint(filter, dao, mock(RepositoryValidator.class), repositoryController);
         final Integer id = 123;
 
-        final Response response = instance.enable(id,"");
+        final Response response = instance.enable(id, "");
 
         verify(dao).enable(id);
         verify(repositoryController).notifyUpdate();
@@ -106,7 +106,7 @@ public class RepositoriesEndpointTest {
         final RepositoriesEndpoint instance = new RepositoriesEndpoint(filter, dao, mock(RepositoryValidator.class), repositoryController);
         final Integer id = 123;
 
-        final Response response = instance.disable(id,"");
+        final Response response = instance.disable(id, "");
 
         verify(dao).disable(id);
         verify(repositoryController).notifyUpdate();
@@ -119,8 +119,8 @@ public class RepositoriesEndpointTest {
     public void indexShouldRespondWithAListOfRepositories() {
         final RepositoryDao dao = mock(RepositoryDao.class);
         final RepositoriesEndpoint instance = new RepositoriesEndpoint(filter, dao, mock(RepositoryValidator.class), mock(RepositoryController.class));
-        final Repository repositoryConfig1 = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, 1, null);
-        final Repository repositoryConfig2 = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY, 2, null);
+        final Repository repositoryConfig1 = new Repository.RepositoryBuilder().setUrl("http://example.com").setName("name").setMetadataPrefix("prefix").setSet("setname").setDateStamp("123").setEnabled(true).setSchedule(HarvestSchedule.DAILY).setId(1).setLastHarvest(null).createRepository();
+        final Repository repositoryConfig2 = new Repository.RepositoryBuilder().setUrl("http://example.com").setName("name").setMetadataPrefix("prefix").setSet("setname").setDateStamp("123").setEnabled(true).setSchedule(HarvestSchedule.DAILY).setId(2).setLastHarvest(null).createRepository();
         final List<Repository> repositories = Lists.newArrayList(repositoryConfig1, repositoryConfig2);
 
         when(dao.list()).thenReturn(repositories);
@@ -137,11 +137,11 @@ public class RepositoriesEndpointTest {
         final RepositoryDao dao = mock(RepositoryDao.class);
         final RepositoryValidator validator = mock(RepositoryValidator.class);
         final RepositoriesEndpoint instance = new RepositoriesEndpoint(filter, dao, validator, mock(RepositoryController.class));
-        final Repository repositoryConfig = new Repository("http://example.com", "name", "prefix", "setname", "123", true, HarvestSchedule.DAILY);
+        final Repository repositoryConfig = new Repository.RepositoryBuilder().setUrl("http://example.com").setName("name").setMetadataPrefix("prefix").setSet("setname").setDateStamp("123").setEnabled(true).setSchedule(HarvestSchedule.DAILY).createRepository();
         final RepositoryValidator.ValidationResult validationResult = validator.new ValidationResult();
         when(validator.validate(repositoryConfig)).thenReturn(validationResult);
 
-        final Response response = instance.validateNew(repositoryConfig,"");
+        final Response response = instance.validateNew(repositoryConfig, "");
 
         assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
         assertThat(response.getEntity(), equalTo(validationResult));

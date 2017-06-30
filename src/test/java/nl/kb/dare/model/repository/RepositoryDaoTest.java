@@ -46,7 +46,7 @@ public class RepositoryDaoTest {
 
     @Test
     public void insertShouldInsertARepository() {
-        final Repository input = new Repository(URL, "Utrecht", NL_DIDL_COMBINED, "uu:dare", null, false, HarvestSchedule.DAILY);
+        final Repository input = new Repository.RepositoryBuilder().setUrl(URL).setName("Utrecht").setMetadataPrefix(NL_DIDL_COMBINED).setSet("uu:dare").setDateStamp(null).setEnabled(false).setSchedule(HarvestSchedule.DAILY).createRepository();
         instance.insert(input);
 
         final Repository result = instance.findById(3);
@@ -74,7 +74,7 @@ public class RepositoryDaoTest {
 
     @Test
     public void updateShouldUpdateTheRepository() {
-        final Repository input = new Repository(URL, "Utrecht", NL_DIDL_COMBINED, "uu:dare", null, false, HarvestSchedule.DAILY);
+        final Repository input = new Repository.RepositoryBuilder().setUrl(URL).setName("Utrecht").setMetadataPrefix(NL_DIDL_COMBINED).setSet("uu:dare").setDateStamp(null).setEnabled(false).setSchedule(HarvestSchedule.DAILY).createRepository();
         instance.update(2, input);
 
         final Repository result = instance.findById(2);
@@ -110,7 +110,7 @@ public class RepositoryDaoTest {
 
     @Test
     public void disableAllShouldSetTheEnabledFieldToFalse() {
-        instance.insert(new Repository(URL, "three", "three", "three", "three", true, HarvestSchedule.DAILY));
+        instance.insert(new Repository.RepositoryBuilder().setUrl(URL).setName("three").setMetadataPrefix("three").setSet("three").setDateStamp("three").setEnabled(true).setSchedule(HarvestSchedule.DAILY).createRepository());
 
         instance.disableAll();
 
@@ -137,8 +137,8 @@ public class RepositoryDaoTest {
     }
 
     private void insertTwo() {
-        instance.insert(new Repository(URL, "One", "one", "one", "one", false, HarvestSchedule.DAILY));
-        instance.insert(new Repository(URL, "Two", "two", "two", "two", true, HarvestSchedule.DAILY));
+        instance.insert(new Repository.RepositoryBuilder().setUrl(URL).setName("One").setMetadataPrefix("one").setSet("one").setDateStamp("one").setEnabled(false).setSchedule(HarvestSchedule.DAILY).createRepository());
+        instance.insert(new Repository.RepositoryBuilder().setUrl(URL).setName("Two").setMetadataPrefix("two").setSet("two").setDateStamp("two").setEnabled(true).setSchedule(HarvestSchedule.DAILY).createRepository());
     }
 
 

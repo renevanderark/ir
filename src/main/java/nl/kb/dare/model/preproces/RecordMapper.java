@@ -12,12 +12,6 @@ public class RecordMapper implements ResultSetMapper<Record> {
     @Override
     public Record map(int index, ResultSet resultSet, StatementContext ctx) throws SQLException {
 
-        final Long id = resultSet.getLong("ID");
-        final Integer repositoryId = resultSet.getInt("REPOSITORY_ID");
-        final Integer state = resultSet.getInt("STATE");
-        final String kbObjId = resultSet.getString("KBOBJID");
-        final String oaiIdentifier = resultSet.getString("OAI_ID");
-        final String oaiDateStamp = resultSet.getString("OAI_DATESTAMP");
         final Timestamp dTsCreate = resultSet.getTimestamp("TS_CREATE");
         final Timestamp dTsProcessed = resultSet.getTimestamp("TS_PROCESSED");
 
@@ -25,12 +19,12 @@ public class RecordMapper implements ResultSetMapper<Record> {
         final String tsProcessed = dTsProcessed == null ? null : dTsProcessed.toString();
 
         return new Record.RecordBuilder()
-                .setId(id)
-                .setState(ProcessStatus.forCode(state))
-                .setKbObjId(kbObjId)
-                .setRepositoryId(repositoryId)
-                .setOaiIdentifier(oaiIdentifier)
-                .setOaiDateStamp(oaiDateStamp)
+                .setId(resultSet.getLong("ID"))
+                .setState(ProcessStatus.forCode(resultSet.getInt("STATE")))
+                .setKbObjId(resultSet.getString("KBOBJID"))
+                .setRepositoryId(resultSet.getInt("REPOSITORY_ID"))
+                .setOaiIdentifier(resultSet.getString("OAI_ID"))
+                .setOaiDateStamp(resultSet.getString("OAI_DATESTAMP"))
                 .setTsCreate(tsCreate)
                 .setTsProcessed(tsProcessed).createRecord();
     }

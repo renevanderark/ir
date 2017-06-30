@@ -26,22 +26,16 @@ public class Repository {
 
     }
 
-    public Repository(String url, String name, String metadataPrefix, String set, String dateStamp, Boolean enabled,
-                      HarvestSchedule schedule) {
-        this.url = url;
-        this.name = name;
-        this.metadataPrefix = metadataPrefix;
-        this.set = set;
-        this.dateStamp = dateStamp;
-        this.enabled = enabled;
-        this.schedule = schedule;
-    }
-
-    public Repository(String url, String name, String metadataPrefix, String set, String dateStamp, Boolean enabled,
-                      HarvestSchedule schedule, Integer id, LocalDate lastHarvest) {
-        this(url, name, metadataPrefix, set, dateStamp, enabled, schedule);
-        this.id = id;
-        this.lastHarvest = lastHarvest;
+    private Repository(RepositoryBuilder repositoryBuilder) {
+        this.url = repositoryBuilder.url;
+        this.name = repositoryBuilder.name;
+        this.metadataPrefix = repositoryBuilder.metadataPrefix;
+        this.set = repositoryBuilder.set;
+        this.dateStamp = repositoryBuilder.dateStamp;
+        this.enabled = repositoryBuilder.enabled;
+        this.schedule = repositoryBuilder.schedule;
+        this.id = repositoryBuilder.id;
+        this.lastHarvest = repositoryBuilder.lastHarvest;
     }
 
 
@@ -123,5 +117,66 @@ public class Repository {
     @JsonIgnore
     public LocalDate getLastHarvest() {
         return lastHarvest;
+    }
+
+    public static class RepositoryBuilder {
+        private String url;
+        private String name;
+        private String metadataPrefix;
+        private String set;
+        private String dateStamp;
+        private Boolean enabled;
+        private HarvestSchedule schedule;
+        private Integer id;
+        private LocalDate lastHarvest;
+
+        public RepositoryBuilder setUrl(String url) {
+            this.url = url;
+            return this;
+        }
+
+        public RepositoryBuilder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public RepositoryBuilder setMetadataPrefix(String metadataPrefix) {
+            this.metadataPrefix = metadataPrefix;
+            return this;
+        }
+
+        public RepositoryBuilder setSet(String set) {
+            this.set = set;
+            return this;
+        }
+
+        public RepositoryBuilder setDateStamp(String dateStamp) {
+            this.dateStamp = dateStamp;
+            return this;
+        }
+
+        public RepositoryBuilder setEnabled(Boolean enabled) {
+            this.enabled = enabled;
+            return this;
+        }
+
+        public RepositoryBuilder setSchedule(HarvestSchedule schedule) {
+            this.schedule = schedule;
+            return this;
+        }
+
+        public RepositoryBuilder setId(Integer id) {
+            this.id = id;
+            return this;
+        }
+
+        public RepositoryBuilder setLastHarvest(LocalDate lastHarvest) {
+            this.lastHarvest = lastHarvest;
+            return this;
+        }
+
+        public Repository createRepository() {
+            return new Repository(this);
+        }
     }
 }
