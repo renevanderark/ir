@@ -4,7 +4,6 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import nl.kb.dare.jobs.getrecord.GetRecord;
-import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
@@ -14,6 +13,7 @@ import nl.kb.dare.model.reporting.ErrorReporter;
 import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
+import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.websocket.socketupdate.RecordFetcherUpdate;
 import nl.kb.filestorage.FileStorage;
 import nl.kb.http.HttpFetcher;
@@ -22,6 +22,7 @@ import nl.kb.xslt.XsltTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -131,6 +132,11 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
                 .filter(Repository::getEnabled)
                 .map(Repository::getId).collect(toList());
 
+        // Prevents division by (near to) zero in next line.
+        if (repositoryIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
         final int dividedLimit = (int) Math.ceil(((float) limit / (float) repositoryIds.size()));
 
         for (Integer repositoryId : repositoryIds) {
@@ -179,7 +185,7 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
     }
 
     private void saveErrorReport(ErrorReport errorReport, Record record) {
-        LOG.error("Failed to process record {} ({})", record.getOaiIdentifier(), errorReport.getUrl(), errorReport.getException());
+        LOG.info("Failed to process record {} ({})", record.getOaiIdentifier(), errorReport.getUrl(), errorReport.getException());
         errorReportDao.insert(record.getId(), errorReport);
         socketNotifier.notifyUpdate(errorReporter.getStatusUpdate());
     }
