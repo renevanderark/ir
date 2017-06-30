@@ -62,7 +62,7 @@ public class IdentifierHarvester implements Runnable {
                 httpFetcher,
                 responseHandlerFactory,
                 oaiDateStamp -> this.storeOaiDateStampAndNewRecords(repository, oaiDateStamp),
-                onException,
+                exception -> this.onHarvestException(repository, exception),
                 oaiRecordHeader ->  recordBatchLoader.addToBatch(repository.getId(), oaiRecordHeader),
                 oaiDateStamp -> this.storeOaiDateStampAndNewRecords(repository, oaiDateStamp),
                 logMessage -> { /* ignore log message */ }
@@ -74,12 +74,19 @@ public class IdentifierHarvester implements Runnable {
         this.setRunState(RunState.WAITING);
     }
 
+    private void onHarvestException(Repository repository, Exception exception) {
+        final String message = String.format("Failed to fetch batch from OAI endpoint %s", repository.getUrl());
+        onException.accept(new IdentifierHarvesterException(message, exception));
+    }
+
     private void storeOaiDateStampAndNewRecords(Repository repository, String oaiDateStamp) {
         try {
             recordBatchLoader.flushBatch(repository.getId());
             repositoryController.storeHarvestDateStamp(repository.getId(), oaiDateStamp);
         } catch (Exception exception) {
-            onException.accept(exception);
+            onException.accept(
+                new IdentifierHarvesterException("Failed to generate numbers with numbers endpoint", exception)
+            );
         }
     }
 
