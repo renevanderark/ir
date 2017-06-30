@@ -2,11 +2,8 @@ package nl.kb.dare.model.repository;
 
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.websocket.socketupdate.RepositoryUpdate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RepositoryController {
-    private static final Logger LOG = LoggerFactory.getLogger(RepositoryController.class);
 
     private final RepositoryDao repositoryDao;
     private final SocketNotifier socketNotifier;

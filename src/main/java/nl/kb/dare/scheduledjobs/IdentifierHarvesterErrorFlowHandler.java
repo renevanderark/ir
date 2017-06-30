@@ -44,6 +44,6 @@ class IdentifierHarvesterErrorFlowHandler {
         final String traceMsg = Arrays.stream(ex.getStackTrace())
                 .map(StackTraceElement::toString).collect(joining("\n"));
 
-        return String.format("%s:\n\n%s", ex.getMessage(), traceMsg);
+        return String.format("%s:%n%n%s", ex.getMessage(), traceMsg);
     }
 }
