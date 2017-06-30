@@ -22,9 +22,9 @@ public class ScheduledRepositoryHarvester extends AbstractScheduledService {
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledRepositoryHarvester.class);
 
     private final RepositoryDao repositoryDao;
-    private final ScheduledHarvestRunner harvestRunner;
+    private final HarvestRunScheduler harvestRunner;
 
-    public ScheduledRepositoryHarvester(RepositoryDao repositoryDao, ScheduledHarvestRunner harvestRunner) {
+    public ScheduledRepositoryHarvester(RepositoryDao repositoryDao, HarvestRunScheduler harvestRunner) {
         this.repositoryDao = repositoryDao;
         this.harvestRunner = harvestRunner;
     }

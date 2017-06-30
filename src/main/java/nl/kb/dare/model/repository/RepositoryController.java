@@ -21,8 +21,7 @@ public class RepositoryController {
         socketNotifier.notifyUpdate(new RepositoryUpdate(repositoryDao.list()));
     }
 
-    public void disableAllRepositories(Integer id, Exception exception) {
-        LOG.error("Harvest failed for repository with id {}", id, exception);
+    public void disableAllRepositories() {
         synchronized (repositoryDao) {
             repositoryDao.disableAll();
         }

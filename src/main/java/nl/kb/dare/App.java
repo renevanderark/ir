@@ -17,7 +17,7 @@ import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
 import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
-import nl.kb.dare.jobs.ScheduledHarvestRunner;
+import nl.kb.dare.jobs.HarvestRunScheduler;
 import nl.kb.dare.jobs.ScheduledOaiRecordFetcher;
 import nl.kb.dare.jobs.ScheduledRepositoryHarvester;
 import nl.kb.dare.websocket.SocketNotifier;
@@ -108,7 +108,7 @@ public class App extends Application<Config> {
         final PipedXsltTransformer xsltTransformer = PipedXsltTransformer.newInstance(stripOaiXslt, didlToManifestXslt);
 
         // Process that manages the amount of running harvesters every 200ms
-        final ScheduledHarvestRunner harvestRunner = new ScheduledHarvestRunner(
+        final HarvestRunScheduler harvestRunner = new HarvestRunScheduler(
                 repositoryController,
                 recordBatchLoader,
                 httpFetcher,

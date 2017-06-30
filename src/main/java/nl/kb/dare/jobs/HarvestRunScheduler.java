@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class ScheduledHarvestRunner extends AbstractScheduledService {
-    private static final Logger LOG = LoggerFactory.getLogger(ScheduledHarvestRunner.class);
+public class HarvestRunScheduler extends AbstractScheduledService {
+    private static final Logger LOG = LoggerFactory.getLogger(HarvestRunScheduler.class);
 
     private static final Map<Integer, RepositoryHarvester> harvesters = Collections.synchronizedMap(new HashMap<>());
     private final RepositoryController repositoryController;
@@ -29,13 +29,13 @@ public class ScheduledHarvestRunner extends AbstractScheduledService {
     private final int maxParallel;
     private RepositoryDao repositoryDao;
 
-    public ScheduledHarvestRunner(RepositoryController repositoryController,
-                                  RecordBatchLoader recordBatchLoader,
-                                  HttpFetcher httpFetcher,
-                                  ResponseHandlerFactory responseHandlerFactory,
-                                  RepositoryDao repositoryDao,
-                                  SocketNotifier socketNotifier,
-                                  int maxParallel) {
+    public HarvestRunScheduler(RepositoryController repositoryController,
+                               RecordBatchLoader recordBatchLoader,
+                               HttpFetcher httpFetcher,
+                               ResponseHandlerFactory responseHandlerFactory,
+                               RepositoryDao repositoryDao,
+                               SocketNotifier socketNotifier,
+                               int maxParallel) {
 
         this.repositoryController = repositoryController;
         this.recordBatchLoader = recordBatchLoader;
@@ -67,6 +67,7 @@ public class ScheduledHarvestRunner extends AbstractScheduledService {
     }
 
     private void interruptAllHarvests(Exception ex) {
+        repositoryController.disableAllRepositories();
         for (Map.Entry<Integer, RepositoryHarvester> entry : harvesters.entrySet()) {
             entry.getValue().sendInterrupt();
         }

@@ -47,7 +47,7 @@ public class RepositoryControllerTest {
         final RepositoryDao repositoryDao = mock(RepositoryDao.class);
         final RepositoryController instance = new RepositoryController(repositoryDao, socketNotifier);
 
-        instance.disableAllRepositories(2, mock(Exception.class));
+        instance.disableAllRepositories();
 
         final InOrder inOrder = inOrder(repositoryDao, socketNotifier);
         inOrder.verify(repositoryDao).disableAll();

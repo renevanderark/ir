@@ -9,14 +9,10 @@ import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
 import nl.kb.oaipmh.ListIdentifiers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 
 public class RepositoryHarvester implements Runnable {
-    private static final Logger LOG = LoggerFactory.getLogger(RepositoryHarvester.class);
-
     private final Integer repositoryId;
     private final RepositoryController repositoryController;
     private final RecordBatchLoader recordBatchLoader;
@@ -65,29 +61,11 @@ public class RepositoryHarvester implements Runnable {
                 repository.getDateStamp(),
                 httpFetcher,
                 responseHandlerFactory,
-                dateStamp -> { // onHarvestComplete
-                    try {
-                        recordBatchLoader.flushBatch(repository.getId());
-                        repositoryController.storeHarvestDateStamp(repository.getId(), dateStamp);
-                    } catch (Exception exception) {
-                        handleHarvestException(repository, exception);
-                    }
-
-                },
-                exception -> handleHarvestException(repository, exception),
-                oaiRecordHeader ->  recordBatchLoader.addToBatch(repository.getId(), oaiRecordHeader), // onRecord
-                dateStamp -> { // onProgress
-                    try {
-                        recordBatchLoader.flushBatch(repository.getId());
-                        repositoryController.storeHarvestDateStamp(repository.getId(), dateStamp);
-                    } catch (Exception exception) {
-                        handleHarvestException(repository, exception);
-                    }
-                }, (String logMessage) -> { // onLogMessage
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("{} {}", repository.getName(), logMessage);
-                    }
-                }
+                oaiDateStamp -> this.storeOaiDateStampAndNewRecords(repository, oaiDateStamp),
+                onException,
+                oaiRecordHeader ->  recordBatchLoader.addToBatch(repository.getId(), oaiRecordHeader),
+                oaiDateStamp -> this.storeOaiDateStampAndNewRecords(repository, oaiDateStamp),
+                logMessage -> { /* ignore log message */ }
         );
 
         runningInstance.harvest();
@@ -96,9 +74,13 @@ public class RepositoryHarvester implements Runnable {
         this.setRunState(RunState.WAITING);
     }
 
-    private void handleHarvestException(Repository repository, Exception exception) {
-        repositoryController.disableAllRepositories(repository.getId(), exception);
-        onException.accept(exception);
+    private void storeOaiDateStampAndNewRecords(Repository repository, String oaiDateStamp) {
+        try {
+            recordBatchLoader.flushBatch(repository.getId());
+            repositoryController.storeHarvestDateStamp(repository.getId(), oaiDateStamp);
+        } catch (Exception exception) {
+            onException.accept(exception);
+        }
     }
 
     void sendInterrupt() {
