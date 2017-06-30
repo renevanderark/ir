@@ -1,4 +1,4 @@
-package nl.kb.dare.jobs;
+package nl.kb.dare.scheduledjobs;
 
 import com.google.common.util.concurrent.AbstractScheduledService;
 import nl.kb.dare.model.RunState;
@@ -17,10 +17,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class HarvestRunScheduler extends AbstractScheduledService {
-    private static final Logger LOG = LoggerFactory.getLogger(HarvestRunScheduler.class);
+public class IdentifierHarvestRunScheduler extends AbstractScheduledService {
+    private static final Logger LOG = LoggerFactory.getLogger(IdentifierHarvestRunScheduler.class);
 
-    private static final Map<Integer, RepositoryHarvester> harvesters = Collections.synchronizedMap(new HashMap<>());
+    private static final Map<Integer, RepositoryIdentifierHarvester> harvesters = Collections.synchronizedMap(new HashMap<>());
     private final RepositoryController repositoryController;
     private final RecordBatchLoader recordBatchLoader;
     private final HttpFetcher httpFetcher;
@@ -29,13 +29,13 @@ public class HarvestRunScheduler extends AbstractScheduledService {
     private final int maxParallel;
     private RepositoryDao repositoryDao;
 
-    public HarvestRunScheduler(RepositoryController repositoryController,
-                               RecordBatchLoader recordBatchLoader,
-                               HttpFetcher httpFetcher,
-                               ResponseHandlerFactory responseHandlerFactory,
-                               RepositoryDao repositoryDao,
-                               SocketNotifier socketNotifier,
-                               int maxParallel) {
+    public IdentifierHarvestRunScheduler(RepositoryController repositoryController,
+                                         RecordBatchLoader recordBatchLoader,
+                                         HttpFetcher httpFetcher,
+                                         ResponseHandlerFactory responseHandlerFactory,
+                                         RepositoryDao repositoryDao,
+                                         SocketNotifier socketNotifier,
+                                         int maxParallel) {
 
         this.repositoryController = repositoryController;
         this.recordBatchLoader = recordBatchLoader;
@@ -48,7 +48,7 @@ public class HarvestRunScheduler extends AbstractScheduledService {
 
     public void startHarvest(int repositoryId) {
         if (!harvesters.containsKey(repositoryId)) {
-            final RepositoryHarvester harvester = new RepositoryHarvester(
+            final RepositoryIdentifierHarvester harvester = new RepositoryIdentifierHarvester(
                     repositoryId, repositoryController,
                     recordBatchLoader, httpFetcher, responseHandlerFactory,
                     repositoryDao, (RunState runState) -> notifyStateChange(),
@@ -59,7 +59,7 @@ public class HarvestRunScheduler extends AbstractScheduledService {
         }
 
 
-        final RepositoryHarvester repositoryHarvester = harvesters.get(repositoryId);
+        final RepositoryIdentifierHarvester repositoryHarvester = harvesters.get(repositoryId);
 
         if (repositoryHarvester.getRunState() == RunState.WAITING) {
             repositoryHarvester.setRunState(RunState.QUEUED);
@@ -68,7 +68,7 @@ public class HarvestRunScheduler extends AbstractScheduledService {
 
     private void interruptAllHarvests(Exception ex) {
         repositoryController.disableAllRepositories();
-        for (Map.Entry<Integer, RepositoryHarvester> entry : harvesters.entrySet()) {
+        for (Map.Entry<Integer, RepositoryIdentifierHarvester> entry : harvesters.entrySet()) {
             entry.getValue().sendInterrupt();
         }
         LOG.error("SEVERE: Harvester failed due to failing service", ex);

@@ -1,9 +1,9 @@
-package nl.kb.dare.jobs;
+package nl.kb.dare.scheduledjobs;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractScheduledService;
-import nl.kb.dare.jobs.getrecord.GetRecord;
+import nl.kb.dare.scheduledjobs.objectharvester.GetRecord;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
@@ -29,8 +29,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
 
-public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
-    private static final Logger LOG = LoggerFactory.getLogger(ScheduledOaiRecordFetcher.class);
+public class ObjectHarvesterDaemon extends AbstractScheduledService {
+    private static final Logger LOG = LoggerFactory.getLogger(ObjectHarvesterDaemon.class);
     private static AtomicInteger runningWorkers = new AtomicInteger(0);
 
     private final RecordDao recordDao;
@@ -52,12 +52,12 @@ public class ScheduledOaiRecordFetcher extends AbstractScheduledService {
 
     private RunState runState;
 
-    public ScheduledOaiRecordFetcher(RecordDao recordDao, RepositoryDao repositoryDao,
-                                     HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory,
-                                     FileStorage fileStorage, XsltTransformer xsltTransformer,
-                                     SocketNotifier socketNotifier, RecordReporter recordReporter,
-                                     ErrorReportDao errorReportDao, ErrorReporter errorReporter,
-                                     Integer maxWorkers, Long downloadQueueFillDelayMs) {
+    public ObjectHarvesterDaemon(RecordDao recordDao, RepositoryDao repositoryDao,
+                                 HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory,
+                                 FileStorage fileStorage, XsltTransformer xsltTransformer,
+                                 SocketNotifier socketNotifier, RecordReporter recordReporter,
+                                 ErrorReportDao errorReportDao, ErrorReporter errorReporter,
+                                 Integer maxWorkers, Long downloadQueueFillDelayMs) {
         this.recordDao = recordDao;
         this.repositoryDao = repositoryDao;
         this.httpFetcher = httpFetcher;

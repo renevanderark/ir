@@ -1,12 +1,12 @@
 package nl.kb.dare.websocket.socketupdate;
 
-import nl.kb.dare.jobs.ScheduledOaiRecordFetcher;
+import nl.kb.dare.scheduledjobs.ObjectHarvesterDaemon;
 import nl.kb.dare.websocket.SocketUpdate;
 
 public class RecordFetcherUpdate implements SocketUpdate {
-    private final ScheduledOaiRecordFetcher.RunState runState;
+    private final ObjectHarvesterDaemon.RunState runState;
 
-    public RecordFetcherUpdate(ScheduledOaiRecordFetcher.RunState runState) {
+    public RecordFetcherUpdate(ObjectHarvesterDaemon.RunState runState) {
         this.runState = runState;
     }
 

@@ -1,4 +1,4 @@
-package nl.kb.dare.jobs;
+package nl.kb.dare.scheduledjobs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import nl.kb.dare.model.RunState;
@@ -12,7 +12,7 @@ import nl.kb.oaipmh.ListIdentifiers;
 
 import java.util.function.Consumer;
 
-public class RepositoryHarvester implements Runnable {
+public class RepositoryIdentifierHarvester implements Runnable {
     private final Integer repositoryId;
     private final RepositoryController repositoryController;
     private final RecordBatchLoader recordBatchLoader;
@@ -25,7 +25,7 @@ public class RepositoryHarvester implements Runnable {
     private ListIdentifiers runningInstance = null;
     private RunState runState = RunState.WAITING;
 
-    RepositoryHarvester(
+    RepositoryIdentifierHarvester(
             Integer repositoryId,
             RepositoryController repositoryController,
             RecordBatchLoader recordBatchLoader,

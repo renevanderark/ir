@@ -1,4 +1,4 @@
-package nl.kb.dare.jobs.getrecord;
+package nl.kb.dare.scheduledjobs.objectharvester;
 
 import com.google.common.collect.Lists;
 import nl.kb.dare.model.preproces.Record;

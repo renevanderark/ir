@@ -17,9 +17,9 @@ import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
 import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
-import nl.kb.dare.jobs.HarvestRunScheduler;
-import nl.kb.dare.jobs.ScheduledOaiRecordFetcher;
-import nl.kb.dare.jobs.ScheduledRepositoryHarvester;
+import nl.kb.dare.scheduledjobs.IdentifierHarvestRunScheduler;
+import nl.kb.dare.scheduledjobs.ObjectHarvesterDaemon;
+import nl.kb.dare.scheduledjobs.DailyRepositoryIdentifierHarvestScheduler;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.preproces.RecordDao;
@@ -32,8 +32,8 @@ import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.nbn.NumbersController;
 import nl.kb.dare.taskmanagers.ManagedPeriodicTask;
-import nl.kb.dare.tasks.LoadOracleSchemaTask;
-import nl.kb.dare.tasks.LoadRepositoriesTask;
+import nl.kb.dare.databasetasks.LoadOracleSchemaTask;
+import nl.kb.dare.databasetasks.LoadRepositoriesTask;
 import nl.kb.filestorage.FileStorage;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.LenientHttpFetcher;
@@ -108,7 +108,7 @@ public class App extends Application<Config> {
         final PipedXsltTransformer xsltTransformer = PipedXsltTransformer.newInstance(stripOaiXslt, didlToManifestXslt);
 
         // Process that manages the amount of running harvesters every 200ms
-        final HarvestRunScheduler harvestRunner = new HarvestRunScheduler(
+        final IdentifierHarvestRunScheduler harvestRunner = new IdentifierHarvestRunScheduler(
                 repositoryController,
                 recordBatchLoader,
                 httpFetcher,
@@ -122,7 +122,7 @@ public class App extends Application<Config> {
         final RepositoryValidator repositoryValidator = new RepositoryValidator(httpFetcher, responseHandlerFactory);
 
         // Process that starts record downloads every 200ms
-        final ScheduledOaiRecordFetcher recordFetcher = new ScheduledOaiRecordFetcher(
+        final ObjectHarvesterDaemon recordFetcher = new ObjectHarvesterDaemon(
                 recordDao,
                 repositoryDao,
                 downloader,
@@ -178,7 +178,7 @@ public class App extends Application<Config> {
         // Websocket servlet status update notifier
         registerServlet(environment, new StatusWebsocketServlet(), "statusWebsocket");
 
-        // Lifecycle (scheduled tasks/deamons)
+        // Lifecycle (scheduled databasetasks/deamons)
         // Process that starts record downloads every 200ms
         environment.lifecycle().manage(new ManagedPeriodicTask(recordFetcher));
 
@@ -186,7 +186,7 @@ public class App extends Application<Config> {
         environment.lifecycle().manage(new ManagedPeriodicTask(harvestRunner));
 
         // Process that starts harvests daily, weekly or monthly
-        environment.lifecycle().manage(new ManagedPeriodicTask(new ScheduledRepositoryHarvester(
+        environment.lifecycle().manage(new ManagedPeriodicTask(new DailyRepositoryIdentifierHarvestScheduler(
                 repositoryDao,
                 harvestRunner
         )));

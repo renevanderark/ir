@@ -1,4 +1,4 @@
-package nl.kb.dare.jobs;
+package nl.kb.dare.scheduledjobs;
 
 import com.google.common.util.concurrent.AbstractScheduledService;
 import nl.kb.dare.model.RunState;
@@ -18,13 +18,13 @@ import java.util.concurrent.TimeUnit;
  * Elke dag wordt er gekeken welke harvests moeten draaien op basis van hun harvest schema,
  * wanneer er voor het laatst gedraaid is (startdatum laatste harvest) en of de harvest actief is.
  */
-public class ScheduledRepositoryHarvester extends AbstractScheduledService {
-    private static final Logger LOG = LoggerFactory.getLogger(ScheduledRepositoryHarvester.class);
+public class DailyRepositoryIdentifierHarvestScheduler extends AbstractScheduledService {
+    private static final Logger LOG = LoggerFactory.getLogger(DailyRepositoryIdentifierHarvestScheduler.class);
 
     private final RepositoryDao repositoryDao;
-    private final HarvestRunScheduler harvestRunner;
+    private final IdentifierHarvestRunScheduler harvestRunner;
 
-    public ScheduledRepositoryHarvester(RepositoryDao repositoryDao, HarvestRunScheduler harvestRunner) {
+    public DailyRepositoryIdentifierHarvestScheduler(RepositoryDao repositoryDao, IdentifierHarvestRunScheduler harvestRunner) {
         this.repositoryDao = repositoryDao;
         this.harvestRunner = harvestRunner;
     }

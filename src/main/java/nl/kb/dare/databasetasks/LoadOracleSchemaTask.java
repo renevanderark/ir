@@ -1,4 +1,4 @@
-package nl.kb.dare.tasks;
+package nl.kb.dare.databasetasks;
 
 import com.google.common.collect.ImmutableMultimap;
 import io.dropwizard.servlets.tasks.Task;
