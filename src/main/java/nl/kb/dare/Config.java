@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import nl.kb.dare.config.FileStorageFactory;
+import nl.kb.dare.config.MailerFactory;
 
 class Config extends Configuration {
     private DataSourceFactory database;
     private FileStorageFactory fileStorageFactory;
+    private MailerFactory mailerFactory;
 
     @JsonProperty
     private String hostName;
@@ -48,6 +50,14 @@ class Config extends Configuration {
     @JsonProperty("fileStorage")
     public void setFileStorageFactory(FileStorageFactory fileStorageFactory) {
         this.fileStorageFactory = fileStorageFactory;
+    }
+
+    @JsonProperty("mailer")
+    public MailerFactory getMailerFactory() { return mailerFactory; }
+
+    @JsonProperty("mailer")
+    public void setMailerFactory(MailerFactory mailerFactory) {
+        this.mailerFactory = mailerFactory;
     }
 
 

@@ -1,6 +1,7 @@
 package nl.kb.dare.scheduledjobs;
 
 import com.google.common.util.concurrent.AbstractScheduledService;
+import nl.kb.dare.mail.Mailer;
 import nl.kb.dare.model.RunState;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.repository.RepositoryController;
@@ -32,7 +33,7 @@ public class IdentifierHarvesterDaemon extends AbstractScheduledService {
                                      ResponseHandlerFactory responseHandlerFactory,
                                      RepositoryDao repositoryDao,
                                      SocketNotifier socketNotifier,
-                                     int maxParallel) {
+                                     Mailer mailer, int maxParallel) {
 
         this.repositoryController = repositoryController;
         this.recordBatchLoader = recordBatchLoader;
@@ -41,7 +42,8 @@ public class IdentifierHarvesterDaemon extends AbstractScheduledService {
         this.repositoryDao = repositoryDao;
         this.socketNotifier = socketNotifier;
         this.maxParallel = maxParallel;
-        this.errorFlowHandler = new IdentifierHarvesterErrorFlowHandler(repositoryController, this);
+        this.errorFlowHandler = new IdentifierHarvesterErrorFlowHandler(
+                repositoryController, this, mailer);
     }
 
     public void startHarvest(int repositoryId) {

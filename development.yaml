@@ -38,6 +38,12 @@ hostName: ${HOST}:${PORT}
 
 numbersEndpoint: http://numbersa.wpakb.kb.nl:8080/numbers/nbn
 
+#mailer:
+#  type: smtp
+#  host: ...
+#  from: from@address
+#  to: to@address
+
 fileStorage:
   storageType: local
   storageDir: ../../dare2-files

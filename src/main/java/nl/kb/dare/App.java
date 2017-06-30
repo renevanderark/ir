@@ -8,6 +8,9 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import nl.kb.dare.config.FileStorageFactory;
+import nl.kb.dare.databasetasks.LoadOracleSchemaTask;
+import nl.kb.dare.databasetasks.LoadRepositoriesTask;
 import nl.kb.dare.endpoints.AuthenticationEndpoint;
 import nl.kb.dare.endpoints.HarvesterEndpoint;
 import nl.kb.dare.endpoints.OaiRecordFetcherEndpoint;
@@ -17,10 +20,7 @@ import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
 import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
-import nl.kb.dare.scheduledjobs.IdentifierHarvesterDaemon;
-import nl.kb.dare.scheduledjobs.ObjectHarvesterDaemon;
-import nl.kb.dare.scheduledjobs.DailyIdentifierHarvestScheduler;
-import nl.kb.dare.websocket.SocketNotifier;
+import nl.kb.dare.mail.mailer.StubbedMailer;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
@@ -31,8 +31,10 @@ import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.nbn.NumbersController;
-import nl.kb.dare.databasetasks.LoadOracleSchemaTask;
-import nl.kb.dare.databasetasks.LoadRepositoriesTask;
+import nl.kb.dare.scheduledjobs.DailyIdentifierHarvestScheduler;
+import nl.kb.dare.scheduledjobs.IdentifierHarvesterDaemon;
+import nl.kb.dare.scheduledjobs.ObjectHarvesterDaemon;
+import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.filestorage.FileStorage;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.LenientHttpFetcher;
@@ -84,7 +86,11 @@ public class App extends Application<Config> {
         final ErrorReportDao errorReportDao = db.onDemand(ErrorReportDao.class);
 
         // File storage access
-        final FileStorage fileStorage = config.getFileStorageFactory().getFileStorage();
+        final FileStorageFactory fileStorageFactory = config.getFileStorageFactory();
+        if (fileStorageFactory == null) {
+            throw new IllegalStateException("No file storage configuration provided");
+        }
+        final FileStorage fileStorage = fileStorageFactory.getFileStorage();
 
 
         // Handler for websocket broadcasts to the browser
@@ -120,6 +126,7 @@ public class App extends Application<Config> {
                 responseHandlerFactory,
                 repositoryDao,
                 socketNotifier,
+                config.getMailerFactory() == null ? new StubbedMailer() : config.getMailerFactory().getMailer(),
                 config.getMaxParallelHarvests()
         );
 
