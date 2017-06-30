@@ -3,12 +3,12 @@ package nl.kb.dare;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import io.dropwizard.lifecycle.Managed;
 
-public class ManagedPeriodicTask implements Managed {
+class ManagedPeriodicTask implements Managed {
 
 
     private final AbstractScheduledService periodicTask;
 
-    public ManagedPeriodicTask(AbstractScheduledService periodicTask) {
+    ManagedPeriodicTask(AbstractScheduledService periodicTask) {
         this.periodicTask = periodicTask;
     }
 
