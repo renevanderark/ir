@@ -28,7 +28,7 @@ class IdentifierHarvesterErrorFlowHandler {
         this.mailer = mailer;
     }
 
-    void handlerIdentifierHarvestException(Exception ex) {
+    void handleIdentifierHarvestException(Exception ex) {
         LOG.error("SEVERE: Harvester failed due to failing service", ex);
         repositoryController.disableAllRepositories();
         identifierHarvesterDaemon.interruptAllHarvests();

@@ -40,7 +40,7 @@ public class IdentifierHarvesterDaemon extends AbstractScheduledService {
             final IdentifierHarvester harvester = harvesterBuilder
                     .setRepositoryId(repositoryId)
                     .setStateChangeNotifier((RunState runState) -> notifyStateChange())
-                    .setOnException(errorFlowHandler::handlerIdentifierHarvestException)
+                    .setOnException(errorFlowHandler::handleIdentifierHarvestException)
                     .createIdentifierHarvester();
 
             harvesters.put(repositoryId, harvester);
