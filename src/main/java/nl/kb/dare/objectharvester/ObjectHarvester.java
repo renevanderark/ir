@@ -48,35 +48,35 @@ public class ObjectHarvester {
 
         final ObjectHarvesterOperations getRecordOperations = new ObjectHarvesterOperations(
                 fileStorage, httpFetcher, responseHandlerFactory, xsltTransformer,
-                repositoryConfig, objectHarvesterResourceOperations, new ManifestFinalizer(),
-                onError);
+                repositoryConfig, objectHarvesterResourceOperations, new ManifestFinalizer());
 
-        return new ObjectHarvester(getRecordOperations, record).fetch();
+        return new ObjectHarvester(getRecordOperations, record).fetch(onError);
     }
 
-    ProcessStatus fetch() {
+    ProcessStatus fetch(Consumer<ErrorReport> onError) {
 
-        final Optional<FileStorageHandle> fileStorageHandle = getRecordOperations.getFileStorageHandle(record);
+        final Optional<FileStorageHandle> fileStorageHandle = getRecordOperations.getFileStorageHandle(record, onError);
         if (!fileStorageHandle.isPresent()) {
             return ProcessStatus.FAILED;
         }
 
         final FileStorageHandle handle = fileStorageHandle.get();
-        final Optional<ObjectResource> metadataResource = getRecordOperations.downloadMetadata(handle, record);
+        final Optional<ObjectResource> metadataResource = getRecordOperations.downloadMetadata(handle, record, onError);
         if (!metadataResource.isPresent()) {
             return ProcessStatus.FAILED;
         }
 
-        if (!getRecordOperations.generateManifest(handle)) {
+        if (!getRecordOperations.generateManifest(handle, onError)) {
             return ProcessStatus.FAILED;
         }
 
-        final List<ObjectResource> objectResources = getRecordOperations.collectResources(handle);
-        if (!getRecordOperations.downloadResources(handle, objectResources)) {
+        final List<ObjectResource> objectResources = getRecordOperations.collectResources(handle, onError);
+        if (!getRecordOperations.downloadResources(handle, objectResources, onError)) {
             return ProcessStatus.FAILED;
         }
 
-        if (!getRecordOperations.writeFilenamesAndChecksumsToMetadata(handle, objectResources, metadataResource.get())) {
+        if (!getRecordOperations
+                .writeFilenamesAndChecksumsToMetadata(handle, objectResources, metadataResource.get(), onError)) {
             return ProcessStatus.FAILED;
         }
 

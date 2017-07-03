@@ -59,7 +59,6 @@ public class ObjectHarvesterOperations {
     private final ResponseHandlerFactory responseHandlerFactory;
     private final XsltTransformer xsltTransformer;
     private final Repository repository;
-    private final Consumer<ErrorReport> onError;
     private final ObjectHarvesterResourceOperations resourceOperations;
     private final ManifestFinalizer manifestFinalizer;
 
@@ -69,8 +68,7 @@ public class ObjectHarvesterOperations {
                               XsltTransformer xsltTransformer,
                               Repository repository,
                               ObjectHarvesterResourceOperations resourceOperations,
-                              ManifestFinalizer manifestFinalizer,
-                              Consumer<ErrorReport> onError) {
+                              ManifestFinalizer manifestFinalizer) {
 
         this.fileStorage = fileStorage;
         this.httpFetcher = httpFetcher;
@@ -79,10 +77,9 @@ public class ObjectHarvesterOperations {
         this.repository = repository;
         this.resourceOperations = resourceOperations;
         this.manifestFinalizer = manifestFinalizer;
-        this.onError = onError;
     }
 
-    Optional<FileStorageHandle> getFileStorageHandle(Record oaiRecord) {
+    Optional<FileStorageHandle> getFileStorageHandle(Record oaiRecord, Consumer<ErrorReport> onError) {
         try {
             return Optional.of(fileStorage.create(oaiRecord.getKbObjId()));
         } catch (IOException e) {
@@ -94,7 +91,8 @@ public class ObjectHarvesterOperations {
         }
     }
 
-    Optional<ObjectResource> downloadMetadata(FileStorageHandle fileStorageHandle, Record record) {
+    Optional<ObjectResource> downloadMetadata(FileStorageHandle fileStorageHandle, Record record,
+                                              Consumer<ErrorReport> onError) {
         try {
             final String urlStr = String.format("%s?verb=GetRecord&metadataPrefix=%s&identifier=%s",
                     repository.getUrl(), repository.getMetadataPrefix(), record.getOaiIdentifier());
@@ -129,7 +127,7 @@ public class ObjectHarvesterOperations {
         }
     }
 
-    boolean generateManifest(FileStorageHandle handle) {
+    boolean generateManifest(FileStorageHandle handle, Consumer<ErrorReport> onError) {
         try {
             final InputStream metadata = handle.getFile(METADATA_XML);
             final OutputStream out = handle.getOutputStream(MANIFEST_INITIAL_XML);
@@ -148,7 +146,7 @@ public class ObjectHarvesterOperations {
     }
 
 
-    List<ObjectResource> collectResources(FileStorageHandle fileStorageHandle) {
+    List<ObjectResource> collectResources(FileStorageHandle fileStorageHandle, Consumer<ErrorReport> onError) {
         try {
             final ManifestXmlHandler manifestXmlHandler = new ManifestXmlHandler();
             synchronized (saxParser) {
@@ -164,7 +162,8 @@ public class ObjectHarvesterOperations {
         }
     }
 
-    boolean downloadResources(FileStorageHandle fileStorageHandle, List<ObjectResource> objectResources) {
+    boolean downloadResources(FileStorageHandle fileStorageHandle, List<ObjectResource> objectResources,
+                              Consumer<ErrorReport> onError) {
         try {
             for (ObjectResource objectResource : objectResources) {
 
@@ -185,7 +184,7 @@ public class ObjectHarvesterOperations {
 
 
     boolean writeFilenamesAndChecksumsToMetadata(FileStorageHandle handle, List<ObjectResource> objectResources,
-                                                 ObjectResource metadataResource) {
+                                                 ObjectResource metadataResource, Consumer<ErrorReport> onError) {
         try {
             final InputStream in = handle.getFile(MANIFEST_INITIAL_XML);
             final OutputStream out = handle.getOutputStream(MANIFEST_XML);
