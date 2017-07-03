@@ -2,7 +2,6 @@ package nl.kb.dare.databasetasks;
 
 import com.google.common.collect.ImmutableMultimap;
 import io.dropwizard.servlets.tasks.Task;
-import nl.kb.dare.SchemaLoader;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 

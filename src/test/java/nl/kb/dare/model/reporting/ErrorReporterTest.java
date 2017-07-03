@@ -1,6 +1,6 @@
 package nl.kb.dare.model.reporting;
 
-import nl.kb.dare.SchemaLoader;
+import nl.kb.dare.databasetasks.SchemaLoader;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordUtil;

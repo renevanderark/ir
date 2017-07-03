@@ -1,6 +1,6 @@
 package nl.kb.dare.model.repository;
 
-import nl.kb.dare.SchemaLoader;
+import nl.kb.dare.databasetasks.SchemaLoader;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.After;
 import org.junit.Before;

@@ -1,6 +1,6 @@
 package nl.kb.dare.model.preproces;
 
-import nl.kb.dare.SchemaLoader;
+import nl.kb.dare.databasetasks.SchemaLoader;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.websocket.socketupdate.RecordStatusUpdate;
 import nl.kb.oaipmh.OaiStatus;

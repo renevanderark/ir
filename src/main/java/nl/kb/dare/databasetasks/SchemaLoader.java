@@ -1,4 +1,4 @@
-package nl.kb.dare;
+package nl.kb.dare.databasetasks;
 
 import org.apache.commons.io.IOUtils;
 import org.skife.jdbi.v2.Handle;

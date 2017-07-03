@@ -1,6 +1,6 @@
 package nl.kb.dare.model.reporting;
 
-import nl.kb.dare.SchemaLoader;
+import nl.kb.dare.databasetasks.SchemaLoader;
 import nl.kb.dare.model.statuscodes.ErrorStatus;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.After;
