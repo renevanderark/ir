@@ -39,7 +39,7 @@ import nl.kb.dare.objectharvester.ObjectHarvesterOperations;
 import nl.kb.dare.objectharvester.ObjectHarvesterResourceOperations;
 import nl.kb.dare.scheduledjobs.DailyIdentifierHarvestScheduler;
 import nl.kb.dare.scheduledjobs.IdentifierHarvestSchedulerDaemon;
-import nl.kb.dare.scheduledjobs.ObjectHarvesterDaemon;
+import nl.kb.dare.scheduledjobs.ObjectHarvestSchedulerDaemon;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.filestorage.FileStorage;
 import nl.kb.http.HttpFetcher;
@@ -153,19 +153,23 @@ public class App extends Application<Config> {
         final ObjectHarvesterOperations objectHarvesterOperations = new ObjectHarvesterOperations(
                 fileStorage, httpFetcherForObjectHarvest, responseHandlerFactory, xsltTransformer,
                 objectHarvesterResourceOperations, new ManifestFinalizer());
-        final ObjectHarvester objectHarvester = new ObjectHarvester(objectHarvesterOperations);
+        // The object harvester
+        final ObjectHarvester objectHarvester = new ObjectHarvester(
+                repositoryDao,
+                recordDao,
+                errorReportDao,
+                objectHarvesterOperations,
+                recordReporter,
+                errorReporter,
+                socketNotifier);
 
         // Initialize wrapped services (injected in endpoints)
 
         // Process that starts publication downloads every n miliseconds
-        final ObjectHarvesterDaemon objectHarvesterDaemon = new ObjectHarvesterDaemon(
-                recordDao,
+        final ObjectHarvestSchedulerDaemon objectHarvesterDaemon = new ObjectHarvestSchedulerDaemon(
                 repositoryDao,
                 objectHarvester,
                 socketNotifier,
-                recordReporter,
-                errorReportDao,
-                errorReporter,
                 config.getMaxParallelDownloads(),
                 config.getDownloadQueueFillDelayMs()
         );
