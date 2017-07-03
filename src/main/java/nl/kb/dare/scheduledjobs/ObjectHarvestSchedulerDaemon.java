@@ -1,7 +1,6 @@
 package nl.kb.dare.scheduledjobs;
 
 import com.google.common.util.concurrent.AbstractScheduledService;
-import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.objectharvester.ObjectHarvester;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.websocket.socketupdate.RecordFetcherUpdate;
@@ -13,7 +12,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ObjectHarvestSchedulerDaemon extends AbstractScheduledService {
     private static AtomicInteger runningWorkers = new AtomicInteger(0);
 
-    private final RepositoryDao repositoryDao;
     private final SocketNotifier socketNotifier;
     private final Integer maxParallelDownloads;
     private final Long downloadQueueFillDelayMs;
@@ -25,13 +23,11 @@ public class ObjectHarvestSchedulerDaemon extends AbstractScheduledService {
 
     private RunState runState;
 
-    public ObjectHarvestSchedulerDaemon(RepositoryDao repositoryDao,
-                                        ObjectHarvester objectHarvester,
+    public ObjectHarvestSchedulerDaemon(ObjectHarvester objectHarvester,
                                         SocketNotifier socketNotifier,
                                         Integer maxWorkers,
                                         Long downloadQueueFillDelayMs) {
 
-        this.repositoryDao = repositoryDao;
         this.socketNotifier = socketNotifier;
         this.maxParallelDownloads = maxWorkers;
         this.downloadQueueFillDelayMs = downloadQueueFillDelayMs;

@@ -167,7 +167,6 @@ public class App extends Application<Config> {
 
         // Process that starts publication downloads every n miliseconds
         final ObjectHarvestSchedulerDaemon objectHarvesterDaemon = new ObjectHarvestSchedulerDaemon(
-                repositoryDao,
                 objectHarvester,
                 socketNotifier,
                 config.getMaxParallelDownloads(),
