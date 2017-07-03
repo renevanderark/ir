@@ -52,4 +52,16 @@ public class Email {
                 ", body='" + body + '\'' +
                 '}';
     }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public String getFrom() {
+        return from;
+    }
 }

@@ -18,11 +18,18 @@ public class MailerFactory {
     @JsonProperty
     private String type;
 
+    @JsonProperty
+    private Integer port = 25;
+
     public Mailer getMailer() {
         if (type.equalsIgnoreCase("smtp")) {
-            return new SmtpMailer(host, from, to);
+            return new SmtpMailer(host, from, to, port);
         }
 
         return new StubbedMailer();
+    }
+
+    public String getHost() {
+        return host;
     }
 }
