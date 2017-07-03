@@ -5,13 +5,8 @@ import nl.kb.dare.model.reporting.ErrorReport;
 import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
-import nl.kb.filestorage.FileStorage;
 import nl.kb.filestorage.FileStorageHandle;
-import nl.kb.http.HttpFetcher;
-import nl.kb.http.responsehandlers.ResponseHandlerFactory;
-import nl.kb.manifest.ManifestFinalizer;
 import nl.kb.manifest.ObjectResource;
-import nl.kb.xslt.XsltTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,24 +28,17 @@ public class ObjectHarvester {
     }
 
     public static ProcessStatus getAndRun(RepositoryDao repositoryDao, Record record,
-                                          HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory,
-                                          FileStorage fileStorage, XsltTransformer xsltTransformer,
-                                          ObjectHarvesterResourceOperations objectHarvesterResourceOperations,
+                                          ObjectHarvesterOperations getRecordOperations,
                                           Consumer<ErrorReport> onError) {
 
         final Repository repositoryConfig = repositoryDao.findById(record.getRepositoryId());
         if (repositoryConfig == null) {
             LOG.error("SEVERE! OaiRecord missing repository configuration in database: {}", record);
-            // TODO error report
             return ProcessStatus.FAILED;
         }
 
-
-        final ObjectHarvesterOperations getRecordOperations = new ObjectHarvesterOperations(
-                fileStorage, httpFetcher, responseHandlerFactory, xsltTransformer,
-                objectHarvesterResourceOperations, new ManifestFinalizer());
-
-        return new ObjectHarvester(getRecordOperations, record).fetch(repositoryConfig, onError);
+        return new ObjectHarvester(getRecordOperations, record)
+                .fetch(repositoryConfig, onError);
     }
 
     ProcessStatus fetch(Repository repositoryConfig, Consumer<ErrorReport> onError) {

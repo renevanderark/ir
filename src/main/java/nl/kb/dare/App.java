@@ -34,6 +34,7 @@ import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.nbn.NumbersController;
+import nl.kb.dare.objectharvester.ObjectHarvesterOperations;
 import nl.kb.dare.objectharvester.ObjectHarvesterResourceOperations;
 import nl.kb.dare.scheduledjobs.DailyIdentifierHarvestScheduler;
 import nl.kb.dare.scheduledjobs.IdentifierHarvestSchedulerDaemon;
@@ -43,6 +44,7 @@ import nl.kb.filestorage.FileStorage;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.LenientHttpFetcher;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
+import nl.kb.manifest.ManifestFinalizer;
 import nl.kb.xslt.PipedXsltTransformer;
 import org.skife.jdbi.v2.DBI;
 import org.slf4j.Logger;
@@ -143,8 +145,13 @@ public class App extends Application<Config> {
         );
 
         // Helper classes for the ObjectHarvester
+        // handles downloads of resources
         final ObjectHarvesterResourceOperations objectHarvesterResourceOperations =
                 new ObjectHarvesterResourceOperations(httpFetcherForObjectHarvest, responseHandlerFactory);
+        // Organises the operations of downloading a full publication object
+        final ObjectHarvesterOperations objectHarvesterOperations = new ObjectHarvesterOperations(
+                fileStorage, httpFetcherForObjectHarvest, responseHandlerFactory, xsltTransformer,
+                objectHarvesterResourceOperations, new ManifestFinalizer());
 
         // Initialize wrapped services (injected in endpoints)
 
@@ -155,17 +162,13 @@ public class App extends Application<Config> {
         final ObjectHarvesterDaemon objectHarvesterDaemon = new ObjectHarvesterDaemon(
                 recordDao,
                 repositoryDao,
-                httpFetcherForObjectHarvest,
-                responseHandlerFactory,
-                fileStorage,
-                xsltTransformer,
-                objectHarvesterResourceOperations,
                 socketNotifier,
                 recordReporter,
                 errorReportDao,
                 errorReporter,
                 config.getMaxParallelDownloads(),
-                config.getDownloadQueueFillDelayMs());
+                config.getDownloadQueueFillDelayMs(),
+                objectHarvesterOperations);
 
         // Fix potential data problems caused by hard termination of application
         try {

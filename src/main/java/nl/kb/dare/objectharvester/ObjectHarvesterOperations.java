@@ -61,12 +61,12 @@ public class ObjectHarvesterOperations {
     private final ObjectHarvesterResourceOperations resourceOperations;
     private final ManifestFinalizer manifestFinalizer;
 
-    ObjectHarvesterOperations(FileStorage fileStorage,
-                              HttpFetcher httpFetcher,
-                              ResponseHandlerFactory responseHandlerFactory,
-                              XsltTransformer xsltTransformer,
-                              ObjectHarvesterResourceOperations resourceOperations,
-                              ManifestFinalizer manifestFinalizer) {
+    public ObjectHarvesterOperations(FileStorage fileStorage,
+                                     HttpFetcher httpFetcher,
+                                     ResponseHandlerFactory responseHandlerFactory,
+                                     XsltTransformer xsltTransformer,
+                                     ObjectHarvesterResourceOperations resourceOperations,
+                                     ManifestFinalizer manifestFinalizer) {
 
         this.fileStorage = fileStorage;
         this.httpFetcher = httpFetcher;
