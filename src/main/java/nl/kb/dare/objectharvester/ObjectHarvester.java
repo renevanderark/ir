@@ -19,12 +19,10 @@ public class ObjectHarvester {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectHarvester.class);
 
 
-    private final Record record;
     private final ObjectHarvesterOperations getRecordOperations;
 
-    ObjectHarvester(ObjectHarvesterOperations getRecordOperations, Record record) {
+    ObjectHarvester(ObjectHarvesterOperations getRecordOperations) {
         this.getRecordOperations = getRecordOperations;
-        this.record = record;
     }
 
     public static ProcessStatus getAndRun(RepositoryDao repositoryDao, Record record,
@@ -37,11 +35,11 @@ public class ObjectHarvester {
             return ProcessStatus.FAILED;
         }
 
-        return new ObjectHarvester(getRecordOperations, record)
-                .fetch(repositoryConfig, onError);
+        return new ObjectHarvester(getRecordOperations)
+                .fetch(record, repositoryConfig, onError);
     }
 
-    ProcessStatus fetch(Repository repositoryConfig, Consumer<ErrorReport> onError) {
+    ProcessStatus fetch(Record record, Repository repositoryConfig, Consumer<ErrorReport> onError) {
 
         final Optional<FileStorageHandle> fileStorageHandle = getRecordOperations.getFileStorageHandle(record, onError);
         if (!fileStorageHandle.isPresent()) {

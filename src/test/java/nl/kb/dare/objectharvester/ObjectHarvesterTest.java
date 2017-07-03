@@ -31,10 +31,10 @@ public class ObjectHarvesterTest {
     public void fetchShouldReturnFailedWhenNoFileStorageHandleCouldBeCreated()  {
         final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
-        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations, oaiRecord);
+        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations);
         when(getRecordOperations.getFileStorageHandle(any(), any())).thenReturn(Optional.empty());
 
-        final ProcessStatus result = instance.fetch(mock(Repository.class), onError);
+        final ProcessStatus result = instance.fetch(oaiRecord, mock(Repository.class), onError);
         verify(getRecordOperations).getFileStorageHandle(oaiRecord, onError);
         verifyNoMoreInteractions(getRecordOperations);
 
@@ -46,12 +46,12 @@ public class ObjectHarvesterTest {
         final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
-        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations, oaiRecord);
+        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations);
         final Repository repository = mock(Repository.class);
         when(getRecordOperations.getFileStorageHandle(any(), any())).thenReturn(Optional.of(fileStorageHandle));
         when(getRecordOperations.downloadMetadata(any(), any(), any(), any())).thenReturn(Optional.empty());
 
-        final ProcessStatus result = instance.fetch(repository, onError);
+        final ProcessStatus result = instance.fetch(oaiRecord, repository, onError);
 
         final InOrder inOrder = inOrder(getRecordOperations, getRecordOperations);
         inOrder.verify(getRecordOperations).getFileStorageHandle(oaiRecord, onError);
@@ -67,12 +67,12 @@ public class ObjectHarvesterTest {
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
         final Repository repository = mock(Repository.class);
-        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations, oaiRecord);
+        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations);
         when(getRecordOperations.getFileStorageHandle(any(), any())).thenReturn(Optional.of(fileStorageHandle));
         when(getRecordOperations.downloadMetadata(any(), any(), any(), any())).thenReturn(Optional.of(mock(ObjectResource.class)));
         when(getRecordOperations.generateManifest(fileStorageHandle, onError)).thenReturn(false);
 
-        final ProcessStatus result = instance.fetch(repository, onError);
+        final ProcessStatus result = instance.fetch(oaiRecord, repository, onError);
 
         final InOrder inOrder = inOrder(getRecordOperations, getRecordOperations);
         inOrder.verify(getRecordOperations).getFileStorageHandle(oaiRecord, onError);
@@ -90,7 +90,7 @@ public class ObjectHarvesterTest {
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
-        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations, oaiRecord);
+        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations);
         final Repository repository = mock(Repository.class);
 
         when(getRecordOperations.getFileStorageHandle(any(), any())).thenReturn(Optional.of(fileStorageHandle));
@@ -99,7 +99,7 @@ public class ObjectHarvesterTest {
         when(getRecordOperations.downloadMetadata(any(), any(), any(), any())).thenReturn(Optional.of(mock(ObjectResource.class)));
         when(getRecordOperations.downloadResources(any(), any(), any())).thenReturn(false);
 
-        final ProcessStatus result = instance.fetch(repository, onError);
+        final ProcessStatus result = instance.fetch(oaiRecord, repository, onError);
 
         final InOrder inOrder = inOrder(getRecordOperations);
         inOrder.verify(getRecordOperations).getFileStorageHandle(oaiRecord, onError);
@@ -118,7 +118,7 @@ public class ObjectHarvesterTest {
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
-        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations, oaiRecord);
+        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations);
         final ObjectResource metadataResource = mock(ObjectResource.class);
         final Repository repository = mock(Repository.class);
 
@@ -129,7 +129,7 @@ public class ObjectHarvesterTest {
         when(getRecordOperations.downloadResources(any(), any(), any())).thenReturn(true);
         when(getRecordOperations.writeFilenamesAndChecksumsToMetadata(any(), any(), any(), any())).thenReturn(false);
 
-        final ProcessStatus result = instance.fetch(repository, onError);
+        final ProcessStatus result = instance.fetch(oaiRecord, repository, onError);
 
         final InOrder inOrder = inOrder(getRecordOperations);
         inOrder.verify(getRecordOperations).getFileStorageHandle(oaiRecord, onError);
@@ -153,7 +153,7 @@ public class ObjectHarvesterTest {
         final ObjectResource metadataResource = mock(ObjectResource.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
         final Repository repository = mock(Repository.class);
-        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations, oaiRecord);
+        final ObjectHarvester instance = new ObjectHarvester(getRecordOperations);
         when(getRecordOperations.getFileStorageHandle(any(), any())).thenReturn(Optional.of(fileStorageHandle));
         when(getRecordOperations.downloadMetadata(any(), any(), any(), any())).thenReturn(Optional.of(metadataResource));
         when(getRecordOperations.generateManifest(fileStorageHandle, onError)).thenReturn(true);
@@ -161,7 +161,7 @@ public class ObjectHarvesterTest {
         when(getRecordOperations.downloadResources(any(), any(), any())).thenReturn(true);
         when(getRecordOperations.writeFilenamesAndChecksumsToMetadata(any(), any(), any(), any())).thenReturn(true);
 
-        final ProcessStatus result = instance.fetch(repository, onError);
+        final ProcessStatus result = instance.fetch(oaiRecord, repository, onError);
 
         final InOrder inOrder = inOrder(getRecordOperations);
         inOrder.verify(getRecordOperations).getFileStorageHandle(oaiRecord, onError);
