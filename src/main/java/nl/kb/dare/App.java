@@ -20,6 +20,8 @@ import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
 import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
+import nl.kb.dare.identifierharvester.IdentifierHarvestErrorFlowHandler;
+import nl.kb.dare.identifierharvester.IdentifierHarvester;
 import nl.kb.dare.mail.Mailer;
 import nl.kb.dare.mail.mailer.StubbedMailer;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
@@ -32,9 +34,8 @@ import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.nbn.NumbersController;
+import nl.kb.dare.objectharvester.ObjectHarvesterResourceOperations;
 import nl.kb.dare.scheduledjobs.DailyIdentifierHarvestScheduler;
-import nl.kb.dare.identifierharvester.IdentifierHarvestErrorFlowHandler;
-import nl.kb.dare.identifierharvester.IdentifierHarvester;
 import nl.kb.dare.scheduledjobs.IdentifierHarvestSchedulerDaemon;
 import nl.kb.dare.scheduledjobs.ObjectHarvesterDaemon;
 import nl.kb.dare.websocket.SocketNotifier;
@@ -141,6 +142,10 @@ public class App extends Application<Config> {
                 config.getMaxParallelHarvests()
         );
 
+        // Helper classes for the ObjectHarvester
+        final ObjectHarvesterResourceOperations objectHarvesterResourceOperations =
+                new ObjectHarvesterResourceOperations(httpFetcherForObjectHarvest, responseHandlerFactory);
+
         // Initialize wrapped services (injected in endpoints)
 
         // Validator for OAI/PMH settings of a repository
@@ -154,6 +159,7 @@ public class App extends Application<Config> {
                 responseHandlerFactory,
                 fileStorage,
                 xsltTransformer,
+                objectHarvesterResourceOperations,
                 socketNotifier,
                 recordReporter,
                 errorReportDao,

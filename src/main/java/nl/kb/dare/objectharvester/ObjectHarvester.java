@@ -35,6 +35,7 @@ public class ObjectHarvester {
     public static ProcessStatus getAndRun(RepositoryDao repositoryDao, Record record,
                                           HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory,
                                           FileStorage fileStorage, XsltTransformer xsltTransformer,
+                                          ObjectHarvesterResourceOperations objectHarvesterResourceOperations,
                                           Consumer<ErrorReport> onError) {
 
         final Repository repositoryConfig = repositoryDao.findById(record.getRepositoryId());
@@ -44,12 +45,10 @@ public class ObjectHarvester {
             return ProcessStatus.FAILED;
         }
 
-        final ObjectHarvesterResourceOperations resourceOperations = new ObjectHarvesterResourceOperations(
-                httpFetcher, responseHandlerFactory);
 
         final ObjectHarvesterOperations getRecordOperations = new ObjectHarvesterOperations(
                 fileStorage, httpFetcher, responseHandlerFactory, xsltTransformer,
-                repositoryConfig, resourceOperations, new ManifestFinalizer(),
+                repositoryConfig, objectHarvesterResourceOperations, new ManifestFinalizer(),
                 onError);
 
         return new ObjectHarvester(getRecordOperations, record).fetch();

@@ -13,6 +13,7 @@ import nl.kb.dare.model.reporting.ErrorReporter;
 import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
+import nl.kb.dare.objectharvester.ObjectHarvesterResourceOperations;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.websocket.socketupdate.RecordFetcherUpdate;
 import nl.kb.filestorage.FileStorage;
@@ -39,6 +40,7 @@ public class ObjectHarvesterDaemon extends AbstractScheduledService {
     private final ResponseHandlerFactory responseHandlerFactory;
     private final FileStorage fileStorage;
     private final XsltTransformer xsltTransformer;
+    private final ObjectHarvesterResourceOperations objectHarvesterResourceOperations;
     private final SocketNotifier socketNotifier;
     private final RecordReporter recordReporter;
     private final ErrorReportDao errorReportDao;
@@ -55,6 +57,7 @@ public class ObjectHarvesterDaemon extends AbstractScheduledService {
     public ObjectHarvesterDaemon(RecordDao recordDao, RepositoryDao repositoryDao,
                                  HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory,
                                  FileStorage fileStorage, XsltTransformer xsltTransformer,
+                                 ObjectHarvesterResourceOperations objectHarvesterResourceOperations,
                                  SocketNotifier socketNotifier, RecordReporter recordReporter,
                                  ErrorReportDao errorReportDao, ErrorReporter errorReporter,
                                  Integer maxWorkers, Long downloadQueueFillDelayMs) {
@@ -64,6 +67,7 @@ public class ObjectHarvesterDaemon extends AbstractScheduledService {
         this.responseHandlerFactory = responseHandlerFactory;
         this.fileStorage = fileStorage;
         this.xsltTransformer = xsltTransformer;
+        this.objectHarvesterResourceOperations = objectHarvesterResourceOperations;
         this.socketNotifier = socketNotifier;
         this.recordReporter = recordReporter;
         this.errorReportDao = errorReportDao;
@@ -91,6 +95,7 @@ public class ObjectHarvesterDaemon extends AbstractScheduledService {
 
                 ProcessStatus result = ObjectHarvester.getAndRun(
                         repositoryDao, record, httpFetcher, responseHandlerFactory, fileStorage, xsltTransformer,
+                        objectHarvesterResourceOperations,
                         (ErrorReport errorReport) -> saveErrorReport(errorReport, record) // on error
                 );
 
