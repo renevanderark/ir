@@ -48,12 +48,12 @@ public class ObjectHarvester {
 
         final ObjectHarvesterOperations getRecordOperations = new ObjectHarvesterOperations(
                 fileStorage, httpFetcher, responseHandlerFactory, xsltTransformer,
-                repositoryConfig, objectHarvesterResourceOperations, new ManifestFinalizer());
+                objectHarvesterResourceOperations, new ManifestFinalizer());
 
-        return new ObjectHarvester(getRecordOperations, record).fetch(onError);
+        return new ObjectHarvester(getRecordOperations, record).fetch(repositoryConfig, onError);
     }
 
-    ProcessStatus fetch(Consumer<ErrorReport> onError) {
+    ProcessStatus fetch(Repository repositoryConfig, Consumer<ErrorReport> onError) {
 
         final Optional<FileStorageHandle> fileStorageHandle = getRecordOperations.getFileStorageHandle(record, onError);
         if (!fileStorageHandle.isPresent()) {
@@ -61,7 +61,8 @@ public class ObjectHarvester {
         }
 
         final FileStorageHandle handle = fileStorageHandle.get();
-        final Optional<ObjectResource> metadataResource = getRecordOperations.downloadMetadata(handle, record, onError);
+        final Optional<ObjectResource> metadataResource = getRecordOperations.downloadMetadata(handle, record,
+                repositoryConfig, onError);
         if (!metadataResource.isPresent()) {
             return ProcessStatus.FAILED;
         }

@@ -58,7 +58,6 @@ public class ObjectHarvesterOperations {
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
     private final XsltTransformer xsltTransformer;
-    private final Repository repository;
     private final ObjectHarvesterResourceOperations resourceOperations;
     private final ManifestFinalizer manifestFinalizer;
 
@@ -66,7 +65,6 @@ public class ObjectHarvesterOperations {
                               HttpFetcher httpFetcher,
                               ResponseHandlerFactory responseHandlerFactory,
                               XsltTransformer xsltTransformer,
-                              Repository repository,
                               ObjectHarvesterResourceOperations resourceOperations,
                               ManifestFinalizer manifestFinalizer) {
 
@@ -74,7 +72,6 @@ public class ObjectHarvesterOperations {
         this.httpFetcher = httpFetcher;
         this.responseHandlerFactory = responseHandlerFactory;
         this.xsltTransformer = xsltTransformer;
-        this.repository = repository;
         this.resourceOperations = resourceOperations;
         this.manifestFinalizer = manifestFinalizer;
     }
@@ -92,7 +89,7 @@ public class ObjectHarvesterOperations {
     }
 
     Optional<ObjectResource> downloadMetadata(FileStorageHandle fileStorageHandle, Record record,
-                                              Consumer<ErrorReport> onError) {
+                                              Repository repository, Consumer<ErrorReport> onError) {
         try {
             final String urlStr = String.format("%s?verb=GetRecord&metadataPrefix=%s&identifier=%s",
                     repository.getUrl(), repository.getMetadataPrefix(), record.getOaiIdentifier());
