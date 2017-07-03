@@ -102,11 +102,7 @@ public class ListIdentifiers {
                     onProgress.accept(lastDateStamp);
                 });
 
-                if (optResumptionToken.isPresent()) {
-                    resumptionToken = optResumptionToken.get();
-                } else {
-                    break;
-                }
+                resumptionToken = optResumptionToken.orElse("");
             }
 
             onHarvestComplete.accept(lastDateStamp);
