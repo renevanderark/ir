@@ -80,12 +80,18 @@ public class ObjectHarvesterDaemon extends AbstractScheduledService {
 
             final Thread worker = new Thread(() -> {
                 final Stopwatch timer = Stopwatch.createStarted();
-                final ProcessStatus result = ObjectHarvester.getAndRun(
-                        repositoryDao, record, getRecordOperations,
-                        (ErrorReport errorReport) -> saveErrorReport(errorReport, record) // on error
-                );
-
-                finishRecord(record, result, timer.elapsed(TimeUnit.SECONDS));
+                final Repository repositoryConfig = repositoryDao.findById(record.getRepositoryId());
+                if (repositoryConfig != null) {
+                    final ProcessStatus result = new ObjectHarvester(getRecordOperations).harvestPublication(
+                            record,
+                            repositoryConfig,
+                            (ErrorReport errorReport) -> saveErrorReport(errorReport, record) // on error
+                    );
+                    finishRecord(record, result, timer.elapsed(TimeUnit.SECONDS));
+                } else {
+                    LOG.error("SEVERE! OaiRecord missing repository configuration in database: {}", record);
+                    finishRecord(record, ProcessStatus.FAILED, timer.elapsed(TimeUnit.SECONDS));
+                }
                 runningWorkers.getAndDecrement();
             });
             workers.add(worker);
