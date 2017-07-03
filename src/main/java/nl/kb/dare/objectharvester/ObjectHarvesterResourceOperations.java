@@ -1,4 +1,4 @@
-package nl.kb.dare.scheduledjobs.objectharvester;
+package nl.kb.dare.objectharvester;
 
 import com.google.common.collect.Lists;
 import nl.kb.dare.model.reporting.ErrorReport;
@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
-class ObjectHarvesterResourceOperations {
+public class ObjectHarvesterResourceOperations {
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
 

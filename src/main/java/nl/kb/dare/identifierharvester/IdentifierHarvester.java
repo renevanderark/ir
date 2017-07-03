@@ -1,4 +1,4 @@
-package nl.kb.dare.scheduledjobs;
+package nl.kb.dare.identifierharvester;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import nl.kb.dare.model.RunState;
@@ -80,7 +80,7 @@ public class IdentifierHarvester implements Runnable {
         }
     }
 
-    void sendInterrupt() {
+    public void sendInterrupt() {
         if (runningInstance != null) {
             runningInstance.interruptHarvest();
             this.setRunState(RunState.INTERRUPTED);
@@ -94,7 +94,7 @@ public class IdentifierHarvester implements Runnable {
         return runState;
     }
 
-    void setRunState(RunState runState) {
+    public void setRunState(RunState runState) {
         this.runState = runState;
         stateChangeNotifier.accept(this.runState);
     }
@@ -122,23 +122,23 @@ public class IdentifierHarvester implements Runnable {
             this.repositoryDao = repositoryDao;
         }
 
-        Builder setRepositoryId(Integer repositoryId) {
+        public Builder setRepositoryId(Integer repositoryId) {
             this.repositoryId = repositoryId;
             return this;
         }
 
 
-        Builder setStateChangeNotifier(Consumer<RunState> stateChangeNotifier) {
+        public Builder setStateChangeNotifier(Consumer<RunState> stateChangeNotifier) {
             this.stateChangeNotifier = stateChangeNotifier;
             return this;
         }
 
-        Builder setOnException(Consumer<Exception> onException) {
+        public Builder setOnException(Consumer<Exception> onException) {
             this.onException = onException;
             return this;
         }
 
-        IdentifierHarvester createIdentifierHarvester() {
+        public IdentifierHarvester createIdentifierHarvester() {
             return new IdentifierHarvester(this);
         }
     }

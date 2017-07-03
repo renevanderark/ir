@@ -1,4 +1,4 @@
-package nl.kb.dare.scheduledjobs;
+package nl.kb.dare.identifierharvester;
 
 import nl.kb.dare.mail.mailer.Email;
 import nl.kb.dare.mail.Mailer;
@@ -25,7 +25,7 @@ public class IdentifierHarvestErrorFlowHandler {
         this.mailer = mailer;
     }
 
-    void handleIdentifierHarvestException(Exception ex) {
+    public void handleIdentifierHarvestException(Exception ex) {
         LOG.error("SEVERE: Harvester failed due to failing service", ex);
         repositoryController.disableAllRepositories();
 

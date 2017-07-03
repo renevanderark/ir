@@ -1,7 +1,8 @@
-package nl.kb.dare.scheduledjobs.objectharvester;
+package nl.kb.dare.objectharvester;
 
 import com.google.common.collect.Lists;
 import nl.kb.dare.model.reporting.ErrorReport;
+import nl.kb.dare.objectharvester.ObjectHarvesterResourceOperations;
 import nl.kb.filestorage.FileStorageHandle;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.HttpResponseHandler;

@@ -1,8 +1,9 @@
-package nl.kb.dare.scheduledjobs.objectharvester;
+package nl.kb.dare.objectharvester;
 
 import com.google.common.collect.Lists;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
+import nl.kb.dare.objectharvester.ObjectHarvesterOperations;
 import nl.kb.filestorage.FileStorageHandle;
 import nl.kb.manifest.ObjectResource;
 import org.junit.Test;

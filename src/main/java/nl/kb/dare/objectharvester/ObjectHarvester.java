@@ -1,4 +1,4 @@
-package nl.kb.dare.scheduledjobs.objectharvester;
+package nl.kb.dare.objectharvester;
 
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.reporting.ErrorReport;

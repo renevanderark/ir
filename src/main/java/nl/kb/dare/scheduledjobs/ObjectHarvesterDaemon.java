@@ -3,7 +3,7 @@ package nl.kb.dare.scheduledjobs;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractScheduledService;
-import nl.kb.dare.scheduledjobs.objectharvester.ObjectHarvester;
+import nl.kb.dare.objectharvester.ObjectHarvester;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;

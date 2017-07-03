@@ -1,4 +1,4 @@
-package nl.kb.dare.scheduledjobs.objectharvester;
+package nl.kb.dare.objectharvester;
 
 import com.google.common.collect.Lists;
 import nl.kb.dare.model.preproces.Record;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-class ObjectHarvesterOperations {
+public class ObjectHarvesterOperations {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectHarvesterOperations.class);
 
     private static final SAXParser saxParser;

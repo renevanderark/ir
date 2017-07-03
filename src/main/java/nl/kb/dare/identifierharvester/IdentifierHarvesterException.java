@@ -1,6 +1,6 @@
-package nl.kb.dare.scheduledjobs;
+package nl.kb.dare.identifierharvester;
 
-class IdentifierHarvesterException extends Exception {
+public class IdentifierHarvesterException extends Exception {
     IdentifierHarvesterException(String message, Exception ex) {
         super(message, ex);
     }

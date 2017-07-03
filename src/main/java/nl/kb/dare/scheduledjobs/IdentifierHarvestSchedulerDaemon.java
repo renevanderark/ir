@@ -1,6 +1,8 @@
 package nl.kb.dare.scheduledjobs;
 
 import com.google.common.util.concurrent.AbstractScheduledService;
+import nl.kb.dare.identifierharvester.IdentifierHarvestErrorFlowHandler;
+import nl.kb.dare.identifierharvester.IdentifierHarvester;
 import nl.kb.dare.model.RunState;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.websocket.socketupdate.HarvesterStatusUpdate;
