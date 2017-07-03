@@ -26,6 +26,7 @@ class LocalFileStorageHandle implements FileStorageHandle {
             return size() > MAX_ENTRIES;
         }
     };
+    private static final String NESTED_PATH_FMT = "%s/%s";
 
     private final String fileDir;
 
@@ -75,19 +76,19 @@ class LocalFileStorageHandle implements FileStorageHandle {
 
     @Override
     public OutputStream getOutputStream(String filename) throws IOException {
-        return new FileOutputStream(new File(String.format("%s/%s", fileDir, filename)));
+        return new FileOutputStream(new File(String.format(NESTED_PATH_FMT, fileDir, filename)));
     }
 
     @Override
     public OutputStream getOutputStream(String path, String filename) throws IOException {
-        final String filePath = String.format("%s/%s", fileDir, path);
+        final String filePath = String.format(NESTED_PATH_FMT, fileDir, path);
         FileUtils.forceMkdir(new File(filePath));
-        return new FileOutputStream(new File(String.format("%s/%s", filePath, filename)));
+        return new FileOutputStream(new File(String.format(NESTED_PATH_FMT, filePath, filename)));
     }
 
     @Override
     public InputStream getFile(String filename) throws FileNotFoundException {
-        return new FileInputStream(new File(String.format("%s/%s", fileDir, filename)));
+        return new FileInputStream(new File(String.format(NESTED_PATH_FMT, fileDir, filename)));
     }
 
     @Override

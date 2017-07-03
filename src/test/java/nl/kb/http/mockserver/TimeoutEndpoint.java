@@ -14,11 +14,7 @@ public class TimeoutEndpoint {
         final StreamingOutput downloadOutput = out -> {
             final long start = System.currentTimeMillis();
             while (System.currentTimeMillis() - start < 1000L) {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-
-                }
+                // makes client wait for at least 1000ms
             }
         };
         return Response.ok(downloadOutput).build();

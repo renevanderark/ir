@@ -123,9 +123,7 @@ public class ObjectHarvester {
     }
 
     private void finishRecord(Record record, ProcessStatus processStatus, long elapsed) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Finished record {} with status {}  in {} seconds", record.getKbObjId(), processStatus, elapsed);
-        }
+        LOG.info("Finished record {} with status {} in {} seconds", record.getOaiIdentifier(), processStatus, elapsed);
         record.setState(processStatus);
         recordDao.updateState(record);
         socketNotifier.notifyUpdate(recordReporter.getStatusUpdate());
