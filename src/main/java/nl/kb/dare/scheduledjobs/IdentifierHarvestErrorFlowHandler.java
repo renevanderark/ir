@@ -10,28 +10,24 @@ import java.util.Arrays;
 
 import static java.util.stream.Collectors.joining;
 
-class IdentifierHarvesterErrorFlowHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(IdentifierHarvesterErrorFlowHandler.class);
+public class IdentifierHarvestErrorFlowHandler {
+    private static final Logger LOG = LoggerFactory.getLogger(IdentifierHarvestErrorFlowHandler.class);
 
     private final RepositoryController repositoryController;
-    private final IdentifierHarvesterDaemon identifierHarvesterDaemon;
     private final Mailer mailer;
 
-    IdentifierHarvesterErrorFlowHandler(
+    public IdentifierHarvestErrorFlowHandler(
             RepositoryController repositoryController,
-            IdentifierHarvesterDaemon identifierHarvesterDaemon,
             Mailer mailer
     ) {
 
         this.repositoryController = repositoryController;
-        this.identifierHarvesterDaemon = identifierHarvesterDaemon;
         this.mailer = mailer;
     }
 
     void handleIdentifierHarvestException(Exception ex) {
         LOG.error("SEVERE: Harvester failed due to failing service", ex);
         repositoryController.disableAllRepositories();
-        identifierHarvesterDaemon.interruptAllHarvests();
 
         final Email email = new Email()
                 .withSubject("Harvest van identifiers gefaald")

@@ -20,6 +20,7 @@ import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
 import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
+import nl.kb.dare.mail.Mailer;
 import nl.kb.dare.mail.mailer.StubbedMailer;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
 import nl.kb.dare.model.preproces.RecordDao;
@@ -32,8 +33,9 @@ import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.nbn.NumbersController;
 import nl.kb.dare.scheduledjobs.DailyIdentifierHarvestScheduler;
+import nl.kb.dare.scheduledjobs.IdentifierHarvestErrorFlowHandler;
 import nl.kb.dare.scheduledjobs.IdentifierHarvester;
-import nl.kb.dare.scheduledjobs.IdentifierHarvesterDaemon;
+import nl.kb.dare.scheduledjobs.IdentifierHarvestSchedulerDaemon;
 import nl.kb.dare.scheduledjobs.ObjectHarvesterDaemon;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.filestorage.FileStorage;
@@ -69,6 +71,9 @@ public class App extends Application<Config> {
 
     @Override
     public void run(Config config, Environment environment) throws Exception {
+        final Mailer mailer = config.getMailerFactory() == null ?
+                new StubbedMailer() : config.getMailerFactory().getMailer();
+
         final DBIFactory factory = new DBIFactory();
         final DBI db = factory.build(environment, config.getDataSourceFactory(), "datasource");
 
@@ -111,7 +116,12 @@ public class App extends Application<Config> {
         // Stores harvest states for the repositories in the database
         final RepositoryController repositoryController = new RepositoryController(repositoryDao, socketNotifier);
         // Stores batches of new records and updates ~oai deleted~ existing records in the database
-        final RecordBatchLoader recordBatchLoader = new RecordBatchLoader(recordDao, numbersController, recordReporter, socketNotifier);
+        final RecordBatchLoader recordBatchLoader =
+                new RecordBatchLoader(recordDao, numbersController, recordReporter, socketNotifier);
+        // Handler for errors in services the IdentfierHarvesters depend on (numbers endpoint; oai endpoint)
+        final IdentifierHarvestErrorFlowHandler identifierHarvestErrorFlowHandler =
+                new IdentifierHarvestErrorFlowHandler(repositoryController, mailer);
+
 
         // Xslt processors
         final StreamSource stripOaiXslt = new StreamSource(PipedXsltTransformer.class.getResourceAsStream("/xslt/strip_oai_wrapper.xsl"));
@@ -124,11 +134,10 @@ public class App extends Application<Config> {
                 recordBatchLoader, httpFetcherForIdentifierHarvest, responseHandlerFactory, repositoryDao);
 
         // Process that manages the amount of running identifier harvesters every 200ms
-        final IdentifierHarvesterDaemon identifierHarvesterDaemon = new IdentifierHarvesterDaemon(
-                repositoryController,
+        final IdentifierHarvestSchedulerDaemon identifierHarvesterDaemon = new IdentifierHarvestSchedulerDaemon(
                 harvesterBuilder,
                 socketNotifier,
-                config.getMailerFactory() == null ? new StubbedMailer() : config.getMailerFactory().getMailer(),
+                identifierHarvestErrorFlowHandler,
                 config.getMaxParallelHarvests()
         );
 

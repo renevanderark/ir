@@ -1,9 +1,7 @@
 package nl.kb.dare.scheduledjobs;
 
 import com.google.common.util.concurrent.AbstractScheduledService;
-import nl.kb.dare.mail.Mailer;
 import nl.kb.dare.model.RunState;
-import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.websocket.socketupdate.HarvesterStatusUpdate;
 
@@ -12,26 +10,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class IdentifierHarvesterDaemon extends AbstractScheduledService {
+public class IdentifierHarvestSchedulerDaemon extends AbstractScheduledService {
     private static final Map<Integer, IdentifierHarvester> harvesters = Collections.synchronizedMap(new HashMap<>());
     private final SocketNotifier socketNotifier;
-    private final IdentifierHarvesterErrorFlowHandler errorFlowHandler;
+    private final IdentifierHarvestErrorFlowHandler errorFlowHandler;
     private final int maxParallel;
     private final IdentifierHarvester.Builder harvesterBuilder;
 
-    public IdentifierHarvesterDaemon(
-            RepositoryController repositoryController,
+    public IdentifierHarvestSchedulerDaemon(
             IdentifierHarvester.Builder harvesterBuilder,
             SocketNotifier socketNotifier,
-            Mailer mailer,
+            IdentifierHarvestErrorFlowHandler errorFlowHandler,
             int maxParallel
-    ) {
+        ) {
 
         this.socketNotifier = socketNotifier;
         this.maxParallel = maxParallel;
-        this.errorFlowHandler = new IdentifierHarvesterErrorFlowHandler(
-                repositoryController, this, mailer);
-
+        this.errorFlowHandler = errorFlowHandler;
         this.harvesterBuilder = harvesterBuilder;
     }
 
@@ -40,7 +35,7 @@ public class IdentifierHarvesterDaemon extends AbstractScheduledService {
             final IdentifierHarvester harvester = harvesterBuilder
                     .setRepositoryId(repositoryId)
                     .setStateChangeNotifier((RunState runState) -> notifyStateChange())
-                    .setOnException(errorFlowHandler::handleIdentifierHarvestException)
+                    .setOnException(this::handleException)
                     .createIdentifierHarvester();
 
             harvesters.put(repositoryId, harvester);
@@ -54,7 +49,12 @@ public class IdentifierHarvesterDaemon extends AbstractScheduledService {
         }
     }
 
-    void interruptAllHarvests() {
+    private void handleException(Exception ex) {
+        interruptAllHarvests();
+        errorFlowHandler.handleIdentifierHarvestException(ex);
+    }
+
+    private void interruptAllHarvests() {
         for (Map.Entry<Integer, IdentifierHarvester> entry : harvesters.entrySet()) {
             entry.getValue().sendInterrupt();
         }
@@ -82,7 +82,6 @@ public class IdentifierHarvesterDaemon extends AbstractScheduledService {
                 .limit(slots)
                 .map(Map.Entry::getValue)
                 .forEach(harvester -> new Thread(harvester).start());
-
     }
 
     public HarvesterStatusUpdate getStatusUpdate() {

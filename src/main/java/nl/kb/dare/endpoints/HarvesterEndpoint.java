@@ -1,7 +1,7 @@
 package nl.kb.dare.endpoints;
 
 import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
-import nl.kb.dare.scheduledjobs.IdentifierHarvesterDaemon;
+import nl.kb.dare.scheduledjobs.IdentifierHarvestSchedulerDaemon;
 import nl.kb.dare.model.RunState;
 import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryDao;
@@ -18,12 +18,12 @@ import javax.ws.rs.core.Response;
 public class HarvesterEndpoint {
     private final KbAuthFilter filter;
     private final RepositoryDao repositoryDao;
-    private final IdentifierHarvesterDaemon harvestRunner;
+    private final IdentifierHarvestSchedulerDaemon harvestRunner;
 
 
     public HarvesterEndpoint(
             KbAuthFilter filter, RepositoryDao repositoryDao,
-            IdentifierHarvesterDaemon harvestRunner) {
+            IdentifierHarvestSchedulerDaemon harvestRunner) {
         this.filter = filter;
 
         this.repositoryDao = repositoryDao;
