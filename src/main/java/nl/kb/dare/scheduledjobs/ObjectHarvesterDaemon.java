@@ -13,7 +13,6 @@ import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.objectharvester.ObjectHarvester;
-import nl.kb.dare.objectharvester.ObjectHarvesterOperations;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.websocket.socketupdate.RecordFetcherUpdate;
 import org.slf4j.Logger;
@@ -38,7 +37,7 @@ public class ObjectHarvesterDaemon extends AbstractScheduledService {
     private final ErrorReporter errorReporter;
     private final Integer maxParallelDownloads;
     private final Long downloadQueueFillDelayMs;
-    private ObjectHarvesterOperations getRecordOperations;
+    private ObjectHarvester objectHarvester;
 
     public enum RunState {
         RUNNING, DISABLING, DISABLED
@@ -46,11 +45,15 @@ public class ObjectHarvesterDaemon extends AbstractScheduledService {
 
     private RunState runState;
 
-    public ObjectHarvesterDaemon(RecordDao recordDao, RepositoryDao repositoryDao,
-                                 SocketNotifier socketNotifier, RecordReporter recordReporter,
-                                 ErrorReportDao errorReportDao, ErrorReporter errorReporter,
-                                 Integer maxWorkers, Long downloadQueueFillDelayMs,
-                                 ObjectHarvesterOperations objectHarvesterOperations) {
+    public ObjectHarvesterDaemon(RecordDao recordDao,
+                                 RepositoryDao repositoryDao,
+                                 ObjectHarvester objectHarvester,
+                                 SocketNotifier socketNotifier,
+                                 RecordReporter recordReporter,
+                                 ErrorReportDao errorReportDao,
+                                 ErrorReporter errorReporter,
+                                 Integer maxWorkers,
+                                 Long downloadQueueFillDelayMs) {
 
         this.recordDao = recordDao;
         this.repositoryDao = repositoryDao;
@@ -61,8 +64,8 @@ public class ObjectHarvesterDaemon extends AbstractScheduledService {
         this.maxParallelDownloads = maxWorkers;
         this.downloadQueueFillDelayMs = downloadQueueFillDelayMs;
         this.runState = RunState.DISABLED;
+        this.objectHarvester = objectHarvester;
 
-        this.getRecordOperations = objectHarvesterOperations;
     }
 
     @Override
@@ -82,7 +85,7 @@ public class ObjectHarvesterDaemon extends AbstractScheduledService {
                 final Stopwatch timer = Stopwatch.createStarted();
                 final Repository repositoryConfig = repositoryDao.findById(record.getRepositoryId());
                 if (repositoryConfig != null) {
-                    final ProcessStatus result = new ObjectHarvester(getRecordOperations).harvestPublication(
+                    final ProcessStatus result = objectHarvester.harvestPublication(
                             record,
                             repositoryConfig,
                             (ErrorReport errorReport) -> saveErrorReport(errorReport, record) // on error
@@ -182,7 +185,8 @@ public class ObjectHarvesterDaemon extends AbstractScheduledService {
     }
 
     private void saveErrorReport(ErrorReport errorReport, Record record) {
-        LOG.info("Failed to process record {} ({})", record.getOaiIdentifier(), errorReport.getUrl(), errorReport.getException());
+        LOG.info("Failed to process record {} ({})", record.getOaiIdentifier(), errorReport.getUrl(),
+                errorReport.getException());
         errorReportDao.insert(record.getId(), errorReport);
         socketNotifier.notifyUpdate(errorReporter.getStatusUpdate());
     }

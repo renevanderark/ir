@@ -34,6 +34,7 @@ import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.nbn.NumbersController;
+import nl.kb.dare.objectharvester.ObjectHarvester;
 import nl.kb.dare.objectharvester.ObjectHarvesterOperations;
 import nl.kb.dare.objectharvester.ObjectHarvesterResourceOperations;
 import nl.kb.dare.scheduledjobs.DailyIdentifierHarvestScheduler;
@@ -152,23 +153,25 @@ public class App extends Application<Config> {
         final ObjectHarvesterOperations objectHarvesterOperations = new ObjectHarvesterOperations(
                 fileStorage, httpFetcherForObjectHarvest, responseHandlerFactory, xsltTransformer,
                 objectHarvesterResourceOperations, new ManifestFinalizer());
+        final ObjectHarvester objectHarvester = new ObjectHarvester(objectHarvesterOperations);
 
         // Initialize wrapped services (injected in endpoints)
-
-        // Validator for OAI/PMH settings of a repository
-        final RepositoryValidator repositoryValidator = new RepositoryValidator(httpFetcherForIdentifierHarvest, responseHandlerFactory);
 
         // Process that starts publication downloads every n miliseconds
         final ObjectHarvesterDaemon objectHarvesterDaemon = new ObjectHarvesterDaemon(
                 recordDao,
                 repositoryDao,
+                objectHarvester,
                 socketNotifier,
                 recordReporter,
                 errorReportDao,
                 errorReporter,
                 config.getMaxParallelDownloads(),
-                config.getDownloadQueueFillDelayMs(),
-                objectHarvesterOperations);
+                config.getDownloadQueueFillDelayMs()
+        );
+
+        // Validator for OAI/PMH settings of a repository
+        final RepositoryValidator repositoryValidator = new RepositoryValidator(httpFetcherForIdentifierHarvest, responseHandlerFactory);
 
         // Fix potential data problems caused by hard termination of application
         try {
