@@ -29,6 +29,7 @@ import EditRepository from "./components/repositories/edit";
 import RepositoryStatus from "./components/repositories/repository-status";
 import RecordStatus from "./components/record-status/record-status";
 
+import UnsafeQuery from "./components/unsafe-query"
 
 // Forces a navigation to the url identified by key (see ./etc/urls)
 const navigateTo = (key, args) => browserHistory.push(urls[key].apply(null, args));
@@ -36,6 +37,10 @@ const navigateTo = (key, args) => browserHistory.push(urls[key].apply(null, args
 // Connects store data to component props
 // see: https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options
 const connectComponent = (stateToProps) => connect(stateToProps, dispatch => actions(navigateTo, dispatch));
+
+
+const unsafeConnector = state => (state.unsafe);
+
 
 // The routes:
 // see: http://redux.js.org/docs/advanced/UsageWithReactRouter.html
@@ -49,6 +54,8 @@ export default (
                 <Route path={urls.repositoryStatus()} components={connectComponent(repositoryStatusConnector)(RepositoryStatus)}/>
                 <Route path={urls.record()} components={connectComponent(recordStatusConnector)(RecordStatus)} />
             </Route>
+
+            <Route path="/unsafe-query"  components={connectComponent(unsafeConnector)(UnsafeQuery)} />
         </Router>
     </Provider>
 );
