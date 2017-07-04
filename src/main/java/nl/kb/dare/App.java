@@ -19,6 +19,7 @@ import nl.kb.dare.endpoints.RecordStatusEndpoint;
 import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
+import nl.kb.dare.endpoints.UnsafeQueryEndpoint;
 import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
 import nl.kb.dare.identifierharvester.IdentifierHarvestErrorFlowHandler;
 import nl.kb.dare.identifierharvester.IdentifierHarvester;
@@ -214,6 +215,8 @@ public class App extends Application<Config> {
 
         // Make JsonProcessingException show details
         register(environment, new JsonProcessingExceptionMapper(true));
+
+        register(environment, new UnsafeQueryEndpoint(db));
 
         // Websocket servlet status update notifier
         registerServlet(environment, new StatusWebsocketServlet(), "statusWebsocket");
