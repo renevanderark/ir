@@ -29,6 +29,8 @@ import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
 import nl.kb.dare.model.reporting.ErrorReportDao;
 import nl.kb.dare.model.reporting.ErrorReporter;
+import nl.kb.dare.model.reporting.ExcelReportBuilder;
+import nl.kb.dare.model.reporting.ExcelReportDao;
 import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryValidator;
@@ -94,6 +96,7 @@ public class App extends Application<Config> {
         final RepositoryDao repositoryDao = db.onDemand(RepositoryDao.class);
         final RecordDao recordDao = db.onDemand(RecordDao.class);
         final ErrorReportDao errorReportDao = db.onDemand(ErrorReportDao.class);
+        final ExcelReportDao excelReportDao = db.onDemand(ExcelReportDao.class);
 
         // File storage access
         final FileStorageFactory fileStorageFactory = config.getFileStorageFactory();
@@ -207,7 +210,8 @@ public class App extends Application<Config> {
         register(environment, new OaiRecordFetcherEndpoint(filter, objectHarvesterDaemon));
 
         // Record status endpoint
-        register(environment, new RecordStatusEndpoint(filter, recordReporter, errorReporter));
+        register(environment, new RecordStatusEndpoint(filter, recordReporter, errorReporter, excelReportDao,
+            new ExcelReportBuilder()));
 
         // HTML + javascript app
         register(environment, new RootEndpoint(config.getKbAutLocation(), config.getHostName()));

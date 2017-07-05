@@ -47,6 +47,14 @@ class RepositoryStatus extends React.Component {
                         </div>
                     </div>
                     <div className="row">
+                        <label className="col-md-6">Download excel rapport</label>
+                        <span className="col-md-26">
+                            <a href={`/record-status/errors/${repository.id}/${repository.name}.xlsx`}>
+                                <img style={{height: "16px"}} src="https://upload.wikimedia.org/wikipedia/commons/8/86/Microsoft_Excel_2013_logo.svg" />{" "}
+                            </a>
+                        </span>
+                    </div>
+                    <div className="row">
                         <label className="col-md-6">URL</label>
                         <span className="col-md-26">{repository.url}</span>
                     </div>
@@ -69,6 +77,7 @@ class RepositoryStatus extends React.Component {
                                       onEnableClick={() => this.props.onEnableRepository(repository.id)}
                                       onDisableClick={() => this.props.onDisableRepository(repository.id)}/>
                     </div>
+
 
 
                 </Panel>

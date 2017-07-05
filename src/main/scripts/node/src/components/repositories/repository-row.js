@@ -46,6 +46,11 @@ class RepositoryRow extends React.Component {
                 <td>
                     {statusLink}
                     {editLink}
+                    <a className="btn btn-default"
+                       href={`/record-status/errors/${repository.id}/${repository.name}.xlsx`}>
+                        <img style={{height: "16px"}}
+                            src="https://upload.wikimedia.org/wikipedia/commons/8/86/Microsoft_Excel_2013_logo.svg" />
+                    </a>
                     <StartStopButton runState={runState || RunState.WAITING}
                                      disabled={!repository.enabled}
                                      onStopClick={() => this.props.onInterruptHarvest(repository.id)}
