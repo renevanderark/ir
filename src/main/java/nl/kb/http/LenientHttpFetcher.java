@@ -13,7 +13,7 @@ public class LenientHttpFetcher implements HttpFetcher {
     private final int readTimeout;
 
     public LenientHttpFetcher(boolean proactivelyClosing) {
-        this(proactivelyClosing, 30_000);
+        this(proactivelyClosing, 300_000);
     }
 
     LenientHttpFetcher(boolean proactivelyClosing, int connectTimeout) {
