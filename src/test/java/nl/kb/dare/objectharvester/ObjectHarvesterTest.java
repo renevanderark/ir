@@ -8,6 +8,7 @@ import nl.kb.dare.model.reporting.ErrorReport;
 import nl.kb.dare.model.reporting.ErrorReportDao;
 import nl.kb.dare.model.reporting.ErrorReporter;
 import nl.kb.dare.model.repository.Repository;
+import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.websocket.SocketNotifier;
@@ -38,12 +39,24 @@ public class ObjectHarvesterTest {
     private SocketNotifier socketNotifier = mock(SocketNotifier.class);
     private ErrorReporter errorReporter = mock(ErrorReporter.class);
     private RecordReporter recordReporter = mock(RecordReporter.class);
+    private RepositoryController repositoryController = mock(RepositoryController.class);
+    private Integer maxSequentialDownloadFailures = 10;
 
     @Test
     public void fetchShouldReturnFailedWhenNoFileStorageHandleCouldBeCreated()  {
         final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
-        final ObjectHarvester instance = new ObjectHarvester(repositoryDao, recordDao, errorReportDao, getRecordOperations, recordReporter, errorReporter, socketNotifier);
+        final ObjectHarvester instance = new ObjectHarvester.Builder()
+                .setRepositoryDao(repositoryDao)
+                .setRecordDao(recordDao)
+                .setErrorReportDao(errorReportDao)
+                .setObjectHarvesterOperations(getRecordOperations)
+                .setRecordReporter(recordReporter)
+                .setErrorReporter(errorReporter)
+                .setSocketNotifier(socketNotifier)
+                .setMaxSequentialDownloadFailures(maxSequentialDownloadFailures)
+                .setObjectHarvestErrorFlowHandler(mock(ObjectHarvestErrorFlowHandler.class))
+                .create();
         when(getRecordOperations.getFileStorageHandle(any(), any())).thenReturn(Optional.empty());
 
         final ProcessStatus result = instance.harvestPublication(oaiRecord, mock(Repository.class), onError);
@@ -58,7 +71,18 @@ public class ObjectHarvesterTest {
         final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
-        final ObjectHarvester instance = new ObjectHarvester(repositoryDao, recordDao, errorReportDao, getRecordOperations, recordReporter, errorReporter, socketNotifier);
+        final ObjectHarvester instance = new ObjectHarvester.Builder()
+                .setRepositoryDao(repositoryDao)
+                .setRecordDao(recordDao)
+                .setErrorReportDao(errorReportDao)
+                .setObjectHarvesterOperations(getRecordOperations)
+                .setRecordReporter(recordReporter)
+                .setErrorReporter(errorReporter)
+                .setSocketNotifier(socketNotifier)
+                .setMaxSequentialDownloadFailures(maxSequentialDownloadFailures)
+                .setObjectHarvestErrorFlowHandler(mock(ObjectHarvestErrorFlowHandler.class))
+                .create();
+
         final Repository repository = mock(Repository.class);
         when(getRecordOperations.getFileStorageHandle(any(), any())).thenReturn(Optional.of(fileStorageHandle));
         when(getRecordOperations.downloadMetadata(any(), any(), any(), any())).thenReturn(Optional.empty());
@@ -79,7 +103,17 @@ public class ObjectHarvesterTest {
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
         final Repository repository = mock(Repository.class);
-        final ObjectHarvester instance = new ObjectHarvester(repositoryDao, recordDao, errorReportDao, getRecordOperations, recordReporter, errorReporter, socketNotifier);
+        final ObjectHarvester instance = new ObjectHarvester.Builder()
+                .setRepositoryDao(repositoryDao)
+                .setRecordDao(recordDao)
+                .setErrorReportDao(errorReportDao)
+                .setObjectHarvesterOperations(getRecordOperations)
+                .setRecordReporter(recordReporter)
+                .setErrorReporter(errorReporter)
+                .setSocketNotifier(socketNotifier)
+                .setMaxSequentialDownloadFailures(maxSequentialDownloadFailures)
+                .setObjectHarvestErrorFlowHandler(mock(ObjectHarvestErrorFlowHandler.class))
+                .create();
         when(getRecordOperations.getFileStorageHandle(any(), any())).thenReturn(Optional.of(fileStorageHandle));
         when(getRecordOperations.downloadMetadata(any(), any(), any(), any())).thenReturn(Optional.of(mock(ObjectResource.class)));
         when(getRecordOperations.generateManifest(fileStorageHandle, onError)).thenReturn(false);
@@ -102,7 +136,17 @@ public class ObjectHarvesterTest {
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
-        final ObjectHarvester instance = new ObjectHarvester(repositoryDao, recordDao, errorReportDao, getRecordOperations, recordReporter, errorReporter, socketNotifier);
+        final ObjectHarvester instance = new ObjectHarvester.Builder()
+                .setRepositoryDao(repositoryDao)
+                .setRecordDao(recordDao)
+                .setErrorReportDao(errorReportDao)
+                .setObjectHarvesterOperations(getRecordOperations)
+                .setRecordReporter(recordReporter)
+                .setErrorReporter(errorReporter)
+                .setSocketNotifier(socketNotifier)
+                .setMaxSequentialDownloadFailures(maxSequentialDownloadFailures)
+                .setObjectHarvestErrorFlowHandler(mock(ObjectHarvestErrorFlowHandler.class))
+                .create();
         final Repository repository = mock(Repository.class);
 
         when(getRecordOperations.getFileStorageHandle(any(), any())).thenReturn(Optional.of(fileStorageHandle));
@@ -130,7 +174,18 @@ public class ObjectHarvesterTest {
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
-        final ObjectHarvester instance = new ObjectHarvester(repositoryDao, recordDao, errorReportDao, getRecordOperations, recordReporter, errorReporter, socketNotifier);
+        final ObjectHarvester instance = new ObjectHarvester.Builder()
+                .setRepositoryDao(repositoryDao)
+                .setRecordDao(recordDao)
+                .setErrorReportDao(errorReportDao)
+                .setObjectHarvesterOperations(getRecordOperations)
+                .setRecordReporter(recordReporter)
+                .setErrorReporter(errorReporter)
+                .setSocketNotifier(socketNotifier)
+                .setMaxSequentialDownloadFailures(maxSequentialDownloadFailures)
+                .setObjectHarvestErrorFlowHandler(mock(ObjectHarvestErrorFlowHandler.class))
+                .create();
+
         final ObjectResource metadataResource = mock(ObjectResource.class);
         final Repository repository = mock(Repository.class);
 
@@ -165,7 +220,17 @@ public class ObjectHarvesterTest {
         final ObjectResource metadataResource = mock(ObjectResource.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
         final Repository repository = mock(Repository.class);
-        final ObjectHarvester instance = new ObjectHarvester(repositoryDao, recordDao, errorReportDao, getRecordOperations, recordReporter, errorReporter, socketNotifier);
+        final ObjectHarvester instance = new ObjectHarvester.Builder()
+                .setRepositoryDao(repositoryDao)
+                .setRecordDao(recordDao)
+                .setErrorReportDao(errorReportDao)
+                .setObjectHarvesterOperations(getRecordOperations)
+                .setRecordReporter(recordReporter)
+                .setErrorReporter(errorReporter)
+                .setSocketNotifier(socketNotifier)
+                .setMaxSequentialDownloadFailures(maxSequentialDownloadFailures)
+                .setObjectHarvestErrorFlowHandler(mock(ObjectHarvestErrorFlowHandler.class))
+                .create();
         when(getRecordOperations.getFileStorageHandle(any(), any())).thenReturn(Optional.of(fileStorageHandle));
         when(getRecordOperations.downloadMetadata(any(), any(), any(), any())).thenReturn(Optional.of(metadataResource));
         when(getRecordOperations.generateManifest(fileStorageHandle, onError)).thenReturn(true);

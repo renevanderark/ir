@@ -18,7 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -29,6 +32,7 @@ import static java.util.stream.Collectors.toList;
 
 public class ObjectHarvester {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectHarvester.class);
+    private static final Map<Integer, Integer> failCounts = Collections.synchronizedMap(new HashMap<>());
 
     private final ObjectHarvesterOperations objectHarvesterOperations;
     private final RepositoryDao repositoryDao;
@@ -37,22 +41,21 @@ public class ObjectHarvester {
     private final RecordReporter recordReporter;
     private final ErrorReporter errorReporter;
     private final SocketNotifier socketNotifier;
+    private final Integer maxSequentialDownloadFailures;
+    private ObjectHarvestErrorFlowHandler objectHarvestErrorFlowHandler;
 
-    public ObjectHarvester(RepositoryDao repositoryDao,
-                           RecordDao recordDao,
-                           ErrorReportDao errorReportDao,
-                           ObjectHarvesterOperations objectHarvesterOperations,
-                           RecordReporter recordReporter,
-                           ErrorReporter errorReporter,
-                           SocketNotifier socketNotifier) {
 
-        this.repositoryDao = repositoryDao;
-        this.recordDao = recordDao;
-        this.errorReportDao = errorReportDao;
-        this.objectHarvesterOperations = objectHarvesterOperations;
-        this.recordReporter = recordReporter;
-        this.errorReporter = errorReporter;
-        this.socketNotifier = socketNotifier;
+    private ObjectHarvester(Builder builder) {
+
+        this.repositoryDao = builder.repositoryDao;
+        this.recordDao = builder.recordDao;
+        this.errorReportDao = builder.errorReportDao;
+        this.objectHarvesterOperations = builder.objectHarvesterOperations;
+        this.recordReporter = builder.recordReporter;
+        this.errorReporter = builder.errorReporter;
+        this.socketNotifier = builder.socketNotifier;
+        this.maxSequentialDownloadFailures = builder.maxSequentialDownloadFailures;
+        this.objectHarvestErrorFlowHandler = builder.objectHarvestErrorFlowHandler;
     }
 
     public List<Thread> harvestNextPublications(Integer maxParallelDownloads, AtomicInteger runningWorkers) {
@@ -126,6 +129,18 @@ public class ObjectHarvester {
         LOG.info("Finished record {} with status {} in {} seconds", record.getOaiIdentifier(), processStatus, elapsed);
         record.setState(processStatus);
         recordDao.updateState(record);
+        if (processStatus == ProcessStatus.PROCESSED) {
+            failCounts.put(record.getRepositoryId(), 0);
+        } else {
+            failCounts.put(record.getRepositoryId(),
+                    failCounts.getOrDefault(record.getRepositoryId(), 0 ) + 1);
+        }
+
+        if (failCounts.getOrDefault(record.getRepositoryId(), 0) >= maxSequentialDownloadFailures) {
+            objectHarvestErrorFlowHandler
+                    .handleConsecutiveDownloadFailures(record.getRepositoryId(), maxSequentialDownloadFailures);
+        }
+
         socketNotifier.notifyUpdate(recordReporter.getStatusUpdate());
     }
 
@@ -170,4 +185,66 @@ public class ObjectHarvester {
     }
 
 
+    public static class Builder {
+        private RepositoryDao repositoryDao;
+        private RecordDao recordDao;
+        private ErrorReportDao errorReportDao;
+        private ObjectHarvesterOperations objectHarvesterOperations;
+        private RecordReporter recordReporter;
+        private ErrorReporter errorReporter;
+        private SocketNotifier socketNotifier;
+        private Integer maxSequentialDownloadFailures;
+        private ObjectHarvestErrorFlowHandler objectHarvestErrorFlowHandler;
+
+        public Builder setRepositoryDao(RepositoryDao repositoryDao) {
+            this.repositoryDao = repositoryDao;
+            return this;
+        }
+
+        public Builder setRecordDao(RecordDao recordDao) {
+            this.recordDao = recordDao;
+            return this;
+        }
+
+        public Builder setErrorReportDao(ErrorReportDao errorReportDao) {
+            this.errorReportDao = errorReportDao;
+            return this;
+        }
+
+        public Builder setObjectHarvesterOperations(ObjectHarvesterOperations objectHarvesterOperations) {
+            this.objectHarvesterOperations = objectHarvesterOperations;
+            return this;
+        }
+
+        public Builder setRecordReporter(RecordReporter recordReporter) {
+            this.recordReporter = recordReporter;
+            return this;
+        }
+
+        public Builder setErrorReporter(ErrorReporter errorReporter) {
+            this.errorReporter = errorReporter;
+            return this;
+        }
+
+        public Builder setSocketNotifier(SocketNotifier socketNotifier) {
+            this.socketNotifier = socketNotifier;
+            return this;
+        }
+
+        public Builder setMaxSequentialDownloadFailures(Integer maxSequentialDownloadFailures) {
+            this.maxSequentialDownloadFailures = maxSequentialDownloadFailures;
+            return this;
+        }
+
+        public Builder setObjectHarvestErrorFlowHandler(ObjectHarvestErrorFlowHandler objectHarvestErrorFlowHandler) {
+            this.objectHarvestErrorFlowHandler = objectHarvestErrorFlowHandler;
+            return this;
+        }
+
+
+        public ObjectHarvester create() {
+            return new ObjectHarvester(this);
+        }
+
+    }
 }

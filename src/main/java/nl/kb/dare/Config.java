@@ -31,6 +31,9 @@ class Config extends Configuration {
     @JsonProperty
     private String kbAutLocation;
 
+    @JsonProperty
+    private Integer maxConsecutiveDownloadFailures = 10;
+
 
     @JsonProperty("database")
     DataSourceFactory getDataSourceFactory() {
@@ -87,5 +90,9 @@ class Config extends Configuration {
 
     public String getKbAutLocation() {
         return kbAutLocation;
+    }
+
+    public Integer getMaxConsecutiveDownloadFailures() {
+        return maxConsecutiveDownloadFailures;
     }
 }

@@ -36,6 +36,7 @@ import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.nbn.NumbersController;
+import nl.kb.dare.objectharvester.ObjectHarvestErrorFlowHandler;
 import nl.kb.dare.objectharvester.ObjectHarvester;
 import nl.kb.dare.objectharvester.ObjectHarvesterOperations;
 import nl.kb.dare.objectharvester.ObjectHarvesterResourceOperations;
@@ -156,15 +157,22 @@ public class App extends Application<Config> {
         final ObjectHarvesterOperations objectHarvesterOperations = new ObjectHarvesterOperations(
                 fileStorage, httpFetcherForObjectHarvest, responseHandlerFactory, xsltTransformer,
                 objectHarvesterResourceOperations, new ManifestFinalizer());
+        // Handles expected failure flow (exceed maximum consecutive download failures
+        final ObjectHarvestErrorFlowHandler objectHarvestErrorFlowHandler = new ObjectHarvestErrorFlowHandler(
+                repositoryController, repositoryDao, mailer);
+
         // The object harvester
-        final ObjectHarvester objectHarvester = new ObjectHarvester(
-                repositoryDao,
-                recordDao,
-                errorReportDao,
-                objectHarvesterOperations,
-                recordReporter,
-                errorReporter,
-                socketNotifier);
+        final ObjectHarvester objectHarvester = new ObjectHarvester.Builder()
+                .setRepositoryDao(repositoryDao)
+                .setRecordDao(recordDao)
+                .setErrorReportDao(errorReportDao)
+                .setObjectHarvesterOperations(objectHarvesterOperations)
+                .setRecordReporter(recordReporter)
+                .setErrorReporter(errorReporter)
+                .setSocketNotifier(socketNotifier)
+                .setMaxSequentialDownloadFailures(config.getMaxConsecutiveDownloadFailures())
+                .setObjectHarvestErrorFlowHandler(objectHarvestErrorFlowHandler)
+                .create();
 
         // Initialize wrapped services (injected in endpoints)
 

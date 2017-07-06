@@ -25,6 +25,13 @@ public class RepositoryController {
         notifyUpdate();
     }
 
+    public void disable(Integer repositoryId) {
+        synchronized (repositoryDao) {
+            repositoryDao.disable(repositoryId);
+        }
+        notifyUpdate();
+    }
+
     public void storeHarvestDateStamp(Integer id, String dateStamp) {
         synchronized (repositoryDao) {
             repositoryDao.setDateStamp(id, dateStamp);
@@ -38,5 +45,6 @@ public class RepositoryController {
         }
         notifyUpdate();
     }
+
 
 }
