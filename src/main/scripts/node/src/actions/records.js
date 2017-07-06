@@ -14,7 +14,7 @@ const findRecords = (query) => (dispatch) => {
 const fetchRecord = (kbObjId) => (dispatch) => {
     dispatch({type: ActionTypes.RECORD_PENDING});
 
-    xhr({url: `/records/status/${kbObjId}`, "method": "GET", headers: {
+    xhr({url: `/records/status/${kbObjId}?${new Date().getTime()}`, "method": "GET", headers: {
         'Authorization': localStorage.getItem("authToken") }}, (err, resp, body) => handleResponse(resp, () => {
         dispatch({type: ActionTypes.RECEIVE_RECORD, data: JSON.parse(body)});
     }));
@@ -25,4 +25,11 @@ const bulkResetToPending = (repositoryId) => (dispatch) => {
         'Authorization': localStorage.getItem("authToken") }}, (err, resp, body) => handleResponse(resp));
 };
 
-export {findRecords, fetchRecord, bulkResetToPending}
+const resetRecord = (kbObjId) => (dispatch) =>{
+    xhr({url: `/records/reset/${kbObjId}`, "method": "PUT", headers: {
+        'Authorization': localStorage.getItem("authToken") }}, (err, resp, body) => handleResponse(resp, () =>
+            dispatch(fetchRecord(kbObjId))
+    ));
+};
+
+export {findRecords, fetchRecord, bulkResetToPending, resetRecord}

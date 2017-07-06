@@ -25,8 +25,9 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 
 
 public class ErrorReportDaoTest {
@@ -71,6 +72,25 @@ public class ErrorReportDaoTest {
                 hasProperty("url", is("http://example.com")),
                 hasProperty("stackTrace", containsString(this.getClass().getCanonicalName()))
             ));
+        }
+    }
+
+    @Test
+    public void deleteForRecordIdShouldDeleteTheErrorReportForTheGivenRecordId() throws MalformedURLException {
+        try {
+            throw new IOException("test exception");
+        } catch (IOException e) {
+            final ErrorReport errorReport = new ErrorReport(e, new URL("http://example.com"),
+                    ErrorStatus.IO_EXCEPTION);
+            instance.insert(1L, errorReport);
+            final StoredErrorReport res1 = instance.fetchForRecordId(1L);
+            instance.deleteForRecordId(1L);
+            final StoredErrorReport res2 = instance.fetchForRecordId(1L);
+
+            assertThat(res1, not(is(nullValue())));
+            assertThat(res2, is(nullValue()));
+
+
         }
     }
 

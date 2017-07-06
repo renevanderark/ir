@@ -54,6 +54,8 @@ public class RecordEndpoint {
                 .build());
     }
 
+
+
     @PUT
     @Path("/bulk-reset/{repositoryId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -71,6 +73,23 @@ public class RecordEndpoint {
                 });
     }
 
+    @PUT
+    @Path("/reset/{kbObjId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response reset(@PathParam("kbObjId") String kbObjId, @HeaderParam("Authorization") String auth) {
+        return filter.getFilterResponse(auth).orElseGet(() -> {
+            final Record record = recordDao.findByKbObjId(kbObjId);
+            if (record == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            record.setState(ProcessStatus.PENDING);
+            recordDao.updateState(record);
+            errorReportDao.deleteForRecordId(record.getId());
+            socketNotifier.notifyUpdate(recordReporter.getStatusUpdate());
+
+            return Response.ok("{}").build();
+        });
+    }
 
     @GET
     @Path("/status/{kbObjId}")

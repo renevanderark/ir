@@ -33,7 +33,7 @@ class RepositoryStatus extends React.Component {
             : (<i>Geen fouten aangetroffen</i>);
 
         const resetButton = recordStatus.failure > 0 ? (
-            <ButtonWithModalWarning className="btn-default btn-xs" label="Terugplaatsen in wachtrij"
+            <ButtonWithModalWarning className="btn btn-default btn-xs" label="Terugplaatsen in wachtrij"
                                     onConfirm={(doClose) => {
                                         onBulkResetToPending(repository.id);
                                         doClose();

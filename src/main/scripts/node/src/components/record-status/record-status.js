@@ -1,5 +1,6 @@
 import React from "react";
 import Panel from "../layout/panel";
+import ButtonWithModalWarning from "../modals/button-with-modal-warning";
 
 class RecordStatus extends React.Component {
 
@@ -21,7 +22,7 @@ class RecordStatus extends React.Component {
 
 
     render() {
-        const { record, errorReport, processStatuses, repositories, errorStatuses } = this.props;
+        const { record, errorReport, processStatuses, repositories, errorStatuses, onReset } = this.props;
         if (!record) { return null; }
 
         const errorReportPanel = errorReport
@@ -68,16 +69,31 @@ class RecordStatus extends React.Component {
             </div>
         ) : null;
 
+        const resetButton = processStatuses[record.state] === "failure" ? (
+                <ButtonWithModalWarning
+                    className="btn btn-default" label="Terugzetten in wachtrij"
+                    onConfirm={(doClose) => {
+                        onReset(record.kbObjId)
+                        doClose();
+                    }}>
+
+                    Weet u zeker dat u deze publicatie wilt terugzetten in de wachtrij?
+                </ButtonWithModalWarning>
+            ) : null;
+
         return (
             <div>
                 <Panel title="Overzicht IP">
                     <div className="row">
                         <label className="col-md-6">OAI/PMH identifier</label>
-                        <div className="col-md-26">
+                        <div className="col-md-20">
                             <a target="_blank"
                                href={`http://oai.gharvester.dans.knaw.nl/?verb=GetRecord&metadataPrefix=nl_didl_norm&identifier=${encodeURIComponent(record.oaiIdentifier)}`}>
                                 {record.oaiIdentifier}
                             </a>
+                        </div>
+                        <div className="col-md-6">
+                            {resetButton}
                         </div>
                     </div>
                     <div className="row">

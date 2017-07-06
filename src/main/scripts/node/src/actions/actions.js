@@ -9,7 +9,7 @@ import {
 
 import { startHarvest, interruptHarvest } from "./harvesters";
 import { disableOaiRecordFetcher, startOaiRecordFetcher } from "./oai-record-fetcher";
-import { fetchRecord, findRecords, bulkResetToPending } from "./records";
+import { fetchRecord, findRecords, bulkResetToPending, resetRecord } from "./records";
 
 import ActionTypes from "./action-types";
 
@@ -28,6 +28,7 @@ export default function actionsMaker(navigateTo, dispatch) {
         onDisableOaiRecordFetcher: () => dispatch(disableOaiRecordFetcher()),
 
         onFindRecords: (query) => dispatch(findRecords(query)),
+        onReset: (kbObjId) => dispatch(resetRecord(kbObjId)),
         onBulkResetToPending: (repositoryId) => dispatch(bulkResetToPending(repositoryId)),
         onClearFoundRecords: () => dispatch({type: ActionTypes.CLEAR_FOUND_RECORDS}),
         onNavigateTo: (key, params) => navigateTo(key, params),

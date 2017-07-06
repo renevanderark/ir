@@ -27,4 +27,7 @@ public interface ErrorReportDao {
             "  and state = :state" +
             ")")
     void bulkDeleteForRepository(@Bind("state") Integer processStatusCode, @Bind("repositoryId") Integer repositoryId);
+
+    @SqlUpdate("delete from error_reports where dare_preproces_id = :recordId")
+    void deleteForRecordId(@Bind("recordId") Long recordId);
 }
