@@ -3,11 +3,12 @@ import Panel from "../layout/panel";
 import {RunState} from "../../etc/enums";
 import EnableToggle from "../widgets/enable-toggle";
 import StartStopButton from "../widgets/start-stop-button";
+import ButtonWithModalWarning from "../modals/button-with-modal-warning";
 
 class RepositoryStatus extends React.Component {
 
     render() {
-        const {repository, recordStatus, errorStatus, runState: { runState } } = this.props;
+        const {repository, recordStatus, errorStatus, runState: { runState }, onBulkResetToPending } = this.props;
 
 
         const errorTable = errorStatus.length > 0
@@ -31,6 +32,18 @@ class RepositoryStatus extends React.Component {
             </table>)
             : (<i>Geen fouten aangetroffen</i>);
 
+        const resetButton = recordStatus.failure > 0 ? (
+            <ButtonWithModalWarning className="btn-default btn-xs" label="Terugplaatsen in wachtrij"
+                                    onConfirm={(doClose) => {
+                                        onBulkResetToPending(repository.id);
+                                        doClose();
+            }}>
+                Weet u zeker dat u {recordStatus.failure}{" "}
+                publicatie{recordStatus.failure > 1 ? "s" : ""} wilt terugplaatsen{" "}
+                naar de wachtrij?
+            </ButtonWithModalWarning>
+        ) : null;
+
         return (
             <div>
                 <Panel title={`Harvest definitie: ${repository.name}`}>
@@ -50,7 +63,8 @@ class RepositoryStatus extends React.Component {
                         <label className="col-md-6">Download excel rapport</label>
                         <span className="col-md-26">
                             <a href={`/record-status/errors/${repository.id}/${repository.name}.xlsx`}>
-                                <img style={{height: "16px"}} src="https://upload.wikimedia.org/wikipedia/commons/8/86/Microsoft_Excel_2013_logo.svg" />{" "}
+                                <img style={{height: "16px"}}
+                                     src="https://upload.wikimedia.org/wikipedia/commons/8/86/Microsoft_Excel_2013_logo.svg"/>{" "}
                             </a>
                         </span>
                     </div>
@@ -79,32 +93,38 @@ class RepositoryStatus extends React.Component {
                     </div>
 
 
-
                 </Panel>
                 <div className="col-md-15">
                     <Panel title={`Verwerkingsoverzicht: ${repository.name}`}>
                         <table className="table">
                             <thead>
-                                <tr><th>Status</th><th className="text-right">Aantal</th></tr>
+                            <tr>
+                                <th>Status</th>
+                                <th className="text-right">Aantal</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Wachtrij</td><td className="text-right">{recordStatus.pending || 0}</td>
-                                </tr>
-                                <tr>
-                                    <td>Downloaden</td><td className="text-right">{recordStatus.processing || 0}</td>
-                                </tr>
-                                <tr>
-                                    <td>Fout</td><td className="text-right">{recordStatus.failure || 0}</td>
-                                </tr>
-                                <tr>
-                                    <td>Download klaar</td><td className="text-right">{recordStatus.processed|| 0}</td>
-                                </tr>
+                            <tr>
+                                <td>Wachtrij</td>
+                                <td className="text-right">{recordStatus.pending || 0}</td>
+                            </tr>
+                            <tr>
+                                <td>Downloaden</td>
+                                <td className="text-right">{recordStatus.processing || 0}</td>
+                            </tr>
+                            <tr>
+                                <td>Fout {resetButton}</td>
+                                <td className="text-right">{recordStatus.failure || 0}</td>
+                            </tr>
+                            <tr>
+                                <td>Download klaar</td>
+                                <td className="text-right">{recordStatus.processed || 0}</td>
+                            </tr>
                             </tbody>
                         </table>
                     </Panel>
                 </div>
-                <div className="col-md-1" />
+                <div className="col-md-1"/>
                 <div className="col-md-16">
                     <Panel title={`Foutrapportage: ${repository.name}`}>
                         {errorTable}

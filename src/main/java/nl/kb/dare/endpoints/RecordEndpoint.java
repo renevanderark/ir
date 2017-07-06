@@ -3,13 +3,17 @@ package nl.kb.dare.endpoints;
 import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.preproces.RecordDao;
+import nl.kb.dare.model.preproces.RecordReporter;
 import nl.kb.dare.model.reporting.ErrorReportDao;
 import nl.kb.dare.model.reporting.StoredErrorReport;
+import nl.kb.dare.model.statuscodes.ProcessStatus;
+import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.filestorage.FileStorage;
 import nl.kb.filestorage.FileStorageHandle;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -27,13 +31,18 @@ public class RecordEndpoint {
     private final RecordDao recordDao;
     private final ErrorReportDao errorReportDao;
     private final FileStorage fileStorage;
+    private final RecordReporter recordReporter;
+    private final SocketNotifier socketNotifier;
 
     public RecordEndpoint(KbAuthFilter filter, RecordDao recordDao,
-                          ErrorReportDao errorReportDao, FileStorage fileStorage) {
+                          ErrorReportDao errorReportDao, FileStorage fileStorage,
+                          RecordReporter recordReporter, SocketNotifier socketNotifier) {
         this.filter = filter;
         this.recordDao = recordDao;
         this.errorReportDao = errorReportDao;
         this.fileStorage = fileStorage;
+        this.recordReporter = recordReporter;
+        this.socketNotifier = socketNotifier;
     }
 
     @GET
@@ -44,6 +53,24 @@ public class RecordEndpoint {
                 .orElseGet(() -> Response.ok(recordDao.query("%" + query + "%"))
                 .build());
     }
+
+    @PUT
+    @Path("/bulk-reset/{repositoryId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response bulkReset(@PathParam("repositoryId") Integer repositoryId,
+                              @HeaderParam("Authorization") String auth) {
+        return filter.getFilterResponse(auth)
+                .orElseGet(() -> {
+                    errorReportDao.bulkDeleteForRepository(ProcessStatus.FAILED.getCode(), repositoryId);
+                    recordDao.bulkUpdateState(ProcessStatus.FAILED.getCode(), ProcessStatus.PENDING.getCode(),
+                            repositoryId);
+
+                    socketNotifier.notifyUpdate(recordReporter.getStatusUpdate());
+
+                    return Response.ok("{}").build();
+                });
+    }
+
 
     @GET
     @Path("/status/{kbObjId}")

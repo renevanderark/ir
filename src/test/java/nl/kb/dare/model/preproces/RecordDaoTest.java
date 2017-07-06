@@ -180,4 +180,35 @@ public class RecordDaoTest {
         ));
     }
 
+    @Test
+    public void bulkUpdateStateShouldUpdateTheStateForAllRecordsWithGivenRepositoryId() {
+        final Record one = RecordUtil.makeRecord(
+                RecordUtil.makeRecordHeader("oai-id-1", "oai-d-1", OaiStatus.AVAILABLE),
+                1,
+                1L
+        );
+        final Record two = RecordUtil.makeRecord(
+                RecordUtil.makeRecordHeader("oai-id-2", "oai-d-2", OaiStatus.AVAILABLE),
+                2,
+                2L
+        );
+        final Record three = RecordUtil.makeRecord(
+                RecordUtil.makeRecordHeader("oai-id-3", "oai-d32", OaiStatus.AVAILABLE),
+                1,
+                3L
+        );
+
+        instance.insertBatch(Stream.of(one, two, three).collect(Collectors.toList()));
+        instance.bulkUpdateState(ProcessStatus.PENDING.getCode(), ProcessStatus.FAILED.getCode(), 1);
+
+        final Record result1 = instance.findByKbObjId("1");
+        final Record result2 = instance.findByKbObjId("2");
+        final Record result3 = instance.findByKbObjId("3");
+
+        assertThat(result1, hasProperty("state", is(ProcessStatus.FAILED.getCode())));
+        assertThat(result2, not(hasProperty("state", is(ProcessStatus.FAILED.getCode()))));
+        assertThat(result3, hasProperty("state", is(ProcessStatus.FAILED.getCode())));
+
+    }
+
 }

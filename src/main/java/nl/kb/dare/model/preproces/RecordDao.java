@@ -41,6 +41,13 @@ public interface RecordDao {
     @SqlUpdate("update DARE_PREPROCES set STATE = :state, TS_PROCESSED = CURRENT_TIMESTAMP where ID = :id")
     void updateState(@BindBean Record record);
 
+    @SqlUpdate("update DARE_PREPROCES set STATE = :toState, TS_PROCESSED = CURRENT_TIMESTAMP " +
+            "where REPOSITORY_ID = :repositoryId AND state = :fromState")
+    void bulkUpdateState(
+            @Bind("fromState") Integer fromState,
+            @Bind("toState") Integer toState,
+            @Bind("repositoryId") Integer repositoryId);
+
     @SqlQuery("select * from DARE_PREPROCES where STATE = :process_status_code")
     Iterator<Record> fetchAllByProcessStatus(@Bind("process_status_code") Integer processStatusCode);
 
@@ -53,6 +60,5 @@ public interface RecordDao {
     @SqlQuery("select * from (select dare_preproces.*, row_number() over (order by state desc) as seqnum " +
             "      from dare_preproces where dare_preproces.lookup like :query) where seqnum <= 10")
     List<Record> query(@Bind("query") String query);
-
 
 }

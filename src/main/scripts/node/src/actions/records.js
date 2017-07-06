@@ -20,4 +20,9 @@ const fetchRecord = (kbObjId) => (dispatch) => {
     }));
 };
 
-export {findRecords, fetchRecord}
+const bulkResetToPending = (repositoryId) => (dispatch) => {
+    xhr({url: `/records/bulk-reset/${repositoryId}`, "method": "PUT", headers: {
+        'Authorization': localStorage.getItem("authToken") }}, (err, resp, body) => handleResponse(resp));
+};
+
+export {findRecords, fetchRecord, bulkResetToPending}
