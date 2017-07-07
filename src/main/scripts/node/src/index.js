@@ -12,5 +12,5 @@ authenticateAndInitialize(() => ReactDOM.render(router, document.getElementById(
 
 setInterval(
     () => fetchInitialData(() => console.log(`Force reload at ${new Date().getTime()}`)),
-    30 * 1000
+    300 * 1000
 );

@@ -3,6 +3,7 @@ import {fetchRepositories} from "./repositories";
 import {fetchErrorStatus, fetchRecordStatus, fetchStatusCodes } from "./record-status";
 import {fetchCredentials} from "./credentials"
 import {fetchHarvesterStatus} from "./harvesters";
+import {fetchOaiRecordFetcherStatus} from "./oai-record-fetcher";
 
 // Perform xhr requests for initial page render
 const fetchInitialData = (onInitialize) => {
@@ -10,12 +11,15 @@ const fetchInitialData = (onInitialize) => {
     store.dispatch(fetchRepositories(() =>
         // Then fetch the current run state of any harvest definition
         store.dispatch(fetchHarvesterStatus(() =>
-            // Then fetch the status code definitions
-            store.dispatch(fetchStatusCodes(() =>
-                // Then fetch the record status counts per repository id
-                store.dispatch(fetchRecordStatus(() =>
-                    // Then fetch the error status counts per repository id
-                    store.dispatch(fetchErrorStatus(onInitialize))
+            // Then fetch the current run state of the object harvester
+            store.dispatch(fetchOaiRecordFetcherStatus(() =>
+                // Then fetch the status code definitions
+                store.dispatch(fetchStatusCodes(() =>
+                    // Then fetch the record status counts per repository id
+                    store.dispatch(fetchRecordStatus(() =>
+                        // Then fetch the error status counts per repository id
+                        store.dispatch(fetchErrorStatus(onInitialize))
+                    ))
                 ))
             ))
         ))

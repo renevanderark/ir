@@ -3,7 +3,7 @@ package nl.kb.dare.scheduledjobs;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import nl.kb.dare.objectharvester.ObjectHarvester;
 import nl.kb.dare.websocket.SocketNotifier;
-import nl.kb.dare.websocket.socketupdate.RecordFetcherUpdate;
+import nl.kb.dare.websocket.socketupdate.ObjectHarvesterRunstateUpdate;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +16,10 @@ public class ObjectHarvestSchedulerDaemon extends AbstractScheduledService {
     private final Integer maxParallelDownloads;
     private final Long downloadQueueFillDelayMs;
     private ObjectHarvester objectHarvester;
+
+    public RunState getRunState() {
+        return runState;
+    }
 
     public enum RunState {
         RUNNING, DISABLING, DISABLED
@@ -63,18 +67,18 @@ public class ObjectHarvestSchedulerDaemon extends AbstractScheduledService {
         }
 
         if (runStateBefore != runState) {
-            socketNotifier.notifyUpdate(new RecordFetcherUpdate(runState));
+            socketNotifier.notifyUpdate(new ObjectHarvesterRunstateUpdate(runState));
         }
     }
 
     public void enable() {
         runState = RunState.RUNNING;
-        socketNotifier.notifyUpdate(new RecordFetcherUpdate(runState));
+        socketNotifier.notifyUpdate(new ObjectHarvesterRunstateUpdate(runState));
     }
 
     public void disable() {
         runState = RunState.DISABLING;
-        socketNotifier.notifyUpdate(new RecordFetcherUpdate(runState));
+        socketNotifier.notifyUpdate(new ObjectHarvesterRunstateUpdate(runState));
     }
 
     @Override
