@@ -13,7 +13,7 @@ import nl.kb.dare.databasetasks.LoadOracleSchemaTask;
 import nl.kb.dare.databasetasks.LoadRepositoriesTask;
 import nl.kb.dare.endpoints.AuthenticationEndpoint;
 import nl.kb.dare.endpoints.HarvesterEndpoint;
-import nl.kb.dare.endpoints.OaiRecordFetcherEndpoint;
+import nl.kb.dare.endpoints.ObjectHarvesterEndpoint;
 import nl.kb.dare.endpoints.RecordEndpoint;
 import nl.kb.dare.endpoints.RecordStatusEndpoint;
 import nl.kb.dare.endpoints.RepositoriesEndpoint;
@@ -216,7 +216,7 @@ public class App extends Application<Config> {
         register(environment, new HarvesterEndpoint(filter, repositoryDao, identifierHarvesterDaemon));
 
         // Operational controls for record fetcher
-        register(environment, new OaiRecordFetcherEndpoint(filter, objectHarvesterDaemon));
+        register(environment, new ObjectHarvesterEndpoint(filter, objectHarvesterDaemon));
 
         // Record status endpoint
         register(environment, new RecordStatusEndpoint(filter, recordReporter, errorReporter, excelReportDao,

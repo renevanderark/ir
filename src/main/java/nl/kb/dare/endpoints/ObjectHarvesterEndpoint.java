@@ -10,11 +10,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 @Path("/workers")
-public class OaiRecordFetcherEndpoint {
+public class ObjectHarvesterEndpoint {
     private final KbAuthFilter filter;
     private final ObjectHarvestSchedulerDaemon oaiRecordFetcher;
 
-    public OaiRecordFetcherEndpoint(KbAuthFilter filter, ObjectHarvestSchedulerDaemon oaiRecordFetcher) {
+    public ObjectHarvesterEndpoint(KbAuthFilter filter, ObjectHarvestSchedulerDaemon oaiRecordFetcher) {
         this.filter = filter;
 
         this.oaiRecordFetcher = oaiRecordFetcher;
