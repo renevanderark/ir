@@ -91,7 +91,9 @@ public class ObjectHarvester {
 
     ProcessStatus harvestPublication(Record record, Repository repositoryConfig, Consumer<ErrorReport> onError) {
 
-        final Optional<FileStorageHandle> fileStorageHandle = objectHarvesterOperations.getFileStorageHandle(record, onError);
+        final Optional<FileStorageHandle> fileStorageHandle = objectHarvesterOperations.getFileStorageHandle(
+                repositoryConfig.getSet().replaceAll(":.*$", ""), record, onError);
+
         if (!fileStorageHandle.isPresent()) {
             return ProcessStatus.FAILED;
         }

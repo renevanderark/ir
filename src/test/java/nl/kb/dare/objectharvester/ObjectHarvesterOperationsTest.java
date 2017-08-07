@@ -40,6 +40,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -53,15 +54,18 @@ public class ObjectHarvesterOperationsTest {
 
     @Test
     public void getFileStorageHandleShouldReturnAHandleIfAvailable() throws IOException {
+        final Repository repositoryConfig = mock(Repository.class);
         final FileStorage fileStorage = mock(FileStorage.class);
         final FileStorageHandle handle = mock(FileStorageHandle.class);
         final ObjectHarvesterOperations instance = new ObjectHarvesterOperations(fileStorage, mock(HttpFetcher.class),
                 mock(ResponseHandlerFactory.class), mock(XsltTransformer.class),
                 mock(ObjectHarvesterResourceOperations.class), mock(ManifestFinalizer.class));
         final Record oaiRecord = mock(Record.class);
-        when(fileStorage.create(oaiRecord.getKbObjId())).thenReturn(handle);
+        when(fileStorage.create(anyString())).thenReturn(handle);
+        when(repositoryConfig.getSet()).thenReturn("set:name");
+        when(oaiRecord.getKbObjId()).thenReturn("123");
 
-        final Optional<FileStorageHandle> result = instance.getFileStorageHandle(oaiRecord, (errorReport) -> {});
+        final Optional<FileStorageHandle> result = instance.getFileStorageHandle(repositoryConfig.getSet(), oaiRecord, (errorReport) -> {});
 
         assertThat(result.isPresent(), is(true));
         assertThat(result.get(), is(handle));
@@ -69,14 +73,17 @@ public class ObjectHarvesterOperationsTest {
 
     @Test
     public void getFileStorageHandleShouldEmptyOptionalWhenIOExceptionIsCaught() throws IOException {
+        final Repository repositoryConfig = mock(Repository.class);
         final FileStorage fileStorage = mock(FileStorage.class);
         final ObjectHarvesterOperations instance = new ObjectHarvesterOperations(
                 fileStorage, mock(HttpFetcher.class), mock(ResponseHandlerFactory.class), mock(XsltTransformer.class),
                 mock(ObjectHarvesterResourceOperations.class), mock(ManifestFinalizer.class));
         final Record oaiRecord = mock(Record.class);
-        when(fileStorage.create(oaiRecord.getKbObjId())).thenThrow(IOException.class);
+        when(oaiRecord.getKbObjId()).thenReturn("123");
+        when(repositoryConfig.getSet()).thenReturn("set:name");
+        when(fileStorage.create(anyString())).thenThrow(IOException.class);
 
-        final Optional<FileStorageHandle> result = instance.getFileStorageHandle(oaiRecord, (errorReport) -> {});
+        final Optional<FileStorageHandle> result = instance.getFileStorageHandle(repositoryConfig.getSet(), oaiRecord, (errorReport) -> {});
 
         assertThat(result.isPresent(), is(false));
     }
@@ -93,6 +100,7 @@ public class ObjectHarvesterOperationsTest {
         final ObjectHarvesterOperations instance = new ObjectHarvesterOperations(mock(FileStorage.class), httpFetcher,
                 responseHandlerFactory, mock(XsltTransformer.class),
                 mock(ObjectHarvesterResourceOperations.class), mock(ManifestFinalizer.class));
+
         when(oaiRecord.getOaiIdentifier()).thenReturn("identifier");
         when(repository.getUrl()).thenReturn("http://example.com");
         when(repository.getMetadataPrefix()).thenReturn("metadataPrefix");

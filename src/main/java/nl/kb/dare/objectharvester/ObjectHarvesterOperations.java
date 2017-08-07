@@ -76,9 +76,10 @@ public class ObjectHarvesterOperations {
         this.manifestFinalizer = manifestFinalizer;
     }
 
-    Optional<FileStorageHandle> getFileStorageHandle(Record oaiRecord, Consumer<ErrorReport> onError) {
+    Optional<FileStorageHandle> getFileStorageHandle(String superSet, Record oaiRecord, Consumer<ErrorReport> onError) {
         try {
-            return Optional.of(fileStorage.create(oaiRecord.getKbObjId()));
+            return Optional.of(fileStorage.create(String.format("%s/%s_%s",
+                    superSet, superSet, oaiRecord.getKbObjId())));
         } catch (IOException e) {
             onError.accept(new ErrorReport(
                     new IOException("Failed to create storage location for record " + oaiRecord.getKbObjId(), e),
