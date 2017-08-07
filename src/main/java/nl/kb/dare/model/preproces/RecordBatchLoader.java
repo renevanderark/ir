@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class RecordBatchLoader {
@@ -24,14 +25,16 @@ public class RecordBatchLoader {
     private final NumbersController numbersController;
     private final RecordReporter recordReporter;
     private final SocketNotifier socketNotifier;
+    private final Boolean batchLoadSampleMode;
 
     public RecordBatchLoader(RecordDao recordDao, NumbersController numbersController, RecordReporter recordReporter,
-                             SocketNotifier socketNotifier) {
+                             SocketNotifier socketNotifier, Boolean batchLoadSampleMode) {
 
         this.recordDao = recordDao;
         this.numbersController = numbersController;
         this.recordReporter = recordReporter;
         this.socketNotifier = socketNotifier;
+        this.batchLoadSampleMode = batchLoadSampleMode;
     }
 
     public void addToBatch(Integer repositoryId, OaiRecordHeader oaiRecordHeader) {
@@ -71,9 +74,12 @@ public class RecordBatchLoader {
         IntStream.range(0, records.size()).forEach(idx ->
                 records.get(idx).setKbObjId(numbers.get(idx)));
 
-
         synchronized (recordDao) {
-            recordDao.insertBatch(new ArrayList<>(records));
+            if (batchLoadSampleMode) {
+                recordDao.insertBatch(records.stream().limit(1).collect(Collectors.toList()));
+            } else {
+                recordDao.insertBatch(new ArrayList<>(records));
+            }
         }
         records.clear();
 

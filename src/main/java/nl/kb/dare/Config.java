@@ -34,6 +34,9 @@ class Config extends Configuration {
     @JsonProperty
     private Integer maxConsecutiveDownloadFailures = 10;
 
+    @JsonProperty
+    private Boolean batchLoadSampleMode;
+
 
     @JsonProperty("database")
     DataSourceFactory getDataSourceFactory() {
@@ -94,5 +97,13 @@ class Config extends Configuration {
 
     public Integer getMaxConsecutiveDownloadFailures() {
         return maxConsecutiveDownloadFailures;
+    }
+
+    public Boolean getBatchLoadSampleMode() {
+        return batchLoadSampleMode;
+    }
+
+    public void setBatchLoadSampleMode(Boolean batchLoadSampleMode) {
+        this.batchLoadSampleMode = batchLoadSampleMode;
     }
 }

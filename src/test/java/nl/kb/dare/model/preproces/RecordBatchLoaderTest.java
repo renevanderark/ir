@@ -40,7 +40,7 @@ public class RecordBatchLoaderTest {
         final Record existing = mock(Record.class);
         final OaiRecordHeader recordHeader = mock(OaiRecordHeader.class);
         final RecordBatchLoader instance = new RecordBatchLoader(recordDao, mock(NumbersController.class),
-                mock(RecordReporter.class), mock(SocketNotifier.class));
+                mock(RecordReporter.class), mock(SocketNotifier.class), false);
 
 
         when(existing.getState()).thenReturn(ProcessStatus.PENDING.getCode());
@@ -62,7 +62,7 @@ public class RecordBatchLoaderTest {
         final Record existing = mock(Record.class);
         final OaiRecordHeader recordHeader = mock(OaiRecordHeader.class);
         final RecordBatchLoader instance = new RecordBatchLoader(recordDao, mock(NumbersController.class),
-                mock(RecordReporter.class), mock(SocketNotifier.class));
+                mock(RecordReporter.class), mock(SocketNotifier.class), false);
 
 
         when(existing.getState()).thenReturn(ProcessStatus.FAILED.getCode());
@@ -85,7 +85,7 @@ public class RecordBatchLoaderTest {
         final Record existing = mock(Record.class);
         final OaiRecordHeader recordHeader = mock(OaiRecordHeader.class);
         final RecordBatchLoader instance = new RecordBatchLoader(recordDao, mock(NumbersController.class),
-                mock(RecordReporter.class), mock(SocketNotifier.class));
+                mock(RecordReporter.class), mock(SocketNotifier.class), false);
 
         when(existing.getState()).thenReturn(ProcessStatus.PROCESSED.getCode());
         when(recordHeader.getOaiStatus()).thenReturn(OaiStatus.DELETED);
@@ -108,7 +108,7 @@ public class RecordBatchLoaderTest {
         final Record existing = mock(Record.class);
         final OaiRecordHeader recordHeader = mock(OaiRecordHeader.class);
         final RecordBatchLoader instance = new RecordBatchLoader(recordDao, mock(NumbersController.class),
-                mock(RecordReporter.class), mock(SocketNotifier.class));
+                mock(RecordReporter.class), mock(SocketNotifier.class), false);
 
         when(existing.getState()).thenReturn(ProcessStatus.PROCESSING.getCode());
         when(recordHeader.getOaiStatus()).thenReturn(OaiStatus.DELETED);
@@ -131,7 +131,7 @@ public class RecordBatchLoaderTest {
         final Record existing = mock(Record.class);
         final OaiRecordHeader recordHeader = mock(OaiRecordHeader.class);
         final RecordBatchLoader instance = new RecordBatchLoader(recordDao, mock(NumbersController.class),
-                mock(RecordReporter.class), mock(SocketNotifier.class));
+                mock(RecordReporter.class), mock(SocketNotifier.class), false);
 
         when(existing.getState()).thenReturn(1234);
         when(recordHeader.getOaiStatus()).thenReturn(OaiStatus.DELETED);
@@ -156,7 +156,7 @@ public class RecordBatchLoaderTest {
         final SocketNotifier socketNotifier = mock(SocketNotifier.class);
         final RecordReporter recordReporter = mock(RecordReporter.class);
         final RecordStatusUpdate recordStatusUpdate = mock(RecordStatusUpdate.class);
-        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, numbersController, recordReporter, socketNotifier);
+        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, numbersController, recordReporter, socketNotifier, false);
         when(oaiRecordHeader1.getIdentifier()).thenReturn("oai:1");
         when(oaiRecordHeader1.getOaiStatus()).thenReturn(OaiStatus.AVAILABLE);
         when(oaiRecordHeader1.getDateStamp()).thenReturn("date-oai-1");
@@ -199,7 +199,7 @@ public class RecordBatchLoaderTest {
         final RecordDao recordDao = mock(RecordDao.class);
         final SocketNotifier socketNotifier = mock(SocketNotifier.class);
         final RecordReporter recordReporter = mock(RecordReporter.class);
-        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, numbersController, recordReporter, socketNotifier);
+        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, numbersController, recordReporter, socketNotifier, false);
 
         instance.flushBatch(1);
 
