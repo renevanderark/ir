@@ -1,5 +1,6 @@
-package nl.kb.dare.nbn;
+package nl.kb.dare.idgen.nbn;
 
+import nl.kb.dare.idgen.IdGenerator;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.HttpResponseException;
 import nl.kb.http.HttpResponseHandler;
@@ -10,7 +11,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-public class NumbersController {
+public class NumbersController implements IdGenerator {
     private final String numbersEndpoint;
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
@@ -23,6 +24,7 @@ public class NumbersController {
         this.responseHandlerFactory = responseHandlerFactory;
     }
 
+    @Override
     public List<Long> getNumbers(int quantity) throws SAXException, IOException, HttpResponseException {
         final NumbersXmlHandler numbersHandler = new NumbersXmlHandler();
         final HttpResponseHandler responseHandler = responseHandlerFactory.getSaxParsingHandler(numbersHandler);

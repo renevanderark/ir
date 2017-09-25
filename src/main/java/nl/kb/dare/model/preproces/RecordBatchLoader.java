@@ -1,7 +1,7 @@
 package nl.kb.dare.model.preproces;
 
 import nl.kb.dare.model.statuscodes.ProcessStatus;
-import nl.kb.dare.nbn.NumbersController;
+import nl.kb.dare.idgen.IdGenerator;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.http.HttpResponseException;
 import nl.kb.oaipmh.OaiRecordHeader;
@@ -22,16 +22,16 @@ public class RecordBatchLoader {
     private final Map<Integer, List<Record>> batchMap = Collections.synchronizedMap(new HashMap<>());
 
     private final RecordDao recordDao;
-    private final NumbersController numbersController;
+    private final IdGenerator idGenerator;
     private final RecordReporter recordReporter;
     private final SocketNotifier socketNotifier;
     private final Boolean batchLoadSampleMode;
 
-    public RecordBatchLoader(RecordDao recordDao, NumbersController numbersController, RecordReporter recordReporter,
+    public RecordBatchLoader(RecordDao recordDao, IdGenerator idGenerator, RecordReporter recordReporter,
                              SocketNotifier socketNotifier, Boolean batchLoadSampleMode) {
 
         this.recordDao = recordDao;
-        this.numbersController = numbersController;
+        this.idGenerator = idGenerator;
         this.recordReporter = recordReporter;
         this.socketNotifier = socketNotifier;
         this.batchLoadSampleMode = batchLoadSampleMode;
@@ -69,7 +69,7 @@ public class RecordBatchLoader {
         }
 
         final List<Record> records = batchMap.get(repositoryId);
-        final List<Long> numbers = numbersController.getNumbers(records.size());
+        final List<Long> numbers = idGenerator.getNumbers(records.size());
 
         IntStream.range(0, records.size()).forEach(idx ->
                 records.get(idx).setIpName(numbers.get(idx)));

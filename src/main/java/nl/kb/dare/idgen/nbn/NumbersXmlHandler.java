@@ -1,4 +1,4 @@
-package nl.kb.dare.nbn;
+package nl.kb.dare.idgen.nbn;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

@@ -1,7 +1,8 @@
 package nl.kb.dare.model.preproces;
 
 import nl.kb.dare.model.statuscodes.ProcessStatus;
-import nl.kb.dare.nbn.NumbersController;
+import nl.kb.dare.idgen.IdGenerator;
+import nl.kb.dare.idgen.nbn.NumbersController;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.websocket.socketupdate.RecordStatusUpdate;
 import nl.kb.http.HttpResponseException;
@@ -149,21 +150,21 @@ public class RecordBatchLoaderTest {
 
     @Test
     public void flushBatchShouldStoreAllTheRecordsAddedToTheBatch() throws SAXException, IOException, HttpResponseException {
-        final NumbersController numbersController = mock(NumbersController.class);
+        final IdGenerator idGenerator = mock(NumbersController.class);
         final OaiRecordHeader oaiRecordHeader1 = mock(OaiRecordHeader.class);
         final OaiRecordHeader oaiRecordHeader2 = mock(OaiRecordHeader.class);
         final RecordDao recordDao = mock(RecordDao.class);
         final SocketNotifier socketNotifier = mock(SocketNotifier.class);
         final RecordReporter recordReporter = mock(RecordReporter.class);
         final RecordStatusUpdate recordStatusUpdate = mock(RecordStatusUpdate.class);
-        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, numbersController, recordReporter, socketNotifier, false);
+        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, idGenerator, recordReporter, socketNotifier, false);
         when(oaiRecordHeader1.getIdentifier()).thenReturn("oai:1");
         when(oaiRecordHeader1.getOaiStatus()).thenReturn(OaiStatus.AVAILABLE);
         when(oaiRecordHeader1.getDateStamp()).thenReturn("date-oai-1");
         when(oaiRecordHeader2.getIdentifier()).thenReturn("oai:2");
         when(oaiRecordHeader2.getOaiStatus()).thenReturn(OaiStatus.AVAILABLE);
         when(oaiRecordHeader2.getDateStamp()).thenReturn("date-oai-2");
-        when(numbersController.getNumbers(2)).thenReturn(Stream.of(1L, 2L).collect(Collectors.toList()));
+        when(idGenerator.getNumbers(2)).thenReturn(Stream.of(1L, 2L).collect(Collectors.toList()));
         when(recordDao.existsByDatestampAndIdentifier(any())).thenReturn(false);
         when(recordReporter.getStatusUpdate()).thenReturn(recordStatusUpdate);
         instance.addToBatch(1, oaiRecordHeader1);
@@ -171,8 +172,8 @@ public class RecordBatchLoaderTest {
 
         instance.flushBatch(1);
 
-        final InOrder inOrder = inOrder(recordDao, socketNotifier, recordReporter, numbersController);
-        inOrder.verify(numbersController).getNumbers(2);
+        final InOrder inOrder = inOrder(recordDao, socketNotifier, recordReporter, idGenerator);
+        inOrder.verify(idGenerator).getNumbers(2);
         inOrder.verify(recordDao).insertBatch(argThat(isAListThat(
                 containsInAnyOrder(
                         allOf(
@@ -195,15 +196,15 @@ public class RecordBatchLoaderTest {
 
     @Test
     public void flushBatchShouldStopWhenTheBatchIsEmpty() throws SAXException, IOException, HttpResponseException {
-        final NumbersController numbersController = mock(NumbersController.class);
+        final IdGenerator idGenerator = mock(NumbersController.class);
         final RecordDao recordDao = mock(RecordDao.class);
         final SocketNotifier socketNotifier = mock(SocketNotifier.class);
         final RecordReporter recordReporter = mock(RecordReporter.class);
-        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, numbersController, recordReporter, socketNotifier, false);
+        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, idGenerator, recordReporter, socketNotifier, false);
 
         instance.flushBatch(1);
 
-        verifyNoMoreInteractions(recordDao, socketNotifier, recordReporter, numbersController);
+        verifyNoMoreInteractions(recordDao, socketNotifier, recordReporter, idGenerator);
     }
 
 
