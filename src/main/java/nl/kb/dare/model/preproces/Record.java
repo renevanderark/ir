@@ -48,8 +48,8 @@ public class Record {
         return repositoryId;
     }
 
-    public void setIpName(Long ipName) {
-        this.ipName = String.format("%d", ipName);
+    public void setIpName(String ipName) {
+        this.ipName = ipName;
     }
 
     public void setState(ProcessStatus processStatus) {

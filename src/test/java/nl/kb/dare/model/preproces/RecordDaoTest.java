@@ -55,12 +55,12 @@ public class RecordDaoTest {
         final Record one =  RecordUtil.makeRecord(
                 RecordUtil.makeRecordHeader("oai-id-1", "oai-d-1", OaiStatus.AVAILABLE),
                 1,
-                1L
+                "1"
         );
         final Record two = RecordUtil.makeRecord(
                 RecordUtil.makeRecordHeader("oai-id-2", "oai-d-2", OaiStatus.AVAILABLE),
                 2,
-                2L);
+                "2");
 
         instance.insertBatch(Stream.of(one, two).collect(Collectors.toList()));
 
@@ -94,7 +94,7 @@ public class RecordDaoTest {
         final Record existingRecord =  RecordUtil.makeRecord(
                 RecordUtil.makeRecordHeader("oai-id-1", "oai-d-1", OaiStatus.AVAILABLE),
                 1,
-                1L
+                "1"
         );
         final OaiRecordHeader newRecordHeader =
                 RecordUtil.makeRecordHeader("oai-id-1", "oai-d-1", OaiStatus.AVAILABLE);
@@ -110,7 +110,7 @@ public class RecordDaoTest {
         final Record existingRecord = RecordUtil.makeRecord(
                 RecordUtil.makeRecordHeader("oai-id-1", "oai-d-1", OaiStatus.AVAILABLE),
                 1,
-                1L
+                "1"
         );
         final OaiRecordHeader newRecordHeader =
                 RecordUtil.makeRecordHeader("oai-id-1", "oai-d-2", OaiStatus.AVAILABLE);
@@ -131,17 +131,17 @@ public class RecordDaoTest {
         final Record one = RecordUtil.makeRecord(
                 RecordUtil.makeRecordHeader("oai-id-1", "oai-d-1", OaiStatus.AVAILABLE),
                 1,
-                1L
+                "1"
         );
         final Record two = RecordUtil.makeRecord(
                 RecordUtil.makeRecordHeader("oai-id-2", "oai-d-2", OaiStatus.AVAILABLE),
                 2,
-                2L
+                "2"
         );
         final Record three = RecordUtil.makeRecord(
                 RecordUtil.makeRecordHeader("oai-id-3", "oai-d32", OaiStatus.AVAILABLE),
                 1,
-                3L
+                "3"
         );
 
 
@@ -164,7 +164,7 @@ public class RecordDaoTest {
         final Record one = RecordUtil.makeRecord(
                 RecordUtil.makeRecordHeader("oai-id-1", "oai-d-1", OaiStatus.AVAILABLE),
                 1,
-                1L
+                "1"
         );
 
         instance.insertBatch(Stream.of(one).collect(Collectors.toList()));
@@ -185,17 +185,17 @@ public class RecordDaoTest {
         final Record one = RecordUtil.makeRecord(
                 RecordUtil.makeRecordHeader("oai-id-1", "oai-d-1", OaiStatus.AVAILABLE),
                 1,
-                1L
+                "1"
         );
         final Record two = RecordUtil.makeRecord(
                 RecordUtil.makeRecordHeader("oai-id-2", "oai-d-2", OaiStatus.AVAILABLE),
                 2,
-                2L
+                "2"
         );
         final Record three = RecordUtil.makeRecord(
                 RecordUtil.makeRecordHeader("oai-id-3", "oai-d32", OaiStatus.AVAILABLE),
                 1,
-                3L
+                "3"
         );
 
         instance.insertBatch(Stream.of(one, two, three).collect(Collectors.toList()));

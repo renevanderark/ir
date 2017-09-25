@@ -7,5 +7,5 @@ import java.io.IOException;
 import java.util.List;
 
 public interface IdGenerator {
-    List<Long> getNumbers(int quantity) throws SAXException, IOException, HttpResponseException;
+    List<String> getUniqueIdentifiers(int quantity) throws SAXException, IOException, HttpResponseException;
 }

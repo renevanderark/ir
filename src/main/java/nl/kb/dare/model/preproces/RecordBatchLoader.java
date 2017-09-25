@@ -69,7 +69,7 @@ public class RecordBatchLoader {
         }
 
         final List<Record> records = batchMap.get(repositoryId);
-        final List<Long> numbers = idGenerator.getNumbers(records.size());
+        final List<String> numbers = idGenerator.getUniqueIdentifiers(records.size());
 
         IntStream.range(0, records.size()).forEach(idx ->
                 records.get(idx).setIpName(numbers.get(idx)));

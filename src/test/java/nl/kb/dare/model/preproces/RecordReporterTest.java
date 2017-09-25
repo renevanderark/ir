@@ -37,16 +37,16 @@ public class RecordReporterTest {
 
         final Record one = RecordUtil.makeRecord(
                 RecordUtil.makeRecordHeader("id-1", "d-1", OaiStatus.AVAILABLE),
-                1, 1L);
+                1, "1");
         final Record two = RecordUtil.makeRecord(
                 RecordUtil.makeRecordHeader("id-2", "d-2", OaiStatus.AVAILABLE),
-                1, 2L);
+                1, "2");
         final Record three = RecordUtil.makeRecord(
                 RecordUtil.makeRecordHeader("id-3", "d-3", OaiStatus.AVAILABLE),
-                2, 3L);
+                2, "3");
         final Record four = RecordUtil.makeRecord(
                 RecordUtil.makeRecordHeader("id-4", "d-4", OaiStatus.AVAILABLE),
-                2, 4L);
+                2, "4");
 
         recordDao.insertBatch(Stream.of(one, two, three, four).collect(toList()));
 

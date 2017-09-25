@@ -25,7 +25,7 @@ public class NumbersController implements IdGenerator {
     }
 
     @Override
-    public List<Long> getNumbers(int quantity) throws SAXException, IOException, HttpResponseException {
+    public List<String> getUniqueIdentifiers(int quantity) throws SAXException, IOException, HttpResponseException {
         final NumbersXmlHandler numbersHandler = new NumbersXmlHandler();
         final HttpResponseHandler responseHandler = responseHandlerFactory.getSaxParsingHandler(numbersHandler);
         httpFetcher.execute(new URL(String.format("%s?qt=%d", numbersEndpoint, quantity)), responseHandler);

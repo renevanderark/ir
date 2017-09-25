@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class NumbersXmlHandler extends DefaultHandler {
-    private final List<Long> result = new ArrayList<>();
+    private final List<String> result = new ArrayList<>();
 
     private boolean inNBNnode = false;
 
@@ -25,7 +25,7 @@ class NumbersXmlHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equalsIgnoreCase("nbn")) {
             inNBNnode = false;
-            result.add(Long.parseLong(currentNBN.toString()));
+            result.add(currentNBN.toString());
             currentNBN.setLength(0);
         }
     }
@@ -37,7 +37,7 @@ class NumbersXmlHandler extends DefaultHandler {
         }
     }
 
-    List<Long> getResult() {
+    List<String> getResult() {
         return result;
     }
 }

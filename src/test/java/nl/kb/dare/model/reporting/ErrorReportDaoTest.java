@@ -104,17 +104,17 @@ public class ErrorReportDaoTest {
             final Record one = RecordUtil.makeRecord(
                     RecordUtil.makeRecordHeader("oai-id-1", "oai-d-1", OaiStatus.AVAILABLE),
                     1,
-                    1L
+                    "1"
             );
             final Record two = RecordUtil.makeRecord(
                     RecordUtil.makeRecordHeader("oai-id-2", "oai-d-2", OaiStatus.AVAILABLE),
                     2,
-                    2L
+                    "2"
             );
             final Record three = RecordUtil.makeRecord(
                     RecordUtil.makeRecordHeader("oai-id-3", "oai-d32", OaiStatus.AVAILABLE),
                     1,
-                    3L
+                    "3"
             );
             recordDao.insertBatch(Stream.of(one, two, three).collect(Collectors.toList()));
             final Record oneUp = recordDao.findByIpName("1");
