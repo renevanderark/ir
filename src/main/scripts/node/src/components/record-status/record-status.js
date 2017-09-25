@@ -97,7 +97,7 @@ class RecordStatus extends React.Component {
                         </div>
                     </div>
                     <div className="row">
-                        <label className="col-md-6">KB object identifier</label>
+                        <label className="col-md-6">IP Name</label>
                         <div className="col-md-26">
                             {record.ipName}
                         </div>

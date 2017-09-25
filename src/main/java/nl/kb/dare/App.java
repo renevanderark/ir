@@ -22,6 +22,7 @@ import nl.kb.dare.endpoints.StatusWebsocketServlet;
 import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
 import nl.kb.dare.identifierharvester.IdentifierHarvestErrorFlowHandler;
 import nl.kb.dare.identifierharvester.IdentifierHarvester;
+import nl.kb.dare.idgen.uuid.UUIDGenerator;
 import nl.kb.dare.mail.Mailer;
 import nl.kb.dare.mail.mailer.StubbedMailer;
 import nl.kb.dare.model.preproces.RecordBatchLoader;
@@ -36,7 +37,6 @@ import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.idgen.IdGenerator;
-import nl.kb.dare.idgen.nbn.NumbersController;
 import nl.kb.dare.objectharvester.ObjectHarvestErrorFlowHandler;
 import nl.kb.dare.objectharvester.ObjectHarvester;
 import nl.kb.dare.objectharvester.ObjectHarvesterOperations;
@@ -120,8 +120,7 @@ public class App extends Application<Config> {
 
         // Data transfer controllers
         // Fetches track numbers for new records using the number generator service
-        final IdGenerator idGenerator = new NumbersController(
-                config.getNumbersEndpoint(), httpFetcherForNumberGenerator, responseHandlerFactory);
+        final IdGenerator idGenerator = new UUIDGenerator();
         // Stores harvest states for the repositories in the database
         final RepositoryController repositoryController = new RepositoryController(repositoryDao, socketNotifier);
         // Stores batches of new records and updates ~oai deleted~ existing records in the database
