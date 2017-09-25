@@ -5,7 +5,6 @@ sample-repo.json
 local-deploy.sh
 target
 src/main/scripts/node/node_modules
-reload-shemas.sh
 restart-database.sh
 *.yaml
 dependency-reduced-pom.xml
