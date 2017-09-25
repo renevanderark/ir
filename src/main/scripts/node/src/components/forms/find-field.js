@@ -32,7 +32,7 @@ class FindField extends React.Component {
     onKeyPress(ev) {
         if (ev.key === 'Enter') {
             if (this.props.recordList.length > this.state.selectedIndex) {
-                this.props.onNavigateTo("record", [this.props.recordList[this.state.selectedIndex].kbObjId]);
+                this.props.onNavigateTo("record", [this.props.recordList[this.state.selectedIndex].ipName]);
                 this.props.onClearFoundRecords();
             }
         } else if (ev.key === 'ArrowUp') {

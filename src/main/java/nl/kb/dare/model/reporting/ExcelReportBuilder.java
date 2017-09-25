@@ -23,7 +23,7 @@ public class ExcelReportBuilder {
 
             headerRow.createCell(3).setCellValue("MESSAGE");
             headerRow.createCell(4).setCellValue("URL");
-            headerRow.createCell(5).setCellValue("KBOBJID");
+            headerRow.createCell(5).setCellValue("IP_NAME");
 
             headerRow.createCell(6).setCellValue("STATE");
             headerRow.createCell(7).setCellValue("TS_CREATE");
@@ -38,7 +38,7 @@ public class ExcelReportBuilder {
                 sheetRow.createCell(2).setCellValue(row.getStatusCode());
                 sheetRow.createCell(3).setCellValue(row.getMessage());
                 sheetRow.createCell(4).setCellValue(row.getUrl());
-                sheetRow.createCell(5).setCellValue(row.getKbObjId());
+                sheetRow.createCell(5).setCellValue(row.getIpName());
                 sheetRow.createCell(6).setCellValue(row.getState());
                 sheetRow.createCell(7).setCellValue(row.getTsCreate());
                 sheetRow.createCell(8).setCellValue(row.getTsProcessed());

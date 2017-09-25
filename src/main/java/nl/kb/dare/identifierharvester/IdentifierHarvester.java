@@ -9,10 +9,14 @@ import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
 import nl.kb.oaipmh.ListIdentifiers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 
 public class IdentifierHarvester implements Runnable {
+    private static final Logger LOG = LoggerFactory.getLogger(IdentifierHarvester.class);
+
     private final Integer repositoryId;
     private final RepositoryController repositoryController;
     private final RecordBatchLoader recordBatchLoader;
@@ -56,6 +60,11 @@ public class IdentifierHarvester implements Runnable {
                 .setOnException(exception -> this.onHarvestException(repository, exception))
                 .setOnOaiRecordHeader(oaiRecordHeader -> recordBatchLoader.addToBatch(repository.getId(), oaiRecordHeader))
                 .setOnProgress(oaiDateStamp -> this.storeOaiDateStampAndNewRecords(repository, oaiDateStamp))
+                .setOnLogMessage(message -> {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(message);
+                    }
+                })
                 .createListIdentifiers();
 
         runningInstance.harvest();

@@ -21,7 +21,7 @@ public class RecordMapper implements ResultSetMapper<Record> {
         return new Record.RecordBuilder()
                 .setId(resultSet.getLong("ID"))
                 .setState(ProcessStatus.forCode(resultSet.getInt("STATE")))
-                .setKbObjId(resultSet.getString("KBOBJID"))
+                .setIpName(resultSet.getString("IP_NAME"))
                 .setRepositoryId(resultSet.getInt("REPOSITORY_ID"))
                 .setOaiIdentifier(resultSet.getString("OAI_ID"))
                 .setOaiDateStamp(resultSet.getString("OAI_DATESTAMP"))

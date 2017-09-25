@@ -19,7 +19,7 @@ public class ExcelReportRowMapper implements ResultSetMapper<ExcelReportRow> {
         final String tsProcessed = dTsProcessed == null ? null : dTsProcessed.toString();
 
         return new ExcelReportRow.ExcelReportRowBuilder()
-                .setKbObjId(resultSet.getString("KBOBJID"))
+                .setIpName(resultSet.getString("IP_NAME"))
                 .setMessage(resultSet.getString("MESSAGE"))
                 .setOaiDatestamp(resultSet.getString("OAI_DATESTAMP"))
                 .setState(resultSet.getInt("STATE"))

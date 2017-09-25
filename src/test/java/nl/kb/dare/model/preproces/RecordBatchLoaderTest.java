@@ -176,13 +176,13 @@ public class RecordBatchLoaderTest {
         inOrder.verify(recordDao).insertBatch(argThat(isAListThat(
                 containsInAnyOrder(
                         allOf(
-                                hasProperty("kbObjId", is("1")),
+                                hasProperty("ipName", is("1")),
                                 hasProperty("oaiIdentifier", is("oai:1")),
                                 hasProperty("oaiDateStamp", is("date-oai-1"))
 
                         ),
                         allOf(
-                                hasProperty("kbObjId", is("2")),
+                                hasProperty("ipName", is("2")),
                                 hasProperty("oaiIdentifier", is("oai:2")),
                                 hasProperty("oaiDateStamp", is("date-oai-2"))
                         )

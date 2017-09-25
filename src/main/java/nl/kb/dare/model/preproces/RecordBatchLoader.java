@@ -72,7 +72,7 @@ public class RecordBatchLoader {
         final List<Long> numbers = numbersController.getNumbers(records.size());
 
         IntStream.range(0, records.size()).forEach(idx ->
-                records.get(idx).setKbObjId(numbers.get(idx)));
+                records.get(idx).setIpName(numbers.get(idx)));
 
         synchronized (recordDao) {
             if (batchLoadSampleMode) {

@@ -78,11 +78,11 @@ public class RecordEndpoint {
     }
 
     @PUT
-    @Path("/reset/{kbObjId}")
+    @Path("/reset/{ipName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response reset(@PathParam("kbObjId") String kbObjId, @HeaderParam("Authorization") String auth) {
+    public Response reset(@PathParam("ipName") String ipName, @HeaderParam("Authorization") String auth) {
         return filter.getFilterResponse(auth).orElseGet(() -> {
-            final Record record = recordDao.findByKbObjId(kbObjId);
+            final Record record = recordDao.findByIpName(ipName);
             if (record == null) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
@@ -96,12 +96,12 @@ public class RecordEndpoint {
     }
 
     @GET
-    @Path("/status/{kbObjId}")
+    @Path("/status/{ipName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response status(@PathParam("kbObjId") String kbObjId, @HeaderParam("Authorization") String auth) {
+    public Response status(@PathParam("ipName") String ipName, @HeaderParam("Authorization") String auth) {
 
         return filter.getFilterResponse(auth).orElseGet(() -> {
-            final Record record = recordDao.findByKbObjId(kbObjId);
+            final Record record = recordDao.findByIpName(ipName);
 
             if (record == null) {
                 return Response.status(Response.Status.NOT_FOUND).build();
@@ -116,10 +116,10 @@ public class RecordEndpoint {
     }
 
     @GET
-    @Path("/download/{kbObjId}")
+    @Path("/download/{ipName}")
     @Produces("application/zip")
-    public Response download(@PathParam("kbObjId") String kbObjId, @HeaderParam("Authorization") String auth) {
-        final Record record = recordDao.findByKbObjId(kbObjId);
+    public Response download(@PathParam("ipName") String ipName, @HeaderParam("Authorization") String auth) {
+        final Record record = recordDao.findByIpName(ipName);
         final Repository repository = repositoryDao.findById(record.getRepositoryId());
         if (record == null || repository == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -127,10 +127,10 @@ public class RecordEndpoint {
         try {
             final String superSet = repository.getSet().replaceAll(":.*$", "");
             final FileStorageHandle fileStorageHandle = fileStorage.create(String.format("%s/%s_%s",
-                    superSet, superSet, record.getKbObjId()));
+                    superSet, superSet, record.getIpName()));
             final StreamingOutput downloadOutput = fileStorageHandle::downloadZip;
             return Response.ok(downloadOutput)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + kbObjId + ".zip\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + ipName + ".zip\"")
                     .build();
         } catch (IOException e) {
             return Response.status(Response.Status.NOT_FOUND).build();

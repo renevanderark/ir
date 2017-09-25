@@ -128,7 +128,9 @@ public class ObjectHarvester {
     }
 
     private void finishRecord(Record record, ProcessStatus processStatus, long elapsed) {
-        LOG.info("Finished record {} with status {} in {} seconds", record.getOaiIdentifier(), processStatus, elapsed);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Finished record {} with status {} in {} seconds", record.getOaiIdentifier(), processStatus, elapsed);
+        }
         record.setState(processStatus);
         recordDao.updateState(record);
         if (processStatus == ProcessStatus.PROCESSED) {
@@ -147,7 +149,9 @@ public class ObjectHarvester {
     }
 
     private void saveErrorReport(ErrorReport errorReport, Record record) {
-        LOG.info("Failed to process record {} ({})", record.getOaiIdentifier(), errorReport.getUrl());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Failed to process record {} ({})", record.getOaiIdentifier(), errorReport.getUrl());
+        }
         errorReportDao.insert(record.getId(), errorReport);
         socketNotifier.notifyUpdate(errorReporter.getStatusUpdate());
     }

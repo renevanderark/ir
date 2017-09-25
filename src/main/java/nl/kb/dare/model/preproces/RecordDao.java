@@ -14,8 +14,8 @@ import java.util.List;
 @RegisterMapper(RecordMapper.class)
 public interface RecordDao {
 
-    @SqlBatch("INSERT INTO DARE_PREPROCES (ID, STATE, KBOBJID, TS_CREATE, REPOSITORY_ID, OAI_ID, OAI_DATESTAMP, LOOKUP) " +
-            "VALUES (SEQ_DARE_PREPROCES.nextval, :state, :kbObjId, CURRENT_TIMESTAMP, :repositoryId, :oaiIdentifier, :oaiDateStamp, :kbObjId || :oaiIdentifier)")
+    @SqlBatch("INSERT INTO DARE_PREPROCES (ID, STATE, IP_NAME, TS_CREATE, REPOSITORY_ID, OAI_ID, OAI_DATESTAMP, LOOKUP) " +
+            "VALUES (SEQ_DARE_PREPROCES.nextval, :state, :ipName, CURRENT_TIMESTAMP, :repositoryId, :oaiIdentifier, :oaiDateStamp, :ipName || :oaiIdentifier)")
     void insertBatch(@BindBean List<Record> recordList);
 
     @SqlQuery("select case " +
@@ -54,8 +54,8 @@ public interface RecordDao {
     @SqlQuery("select * from DARE_PREPROCES where OAI_ID = :oaiId")
     Record findByOaiId(@Bind("oaiId") String oaiIdentifier);
 
-    @SqlQuery("select * from DARE_PREPROCES where KBOBJID = :kbObjId")
-    Record findByKbObjId(@Bind("kbObjId") String kbObjId);
+    @SqlQuery("select * from DARE_PREPROCES where IP_NAME = :ipName")
+    Record findByIpName(@Bind("ipName") String ipName);
 
     @SqlQuery("select * from (select dare_preproces.*, row_number() over (order by state desc) as seqnum " +
             "      from dare_preproces where dare_preproces.lookup like :query) where seqnum <= 10")

@@ -28,11 +28,11 @@ export default function actionsMaker(navigateTo, dispatch) {
         onDisableOaiRecordFetcher: () => dispatch(disableOaiRecordFetcher()),
 
         onFindRecords: (query) => dispatch(findRecords(query)),
-        onReset: (kbObjId) => dispatch(resetRecord(kbObjId)),
+        onReset: (ipName) => dispatch(resetRecord(ipName)),
         onBulkResetToPending: (repositoryId) => dispatch(bulkResetToPending(repositoryId)),
         onClearFoundRecords: () => dispatch({type: ActionTypes.CLEAR_FOUND_RECORDS}),
         onNavigateTo: (key, params) => navigateTo(key, params),
 
-        onFetchRecord: (kbObjId) => dispatch(fetchRecord(kbObjId))
+        onFetchRecord: (ipName) => dispatch(fetchRecord(ipName))
     };
 }

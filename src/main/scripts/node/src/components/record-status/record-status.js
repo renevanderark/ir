@@ -7,16 +7,16 @@ class RecordStatus extends React.Component {
     componentWillReceiveProps(nextProps) {
         const { onFetchRecord } = this.props;
 
-        if (nextProps.kbObjId !== this.props.kbObjId) {
-            onFetchRecord(nextProps.kbObjId);
+        if (nextProps.ipName !== this.props.ipName) {
+            onFetchRecord(nextProps.ipName);
         }
     }
 
     componentDidMount() {
-        const {record, kbObjId, onFetchRecord } = this.props;
+        const {record, ipName, onFetchRecord } = this.props;
 
-        if (!record || record.kbObjId !== kbObjId) {
-            onFetchRecord(kbObjId);
+        if (!record || record.ipName !== ipName) {
+            onFetchRecord(ipName);
         }
     }
 
@@ -62,7 +62,7 @@ class RecordStatus extends React.Component {
             <div className="row">
                 <label className="col-md-6">Download als ZIP</label>
                 <div className="col-md-26">
-                    <a href={`/records/download/${record.kbObjId}`}>
+                    <a href={`/records/download/${record.ipName}`}>
                         Downloaden <span className="glyphicon glyphicon-download-alt" />
                     </a>
                 </div>
@@ -73,7 +73,7 @@ class RecordStatus extends React.Component {
                 <ButtonWithModalWarning
                     className="btn btn-default" label="Terugzetten in wachtrij"
                     onConfirm={(doClose) => {
-                        onReset(record.kbObjId)
+                        onReset(record.ipName)
                         doClose();
                     }}>
 
@@ -99,7 +99,7 @@ class RecordStatus extends React.Component {
                     <div className="row">
                         <label className="col-md-6">KB object identifier</label>
                         <div className="col-md-26">
-                            {record.kbObjId}
+                            {record.ipName}
                         </div>
                     </div>
                     <div className="row">

@@ -1,5 +1,5 @@
 export default (state, routed) => ({
-    kbObjId: routed.params.kbObjId,
+    ipName: routed.params.ipName,
     repositories: state.repositories.list,
     record: (state.records.record || {}).record,
     errorReport: (state.records.record || {}).errorReport,

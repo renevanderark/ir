@@ -18,9 +18,9 @@ public class RecordUtil {
         return result;
     }
 
-    public static Record makeRecord(OaiRecordHeader header, int repositoryId, long kbObjId) {
+    public static Record makeRecord(OaiRecordHeader header, int repositoryId, long ipName) {
         final Record result = Record.fromHeader(header, repositoryId);
-        result.setKbObjId(kbObjId);
+        result.setIpName(ipName);
         return result;
     }
 }

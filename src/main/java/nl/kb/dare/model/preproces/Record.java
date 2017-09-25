@@ -8,7 +8,7 @@ public class Record {
 
     private Long id;
     private ProcessStatus state;
-    private String kbObjId;
+    private String ipName;
     private String tsCreate;
     private String tsProcessed;
     private Integer repositoryId;
@@ -18,7 +18,7 @@ public class Record {
     private Record(RecordBuilder recordBuilder) {
         this.id = recordBuilder.id;
         this.state = recordBuilder.state;
-        this.kbObjId = recordBuilder.kbObjId;
+        this.ipName = recordBuilder.ipName;
         this.repositoryId = recordBuilder.repositoryId;
         this.oaiIdentifier = recordBuilder.oaiIdentifier;
         this.oaiDateStamp = recordBuilder.oaiDateStamp;
@@ -29,7 +29,7 @@ public class Record {
     static Record fromHeader(OaiRecordHeader header, Integer repositoryId) {
         return new RecordBuilder()
                 .setState(header.getOaiStatus() == OaiStatus.AVAILABLE ? ProcessStatus.PENDING : ProcessStatus.DELETED)
-                .setKbObjId(null)
+                .setIpName(null)
                 .setRepositoryId(repositoryId)
                 .setOaiIdentifier(header.getIdentifier())
                 .setOaiDateStamp(header.getDateStamp())
@@ -40,16 +40,16 @@ public class Record {
         return state.getCode();
     }
 
-    public String getKbObjId() {
-        return kbObjId;
+    public String getIpName() {
+        return ipName;
     }
 
     public Integer getRepositoryId() {
         return repositoryId;
     }
 
-    public void setKbObjId(Long kbObjId) {
-        this.kbObjId = String.format("%d", kbObjId);
+    public void setIpName(Long ipName) {
+        this.ipName = String.format("%d", ipName);
     }
 
     public void setState(ProcessStatus processStatus) {
@@ -78,7 +78,7 @@ public class Record {
     static class RecordBuilder {
         private Long id = null;
         private ProcessStatus state;
-        private String kbObjId;
+        private String ipName;
         private Integer repositoryId;
         private String oaiIdentifier;
         private String oaiDateStamp;
@@ -95,8 +95,8 @@ public class Record {
             return this;
         }
 
-        RecordBuilder setKbObjId(String kbObjId) {
-            this.kbObjId = kbObjId;
+        RecordBuilder setIpName(String ipName) {
+            this.ipName = ipName;
             return this;
         }
 
@@ -133,8 +133,8 @@ public class Record {
             return state;
         }
 
-        public String getKbObjId() {
-            return kbObjId;
+        public String getIpName() {
+            return ipName;
         }
 
         public Integer getRepositoryId() {

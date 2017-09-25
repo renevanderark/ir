@@ -13,8 +13,8 @@ class RecordList extends React.Component {
                     <li className={`list-group-item ${selectedIndex === i ? "active" : ""}`}
                         onMouseOver={() => this.props.onHover(i)}
                         key={i}>
-                        <Link to={urls.record(record.kbObjId)}>
-                            {record.kbObjId} -{" "}
+                        <Link to={urls.record(record.ipName)}>
+                            {record.ipName} -{" "}
                             {record.oaiIdentifier} -{" "}
                             {processStatuses[record.state]} -{" "}
                             ({this.props.repositories.find(repo => repo.id === record.repositoryId).name})

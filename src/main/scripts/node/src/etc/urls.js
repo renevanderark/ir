@@ -15,10 +15,10 @@ const urls = {
             ? `/overzicht/${id}`
             : "/overzicht/:repositoryId"
     },
-    record(kbObjId) {
-        return kbObjId
-            ? `/publicatie/${kbObjId}`
-            : "/publicatie/:kbObjId"
+    record(ipName) {
+        return ipName
+            ? `/publicatie/${ipName}`
+            : "/publicatie/:ipName"
     }
 };
 

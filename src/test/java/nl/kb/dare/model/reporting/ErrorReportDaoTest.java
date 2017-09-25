@@ -117,9 +117,9 @@ public class ErrorReportDaoTest {
                     3L
             );
             recordDao.insertBatch(Stream.of(one, two, three).collect(Collectors.toList()));
-            final Record oneUp = recordDao.findByKbObjId("1");
-            final Record twoUp = recordDao.findByKbObjId("2");
-            final Record threeUp = recordDao.findByKbObjId("3");
+            final Record oneUp = recordDao.findByIpName("1");
+            final Record twoUp = recordDao.findByIpName("2");
+            final Record threeUp = recordDao.findByIpName("3");
             instance.insert(oneUp.getId(), errorReport);
             instance.insert(twoUp.getId(), errorReport);
             instance.insert(threeUp.getId(), errorReport);

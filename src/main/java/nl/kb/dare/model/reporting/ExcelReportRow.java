@@ -8,7 +8,7 @@ public class ExcelReportRow {
     private final String oaiId;
     private final String tsProcessed;
     private final Integer state;
-    private final String kbObjId;
+    private final String ipName;
     private final String oaiDatestamp;
 
     public ExcelReportRow(ExcelReportRowBuilder builder) {
@@ -19,7 +19,7 @@ public class ExcelReportRow {
         this.oaiId = builder.oaiId;
         this.tsProcessed = builder.tsProcessed;
         this.state = builder.state;
-        this.kbObjId = builder.kbObjId;
+        this.ipName = builder.ipName;
         this.oaiDatestamp = builder.oaiDatestamp;
     }
 
@@ -52,8 +52,8 @@ public class ExcelReportRow {
         return state;
     }
 
-    public String getKbObjId() {
-        return kbObjId;
+    public String getIpName() {
+        return ipName;
     }
 
     public String getOaiDatestamp() {
@@ -68,7 +68,7 @@ public class ExcelReportRow {
         private String oaiId;
         private String tsProcessed;
         private Integer state;
-        private String kbObjId;
+        private String ipName;
         private String oaiDatestamp;
 
         public ExcelReportRowBuilder setStatusCode(Integer statusCode) {
@@ -106,8 +106,8 @@ public class ExcelReportRow {
             return this;
         }
 
-        public ExcelReportRowBuilder setKbObjId(String kbObjId) {
-            this.kbObjId = kbObjId == null ? "" : kbObjId;
+        public ExcelReportRowBuilder setIpName(String ipName) {
+            this.ipName = ipName == null ? "" : ipName;
             return this;
         }
 

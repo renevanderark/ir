@@ -69,7 +69,7 @@ public class RecordDaoTest {
 
         assertThat(result, containsInAnyOrder(
                 allOf(
-                        hasProperty("kbObjId", is("1")),
+                        hasProperty("ipName", is("1")),
                         hasProperty("repositoryId", is(1)),
                         hasProperty("state", is(ProcessStatus.PENDING.getCode())),
                         hasProperty("oaiIdentifier", is("oai-id-1")),
@@ -78,7 +78,7 @@ public class RecordDaoTest {
                         hasProperty("tsProcessed", is(nullValue()))
                 ),
                 allOf(
-                        hasProperty("kbObjId", is("2")),
+                        hasProperty("ipName", is("2")),
                         hasProperty("repositoryId", is(2)),
                         hasProperty("state", is(ProcessStatus.PENDING.getCode())),
                         hasProperty("oaiIdentifier", is("oai-id-2")),
@@ -173,7 +173,7 @@ public class RecordDaoTest {
 
         instance.updateState(toUpdate);
 
-        final Record result = instance.findByKbObjId("1");
+        final Record result = instance.findByIpName("1");
         assertThat(result, allOf(
                 hasProperty("state", is(ProcessStatus.PROCESSED.getCode())),
                 hasProperty("tsProcessed", not(isEmptyOrNullString()))
@@ -201,9 +201,9 @@ public class RecordDaoTest {
         instance.insertBatch(Stream.of(one, two, three).collect(Collectors.toList()));
         instance.bulkUpdateState(ProcessStatus.PENDING.getCode(), ProcessStatus.FAILED.getCode(), 1);
 
-        final Record result1 = instance.findByKbObjId("1");
-        final Record result2 = instance.findByKbObjId("2");
-        final Record result3 = instance.findByKbObjId("3");
+        final Record result1 = instance.findByIpName("1");
+        final Record result2 = instance.findByIpName("2");
+        final Record result3 = instance.findByIpName("3");
 
         assertThat(result1, hasProperty("state", is(ProcessStatus.FAILED.getCode())));
         assertThat(result2, not(hasProperty("state", is(ProcessStatus.FAILED.getCode()))));

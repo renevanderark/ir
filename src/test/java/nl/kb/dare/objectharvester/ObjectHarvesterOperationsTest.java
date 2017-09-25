@@ -63,7 +63,7 @@ public class ObjectHarvesterOperationsTest {
         final Record oaiRecord = mock(Record.class);
         when(fileStorage.create(anyString())).thenReturn(handle);
         when(repositoryConfig.getSet()).thenReturn("set:name");
-        when(oaiRecord.getKbObjId()).thenReturn("123");
+        when(oaiRecord.getIpName()).thenReturn("123");
 
         final Optional<FileStorageHandle> result = instance.getFileStorageHandle(repositoryConfig.getSet(), oaiRecord, (errorReport) -> {});
 
@@ -79,7 +79,7 @@ public class ObjectHarvesterOperationsTest {
                 fileStorage, mock(HttpFetcher.class), mock(ResponseHandlerFactory.class), mock(XsltTransformer.class),
                 mock(ObjectHarvesterResourceOperations.class), mock(ManifestFinalizer.class));
         final Record oaiRecord = mock(Record.class);
-        when(oaiRecord.getKbObjId()).thenReturn("123");
+        when(oaiRecord.getIpName()).thenReturn("123");
         when(repositoryConfig.getSet()).thenReturn("set:name");
         when(fileStorage.create(anyString())).thenThrow(IOException.class);
 
@@ -134,7 +134,7 @@ public class ObjectHarvesterOperationsTest {
         when(responseHandlerFactory.getStreamCopyingResponseHandler(any(), any(), any()))
                 .thenReturn(responseHandler);
         when(responseHandler.getExceptions()).thenReturn(returnedReports);
-        when(oaiRecord.getKbObjId()).thenReturn("identifier");
+        when(oaiRecord.getIpName()).thenReturn("identifier");
         when(repository.getUrl()).thenReturn("http://example.com");
         when(repository.getMetadataPrefix()).thenReturn("metadataPrefix");
         when(fileStorageHandle.getOutputStream("metadata.xml")).thenReturn(new ByteArrayOutputStream());
@@ -165,7 +165,7 @@ public class ObjectHarvesterOperationsTest {
 
         when(responseHandlerFactory.getStreamCopyingResponseHandler(any(), any(), any()))
                 .thenReturn(responseHandler);
-        when(oaiRecord.getKbObjId()).thenReturn("identifier");
+        when(oaiRecord.getIpName()).thenReturn("identifier");
         when(repository.getUrl()).thenReturn("http://example.com");
         when(repository.getMetadataPrefix()).thenReturn("metadataPrefix");
         when(fileStorageHandle.getOutputStream("metadata.xml")).thenReturn(new ByteArrayOutputStream());
@@ -190,7 +190,7 @@ public class ObjectHarvesterOperationsTest {
         when(responseHandler.getExceptions()).thenReturn(Lists.newArrayList(mock(Exception.class)));
         when(responseHandlerFactory.getStreamCopyingResponseHandler(any(), any(), any()))
                 .thenReturn(responseHandler);
-        when(oaiRecord.getKbObjId()).thenReturn("identifier");
+        when(oaiRecord.getIpName()).thenReturn("identifier");
         when(repository.getUrl()).thenReturn("http://example.com");
         when(repository.getMetadataPrefix()).thenReturn("metadataPrefix");
         when(fileStorageHandle.getOutputStream("metadata.xml")).thenReturn(new ByteArrayOutputStream());
