@@ -6,12 +6,10 @@ import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
 import nl.kb.dare.model.reporting.ErrorReportDao;
 import nl.kb.dare.model.reporting.StoredErrorReport;
-import nl.kb.dare.model.repository.Repository;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.filestorage.FileStorage;
-import nl.kb.filestorage.FileStorageHandle;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -20,11 +18,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
-import java.io.IOException;
 import java.util.HashMap;
 
 @Path("/records")
@@ -114,27 +109,4 @@ public class RecordEndpoint {
             return Response.ok(result).build();
         });
     }
-
-    @GET
-    @Path("/download/{ipName}")
-    @Produces("application/zip")
-    public Response download(@PathParam("ipName") String ipName, @HeaderParam("Authorization") String auth) {
-        final Record record = recordDao.findByIpName(ipName);
-        final Repository repository = repositoryDao.findById(record.getRepositoryId());
-        if (record == null || repository == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        try {
-            final String superSet = repository.getSet().replaceAll(":.*$", "");
-            final FileStorageHandle fileStorageHandle = fileStorage.create(String.format("%s/%s_%s",
-                    superSet, superSet, record.getIpName()));
-            final StreamingOutput downloadOutput = fileStorageHandle::downloadZip;
-            return Response.ok(downloadOutput)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + ipName + ".zip\"")
-                    .build();
-        } catch (IOException e) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-    }
-
 }

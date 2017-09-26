@@ -78,8 +78,7 @@ public class ObjectHarvesterOperations {
 
     Optional<FileStorageHandle> getFileStorageHandle(String superSet, Record oaiRecord, Consumer<ErrorReport> onError) {
         try {
-            return Optional.of(fileStorage.create(String.format("%s/%s_%s",
-                    superSet, superSet, oaiRecord.getIpName())));
+            return Optional.of(fileStorage.create(String.format("%s/%s", superSet, oaiRecord.getIpName())));
         } catch (IOException e) {
             onError.accept(new ErrorReport(
                     new IOException("Failed to create storage location for record " + oaiRecord.getIpName(), e),

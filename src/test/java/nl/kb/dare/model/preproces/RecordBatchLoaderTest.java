@@ -1,6 +1,8 @@
 package nl.kb.dare.model.preproces;
 
 import nl.kb.dare.idgen.IdGenerator;
+import nl.kb.dare.model.repository.Repository;
+import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.websocket.socketupdate.RecordStatusUpdate;
@@ -10,6 +12,7 @@ import nl.kb.oaipmh.OaiStatus;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 import org.xml.sax.SAXException;
@@ -33,13 +36,27 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 public class RecordBatchLoaderTest {
 
+    private static final int REPOSITORY_ID = 1;
+    private RepositoryDao repositoryDao;
+
+    @Before
+    public void setUp() {
+        final Repository repository = new Repository.RepositoryBuilder()
+                .setSet("set:with:nesting")
+                .createRepository();
+
+        repositoryDao = mock(RepositoryDao.class);
+        when(repositoryDao.findById(REPOSITORY_ID)).thenReturn(repository);
+
+    }
+
     @Test
     public void addToBatchShouldUpdateExistingPendingRecordsWhichAreDeletedLater() {
         final String theId = "the-id";
         final RecordDao recordDao = mock(RecordDao.class);
         final Record existing = mock(Record.class);
         final OaiRecordHeader recordHeader = mock(OaiRecordHeader.class);
-        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, mock(IdGenerator.class),
+        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, repositoryDao, mock(IdGenerator.class),
                 mock(RecordReporter.class), mock(SocketNotifier.class), false);
 
 
@@ -47,8 +64,7 @@ public class RecordBatchLoaderTest {
         when(recordHeader.getOaiStatus()).thenReturn(OaiStatus.DELETED);
         when(recordHeader.getIdentifier()).thenReturn(theId);
         when(recordDao.findByOaiId(theId)).thenReturn(existing);
-
-        instance.addToBatch(1, recordHeader);
+        instance.addToBatch(REPOSITORY_ID, recordHeader);
         final InOrder inOrder = inOrder(existing, recordDao);
 
         inOrder.verify(existing).setState(ProcessStatus.DELETED);
@@ -61,7 +77,7 @@ public class RecordBatchLoaderTest {
         final RecordDao recordDao = mock(RecordDao.class);
         final Record existing = mock(Record.class);
         final OaiRecordHeader recordHeader = mock(OaiRecordHeader.class);
-        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, mock(IdGenerator.class),
+        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, repositoryDao, mock(IdGenerator.class),
                 mock(RecordReporter.class), mock(SocketNotifier.class), false);
 
 
@@ -84,7 +100,7 @@ public class RecordBatchLoaderTest {
         final RecordDao recordDao = mock(RecordDao.class);
         final Record existing = mock(Record.class);
         final OaiRecordHeader recordHeader = mock(OaiRecordHeader.class);
-        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, mock(IdGenerator.class),
+        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, repositoryDao, mock(IdGenerator.class),
                 mock(RecordReporter.class), mock(SocketNotifier.class), false);
 
         when(existing.getState()).thenReturn(ProcessStatus.PROCESSED.getCode());
@@ -107,7 +123,7 @@ public class RecordBatchLoaderTest {
         final RecordDao recordDao = mock(RecordDao.class);
         final Record existing = mock(Record.class);
         final OaiRecordHeader recordHeader = mock(OaiRecordHeader.class);
-        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, mock(IdGenerator.class),
+        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, repositoryDao, mock(IdGenerator.class),
                 mock(RecordReporter.class), mock(SocketNotifier.class), false);
 
         when(existing.getState()).thenReturn(ProcessStatus.PROCESSING.getCode());
@@ -130,7 +146,7 @@ public class RecordBatchLoaderTest {
         final RecordDao recordDao = mock(RecordDao.class);
         final Record existing = mock(Record.class);
         final OaiRecordHeader recordHeader = mock(OaiRecordHeader.class);
-        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, mock(IdGenerator.class),
+        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, repositoryDao, mock(IdGenerator.class),
                 mock(RecordReporter.class), mock(SocketNotifier.class), false);
 
         when(existing.getState()).thenReturn(1234);
@@ -156,7 +172,7 @@ public class RecordBatchLoaderTest {
         final SocketNotifier socketNotifier = mock(SocketNotifier.class);
         final RecordReporter recordReporter = mock(RecordReporter.class);
         final RecordStatusUpdate recordStatusUpdate = mock(RecordStatusUpdate.class);
-        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, idGenerator, recordReporter, socketNotifier, false);
+        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, repositoryDao, idGenerator, recordReporter, socketNotifier, false);
         when(oaiRecordHeader1.getIdentifier()).thenReturn("oai:1");
         when(oaiRecordHeader1.getOaiStatus()).thenReturn(OaiStatus.AVAILABLE);
         when(oaiRecordHeader1.getDateStamp()).thenReturn("date-oai-1");
@@ -176,13 +192,13 @@ public class RecordBatchLoaderTest {
         inOrder.verify(recordDao).insertBatch(argThat(isAListThat(
                 containsInAnyOrder(
                         allOf(
-                                hasProperty("ipName", is("1")),
+                                hasProperty("ipName", is("set_1")),
                                 hasProperty("oaiIdentifier", is("oai:1")),
                                 hasProperty("oaiDateStamp", is("date-oai-1"))
 
                         ),
                         allOf(
-                                hasProperty("ipName", is("2")),
+                                hasProperty("ipName", is("set_2")),
                                 hasProperty("oaiIdentifier", is("oai:2")),
                                 hasProperty("oaiDateStamp", is("date-oai-2"))
                         )
@@ -199,7 +215,7 @@ public class RecordBatchLoaderTest {
         final RecordDao recordDao = mock(RecordDao.class);
         final SocketNotifier socketNotifier = mock(SocketNotifier.class);
         final RecordReporter recordReporter = mock(RecordReporter.class);
-        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, idGenerator, recordReporter, socketNotifier, false);
+        final RecordBatchLoader instance = new RecordBatchLoader(recordDao, repositoryDao, idGenerator, recordReporter, socketNotifier, false);
 
         instance.flushBatch(1);
 

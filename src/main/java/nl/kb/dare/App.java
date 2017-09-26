@@ -125,7 +125,8 @@ public class App extends Application<Config> {
         final RepositoryController repositoryController = new RepositoryController(repositoryDao, socketNotifier);
         // Stores batches of new records and updates ~oai deleted~ existing records in the database
         final RecordBatchLoader recordBatchLoader = new RecordBatchLoader(
-                recordDao, idGenerator, recordReporter, socketNotifier, config.getBatchLoadSampleMode());
+                recordDao, repositoryDao, idGenerator, recordReporter, socketNotifier,
+                config.getBatchLoadSampleMode());
         // Handler for errors in services the IdentfierHarvesters depend on (numbers endpoint; oai endpoint)
         final IdentifierHarvestErrorFlowHandler identifierHarvestErrorFlowHandler =
                 new IdentifierHarvestErrorFlowHandler(repositoryController, mailer);

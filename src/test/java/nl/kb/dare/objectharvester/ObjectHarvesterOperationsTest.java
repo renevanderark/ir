@@ -54,7 +54,6 @@ public class ObjectHarvesterOperationsTest {
 
     @Test
     public void getFileStorageHandleShouldReturnAHandleIfAvailable() throws IOException {
-        final Repository repositoryConfig = mock(Repository.class);
         final FileStorage fileStorage = mock(FileStorage.class);
         final FileStorageHandle handle = mock(FileStorageHandle.class);
         final ObjectHarvesterOperations instance = new ObjectHarvesterOperations(fileStorage, mock(HttpFetcher.class),
@@ -62,28 +61,26 @@ public class ObjectHarvesterOperationsTest {
                 mock(ObjectHarvesterResourceOperations.class), mock(ManifestFinalizer.class));
         final Record oaiRecord = mock(Record.class);
         when(fileStorage.create(anyString())).thenReturn(handle);
-        when(repositoryConfig.getSet()).thenReturn("set:name");
-        when(oaiRecord.getIpName()).thenReturn("123");
+        when(oaiRecord.getIpName()).thenReturn("superset_123");
 
-        final Optional<FileStorageHandle> result = instance.getFileStorageHandle(repositoryConfig.getSet(), oaiRecord, (errorReport) -> {});
+        final Optional<FileStorageHandle> result = instance.getFileStorageHandle("superset", oaiRecord, (errorReport) -> {});
 
+        verify(fileStorage).create("superset/superset_123");
         assertThat(result.isPresent(), is(true));
         assertThat(result.get(), is(handle));
     }
 
     @Test
     public void getFileStorageHandleShouldEmptyOptionalWhenIOExceptionIsCaught() throws IOException {
-        final Repository repositoryConfig = mock(Repository.class);
         final FileStorage fileStorage = mock(FileStorage.class);
         final ObjectHarvesterOperations instance = new ObjectHarvesterOperations(
                 fileStorage, mock(HttpFetcher.class), mock(ResponseHandlerFactory.class), mock(XsltTransformer.class),
                 mock(ObjectHarvesterResourceOperations.class), mock(ManifestFinalizer.class));
         final Record oaiRecord = mock(Record.class);
         when(oaiRecord.getIpName()).thenReturn("123");
-        when(repositoryConfig.getSet()).thenReturn("set:name");
         when(fileStorage.create(anyString())).thenThrow(IOException.class);
 
-        final Optional<FileStorageHandle> result = instance.getFileStorageHandle(repositoryConfig.getSet(), oaiRecord, (errorReport) -> {});
+        final Optional<FileStorageHandle> result = instance.getFileStorageHandle("superset", oaiRecord, (errorReport) -> {});
 
         assertThat(result.isPresent(), is(false));
     }

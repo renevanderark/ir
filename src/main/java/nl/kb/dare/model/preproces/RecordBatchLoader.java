@@ -1,5 +1,6 @@
 package nl.kb.dare.model.preproces;
 
+import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.idgen.IdGenerator;
 import nl.kb.dare.websocket.SocketNotifier;
@@ -22,15 +23,18 @@ public class RecordBatchLoader {
     private final Map<Integer, List<Record>> batchMap = Collections.synchronizedMap(new HashMap<>());
 
     private final RecordDao recordDao;
+    private final RepositoryDao repositoryDao;
     private final IdGenerator idGenerator;
     private final RecordReporter recordReporter;
     private final SocketNotifier socketNotifier;
     private final Boolean batchLoadSampleMode;
 
-    public RecordBatchLoader(RecordDao recordDao, IdGenerator idGenerator, RecordReporter recordReporter,
-                             SocketNotifier socketNotifier, Boolean batchLoadSampleMode) {
+    public RecordBatchLoader(RecordDao recordDao, RepositoryDao repositoryDao, IdGenerator idGenerator,
+                             RecordReporter recordReporter, SocketNotifier socketNotifier,
+                             Boolean batchLoadSampleMode) {
 
         this.recordDao = recordDao;
+        this.repositoryDao = repositoryDao;
         this.idGenerator = idGenerator;
         this.recordReporter = recordReporter;
         this.socketNotifier = socketNotifier;
@@ -67,12 +71,12 @@ public class RecordBatchLoader {
         if (!batchMap.containsKey(repositoryId) || batchMap.get(repositoryId).isEmpty()) {
             return;
         }
-
+        final String prefix = repositoryDao.findById(repositoryId).getSet().replaceAll(":.*$", "");
         final List<Record> records = batchMap.get(repositoryId);
-        final List<String> numbers = idGenerator.getUniqueIdentifiers(records.size());
+        final List<String> uniqueIdentifiers = idGenerator.getUniqueIdentifiers(records.size());
 
         IntStream.range(0, records.size()).forEach(idx ->
-                records.get(idx).setIpName(numbers.get(idx)));
+                records.get(idx).setIpName(String.format("%s_%s", prefix, uniqueIdentifiers.get(idx))));
 
         synchronized (recordDao) {
             if (batchLoadSampleMode) {
