@@ -62,10 +62,10 @@ public class ObjectHarvesterTest {
                 .setMaxSequentialDownloadFailures(maxSequentialDownloadFailures)
                 .setObjectHarvestErrorFlowHandler(mock(ObjectHarvestErrorFlowHandler.class))
                 .create();
-        when(getRecordOperations.getFileStorageHandle(any(), any(), any())).thenReturn(Optional.empty());
+        when(getRecordOperations.getProcessingStorageHandle(any(), any(), any())).thenReturn(Optional.empty());
 
         final ProcessStatus result = instance.harvestPublication(oaiRecord, repositoryConfig, onError);
-        verify(getRecordOperations).getFileStorageHandle("set", oaiRecord, onError);
+        verify(getRecordOperations).getProcessingStorageHandle("set", oaiRecord, onError);
         verifyNoMoreInteractions(getRecordOperations);
 
         assertThat(result, is(ProcessStatus.FAILED));
@@ -75,7 +75,7 @@ public class ObjectHarvesterTest {
     public void fetchShouldReturnFailedWhenDownloadMetadataFails()  {
         final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
-        final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
+        final FileStorageHandle processingStorageHandle = mock(FileStorageHandle.class);
         final ObjectHarvester instance = new ObjectHarvester.Builder()
                 .setRepositoryDao(repositoryDao)
                 .setRecordDao(recordDao)
@@ -88,14 +88,14 @@ public class ObjectHarvesterTest {
                 .setObjectHarvestErrorFlowHandler(mock(ObjectHarvestErrorFlowHandler.class))
                 .create();
 
-        when(getRecordOperations.getFileStorageHandle(any(), any(), any())).thenReturn(Optional.of(fileStorageHandle));
+        when(getRecordOperations.getProcessingStorageHandle(any(), any(), any())).thenReturn(Optional.of(processingStorageHandle));
         when(getRecordOperations.downloadMetadata(any(), any(), any(), any())).thenReturn(Optional.empty());
 
         final ProcessStatus result = instance.harvestPublication(oaiRecord, repositoryConfig, onError);
 
         final InOrder inOrder = inOrder(getRecordOperations, getRecordOperations);
-        inOrder.verify(getRecordOperations).getFileStorageHandle("set", oaiRecord, onError);
-        inOrder.verify(getRecordOperations).downloadMetadata(fileStorageHandle, oaiRecord, repositoryConfig, onError);
+        inOrder.verify(getRecordOperations).getProcessingStorageHandle("set", oaiRecord, onError);
+        inOrder.verify(getRecordOperations).downloadMetadata(processingStorageHandle, oaiRecord, repositoryConfig, onError);
         verifyNoMoreInteractions(getRecordOperations);
 
         assertThat(result, is(ProcessStatus.FAILED));
@@ -105,7 +105,7 @@ public class ObjectHarvesterTest {
     public void fetchShouldReturnFailedWhenGenerateManifestFails() {
         final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
-        final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
+        final FileStorageHandle processingStorageHandle = mock(FileStorageHandle.class);
         final ObjectHarvester instance = new ObjectHarvester.Builder()
                 .setRepositoryDao(repositoryDao)
                 .setRecordDao(recordDao)
@@ -117,16 +117,16 @@ public class ObjectHarvesterTest {
                 .setMaxSequentialDownloadFailures(maxSequentialDownloadFailures)
                 .setObjectHarvestErrorFlowHandler(mock(ObjectHarvestErrorFlowHandler.class))
                 .create();
-        when(getRecordOperations.getFileStorageHandle(any(), any(), any())).thenReturn(Optional.of(fileStorageHandle));
+        when(getRecordOperations.getProcessingStorageHandle(any(), any(), any())).thenReturn(Optional.of(processingStorageHandle));
         when(getRecordOperations.downloadMetadata(any(), any(), any(), any())).thenReturn(Optional.of(mock(ObjectResource.class)));
-        when(getRecordOperations.generateManifest(fileStorageHandle, onError)).thenReturn(false);
+        when(getRecordOperations.generateManifest(processingStorageHandle, onError)).thenReturn(false);
 
         final ProcessStatus result = instance.harvestPublication(oaiRecord, repositoryConfig, onError);
 
         final InOrder inOrder = inOrder(getRecordOperations, getRecordOperations);
-        inOrder.verify(getRecordOperations).getFileStorageHandle("set", oaiRecord, onError);
-        inOrder.verify(getRecordOperations).downloadMetadata(fileStorageHandle, oaiRecord, repositoryConfig, onError);
-        inOrder.verify(getRecordOperations).generateManifest(fileStorageHandle, onError);
+        inOrder.verify(getRecordOperations).getProcessingStorageHandle("set", oaiRecord, onError);
+        inOrder.verify(getRecordOperations).downloadMetadata(processingStorageHandle, oaiRecord, repositoryConfig, onError);
+        inOrder.verify(getRecordOperations).generateManifest(processingStorageHandle, onError);
 
         verifyNoMoreInteractions(getRecordOperations);
 
@@ -137,7 +137,7 @@ public class ObjectHarvesterTest {
     public void fetchShouldReturnFailedWhenDownloadResourcesFails()  {
         final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
-        final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
+        final FileStorageHandle processingStorageHandle = mock(FileStorageHandle.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
         final ObjectHarvester instance = new ObjectHarvester.Builder()
                 .setRepositoryDao(repositoryDao)
@@ -151,8 +151,8 @@ public class ObjectHarvesterTest {
                 .setObjectHarvestErrorFlowHandler(mock(ObjectHarvestErrorFlowHandler.class))
                 .create();
 
-        when(getRecordOperations.getFileStorageHandle(any(), any(), any())).thenReturn(Optional.of(fileStorageHandle));
-        when(getRecordOperations.generateManifest(fileStorageHandle, onError)).thenReturn(true);
+        when(getRecordOperations.getProcessingStorageHandle(any(), any(), any())).thenReturn(Optional.of(processingStorageHandle));
+        when(getRecordOperations.generateManifest(processingStorageHandle, onError)).thenReturn(true);
         when(getRecordOperations.collectResources(any(), any())).thenReturn(objectResources);
         when(getRecordOperations.downloadMetadata(any(), any(), any(), any())).thenReturn(Optional.of(mock(ObjectResource.class)));
         when(getRecordOperations.downloadResources(any(), any(), any())).thenReturn(false);
@@ -160,11 +160,11 @@ public class ObjectHarvesterTest {
         final ProcessStatus result = instance.harvestPublication(oaiRecord, repositoryConfig, onError);
 
         final InOrder inOrder = inOrder(getRecordOperations);
-        inOrder.verify(getRecordOperations).getFileStorageHandle("set", oaiRecord, onError);
-        inOrder.verify(getRecordOperations).downloadMetadata(fileStorageHandle, oaiRecord, repositoryConfig, onError);
-        inOrder.verify(getRecordOperations).generateManifest(fileStorageHandle, onError);
-        inOrder.verify(getRecordOperations).collectResources(fileStorageHandle, onError);
-        inOrder.verify(getRecordOperations).downloadResources(fileStorageHandle, objectResources, onError);
+        inOrder.verify(getRecordOperations).getProcessingStorageHandle("set", oaiRecord, onError);
+        inOrder.verify(getRecordOperations).downloadMetadata(processingStorageHandle, oaiRecord, repositoryConfig, onError);
+        inOrder.verify(getRecordOperations).generateManifest(processingStorageHandle, onError);
+        inOrder.verify(getRecordOperations).collectResources(processingStorageHandle, onError);
+        inOrder.verify(getRecordOperations).downloadResources(processingStorageHandle, objectResources, onError);
         verifyNoMoreInteractions(getRecordOperations);
 
         assertThat(result, is(ProcessStatus.FAILED));
@@ -174,7 +174,7 @@ public class ObjectHarvesterTest {
     public void fetchShouldReturnFailedWhenWriteFilenamesAndChecksumsToMetadataFails()  {
         final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
-        final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
+        final FileStorageHandle processingStorageHandle = mock(FileStorageHandle.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
         final ObjectHarvester instance = new ObjectHarvester.Builder()
                 .setRepositoryDao(repositoryDao)
@@ -190,8 +190,8 @@ public class ObjectHarvesterTest {
 
         final ObjectResource metadataResource = mock(ObjectResource.class);
 
-        when(getRecordOperations.getFileStorageHandle(any(), any(), any())).thenReturn(Optional.of(fileStorageHandle));
-        when(getRecordOperations.generateManifest(fileStorageHandle, onError)).thenReturn(true);
+        when(getRecordOperations.getProcessingStorageHandle(any(), any(), any())).thenReturn(Optional.of(processingStorageHandle));
+        when(getRecordOperations.generateManifest(processingStorageHandle, onError)).thenReturn(true);
         when(getRecordOperations.collectResources(any(), any())).thenReturn(objectResources);
         when(getRecordOperations.downloadMetadata(any(), any(), any(), any())).thenReturn(Optional.of(metadataResource));
         when(getRecordOperations.downloadResources(any(), any(), any())).thenReturn(true);
@@ -200,12 +200,12 @@ public class ObjectHarvesterTest {
         final ProcessStatus result = instance.harvestPublication(oaiRecord, repositoryConfig, onError);
 
         final InOrder inOrder = inOrder(getRecordOperations);
-        inOrder.verify(getRecordOperations).getFileStorageHandle("set", oaiRecord, onError);
-        inOrder.verify(getRecordOperations).downloadMetadata(fileStorageHandle, oaiRecord, repositoryConfig, onError);
-        inOrder.verify(getRecordOperations).generateManifest(fileStorageHandle, onError);
-        inOrder.verify(getRecordOperations).collectResources(fileStorageHandle, onError);
-        inOrder.verify(getRecordOperations).downloadResources(fileStorageHandle, objectResources, onError);
-        inOrder.verify(getRecordOperations).writeFilenamesAndChecksumsToMetadata(fileStorageHandle, objectResources,
+        inOrder.verify(getRecordOperations).getProcessingStorageHandle("set", oaiRecord, onError);
+        inOrder.verify(getRecordOperations).downloadMetadata(processingStorageHandle, oaiRecord, repositoryConfig, onError);
+        inOrder.verify(getRecordOperations).generateManifest(processingStorageHandle, onError);
+        inOrder.verify(getRecordOperations).collectResources(processingStorageHandle, onError);
+        inOrder.verify(getRecordOperations).downloadResources(processingStorageHandle, objectResources, onError);
+        inOrder.verify(getRecordOperations).writeFilenamesAndChecksumsToMetadata(processingStorageHandle, objectResources,
                 metadataResource, onError);
 
         verifyNoMoreInteractions(getRecordOperations);
@@ -217,7 +217,7 @@ public class ObjectHarvesterTest {
     public void fetchShouldReturnProcessedWhenAllOperationsSucceed()  {
         final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
-        final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
+        final FileStorageHandle processingStorageHandle = mock(FileStorageHandle.class);
         final ObjectResource metadataResource = mock(ObjectResource.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
         final ObjectHarvester instance = new ObjectHarvester.Builder()
@@ -231,22 +231,22 @@ public class ObjectHarvesterTest {
                 .setMaxSequentialDownloadFailures(maxSequentialDownloadFailures)
                 .setObjectHarvestErrorFlowHandler(mock(ObjectHarvestErrorFlowHandler.class))
                 .create();
-        when(getRecordOperations.getFileStorageHandle(any(), any(), any())).thenReturn(Optional.of(fileStorageHandle));
+        when(getRecordOperations.getProcessingStorageHandle(any(), any(), any())).thenReturn(Optional.of(processingStorageHandle));
         when(getRecordOperations.downloadMetadata(any(), any(), any(), any())).thenReturn(Optional.of(metadataResource));
-        when(getRecordOperations.generateManifest(fileStorageHandle, onError)).thenReturn(true);
-        when(getRecordOperations.collectResources(fileStorageHandle, onError)).thenReturn(objectResources);
+        when(getRecordOperations.generateManifest(processingStorageHandle, onError)).thenReturn(true);
+        when(getRecordOperations.collectResources(processingStorageHandle, onError)).thenReturn(objectResources);
         when(getRecordOperations.downloadResources(any(), any(), any())).thenReturn(true);
         when(getRecordOperations.writeFilenamesAndChecksumsToMetadata(any(), any(), any(), any())).thenReturn(true);
 
         final ProcessStatus result = instance.harvestPublication(oaiRecord, repositoryConfig, onError);
 
         final InOrder inOrder = inOrder(getRecordOperations);
-        inOrder.verify(getRecordOperations).getFileStorageHandle("set", oaiRecord, onError);
-        inOrder.verify(getRecordOperations).downloadMetadata(fileStorageHandle, oaiRecord, repositoryConfig, onError);
-        inOrder.verify(getRecordOperations).generateManifest(fileStorageHandle, onError);
-        inOrder.verify(getRecordOperations).collectResources(fileStorageHandle, onError);
-        inOrder.verify(getRecordOperations).downloadResources(fileStorageHandle, objectResources, onError);
-        inOrder.verify(getRecordOperations).writeFilenamesAndChecksumsToMetadata(fileStorageHandle, objectResources,
+        inOrder.verify(getRecordOperations).getProcessingStorageHandle("set", oaiRecord, onError);
+        inOrder.verify(getRecordOperations).downloadMetadata(processingStorageHandle, oaiRecord, repositoryConfig, onError);
+        inOrder.verify(getRecordOperations).generateManifest(processingStorageHandle, onError);
+        inOrder.verify(getRecordOperations).collectResources(processingStorageHandle, onError);
+        inOrder.verify(getRecordOperations).downloadResources(processingStorageHandle, objectResources, onError);
+        inOrder.verify(getRecordOperations).writeFilenamesAndChecksumsToMetadata(processingStorageHandle, objectResources,
                 metadataResource, onError);
         verifyNoMoreInteractions(getRecordOperations);
 

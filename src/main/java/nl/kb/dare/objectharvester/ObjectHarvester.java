@@ -91,14 +91,14 @@ public class ObjectHarvester {
 
     ProcessStatus harvestPublication(Record record, Repository repositoryConfig, Consumer<ErrorReport> onError) {
 
-        final Optional<FileStorageHandle> fileStorageHandle = objectHarvesterOperations.getFileStorageHandle(
+        final Optional<FileStorageHandle> processingStorageHandle = objectHarvesterOperations.getProcessingStorageHandle(
                 repositoryConfig.getSet().replaceAll(":.*$", ""), record, onError);
 
-        if (!fileStorageHandle.isPresent()) {
+        if (!processingStorageHandle.isPresent()) {
             return ProcessStatus.FAILED;
         }
 
-        final FileStorageHandle handle = fileStorageHandle.get();
+        final FileStorageHandle handle = processingStorageHandle.get();
         final Optional<ObjectResource> metadataResource = objectHarvesterOperations.downloadMetadata(handle, record,
                 repositoryConfig, onError);
         if (!metadataResource.isPresent()) {

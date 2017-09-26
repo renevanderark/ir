@@ -54,21 +54,21 @@ public class ObjectHarvesterOperations {
         }
     }
 
-    private final FileStorage fileStorage;
+    private final FileStorage processingStorage;
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
     private final XsltTransformer xsltTransformer;
     private final ObjectHarvesterResourceOperations resourceOperations;
     private final ManifestFinalizer manifestFinalizer;
 
-    public ObjectHarvesterOperations(FileStorage fileStorage,
+    public ObjectHarvesterOperations(FileStorage processingStorage,
                                      HttpFetcher httpFetcher,
                                      ResponseHandlerFactory responseHandlerFactory,
                                      XsltTransformer xsltTransformer,
                                      ObjectHarvesterResourceOperations resourceOperations,
                                      ManifestFinalizer manifestFinalizer) {
 
-        this.fileStorage = fileStorage;
+        this.processingStorage = processingStorage;
         this.httpFetcher = httpFetcher;
         this.responseHandlerFactory = responseHandlerFactory;
         this.xsltTransformer = xsltTransformer;
@@ -76,9 +76,9 @@ public class ObjectHarvesterOperations {
         this.manifestFinalizer = manifestFinalizer;
     }
 
-    Optional<FileStorageHandle> getFileStorageHandle(String superSet, Record oaiRecord, Consumer<ErrorReport> onError) {
+    Optional<FileStorageHandle> getProcessingStorageHandle(String superSet, Record oaiRecord, Consumer<ErrorReport> onError) {
         try {
-            return Optional.of(fileStorage.create(String.format("%s/%s", superSet, oaiRecord.getIpName())));
+            return Optional.of(processingStorage.create(String.format("%s/%s", superSet, oaiRecord.getIpName())));
         } catch (IOException e) {
             onError.accept(new ErrorReport(
                     new IOException("Failed to create storage location for record " + oaiRecord.getIpName(), e),
@@ -88,13 +88,13 @@ public class ObjectHarvesterOperations {
         }
     }
 
-    Optional<ObjectResource> downloadMetadata(FileStorageHandle fileStorageHandle, Record record,
+    Optional<ObjectResource> downloadMetadata(FileStorageHandle processingStorageHandle, Record record,
                                               Repository repository, Consumer<ErrorReport> onError) {
         try {
             final String urlStr = String.format("%s?verb=GetRecord&metadataPrefix=%s&identifier=%s",
                     repository.getUrl(), repository.getMetadataPrefix(), record.getOaiIdentifier());
 
-            final OutputStream out = fileStorageHandle.getOutputStream(METADATA_XML);
+            final OutputStream out = processingStorageHandle.getOutputStream(METADATA_XML);
             final ChecksumOutputStream checksumOut = new ChecksumOutputStream("SHA-512");
             final ByteCountOutputStream byteCountOut = new ByteCountOutputStream();
 
@@ -143,11 +143,11 @@ public class ObjectHarvesterOperations {
     }
 
 
-    List<ObjectResource> collectResources(FileStorageHandle fileStorageHandle, Consumer<ErrorReport> onError) {
+    List<ObjectResource> collectResources(FileStorageHandle processingStorageHandle, Consumer<ErrorReport> onError) {
         try {
             final ManifestXmlHandler manifestXmlHandler = new ManifestXmlHandler();
             synchronized (saxParser) {
-                saxParser.parse(fileStorageHandle.getFile(MANIFEST_INITIAL_XML), manifestXmlHandler);
+                saxParser.parse(processingStorageHandle.getFile(MANIFEST_INITIAL_XML), manifestXmlHandler);
             }
             return manifestXmlHandler.getObjectResources();
         } catch (SAXException e) {
@@ -159,13 +159,13 @@ public class ObjectHarvesterOperations {
         }
     }
 
-    boolean downloadResources(FileStorageHandle fileStorageHandle, List<ObjectResource> objectResources,
+    boolean downloadResources(FileStorageHandle processingStorageHandle, List<ObjectResource> objectResources,
                               Consumer<ErrorReport> onError) {
         try {
             for (ObjectResource objectResource : objectResources) {
 
                 final List<ErrorReport> reports = resourceOperations
-                        .downloadResource(objectResource, fileStorageHandle);
+                        .downloadResource(objectResource, processingStorageHandle);
 
                 if (!reports.isEmpty()) {
                     onError.accept(reports.get(0));

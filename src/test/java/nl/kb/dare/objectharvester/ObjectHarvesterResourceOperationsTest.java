@@ -40,7 +40,7 @@ public class ObjectHarvesterResourceOperationsTest {
 
     @Test
     public void downloadResourceShouldSaveTheFileAndTheChecksum() throws IOException, NoSuchAlgorithmException {
-        final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
+        final FileStorageHandle processingStorageHandle = mock(FileStorageHandle.class);
         final ResponseHandlerFactory responseHandlerFactory = mock(ResponseHandlerFactory.class);
         final ObjectResource objectResource = getObjectResource(FULL_URL);
         final HttpFetcher httpFetcher = mock(HttpFetcher.class);
@@ -52,15 +52,15 @@ public class ObjectHarvesterResourceOperationsTest {
         final ObjectHarvesterResourceOperations instance = new ObjectHarvesterResourceOperations(httpFetcher,
                 responseHandlerFactory, fileLocation -> EXPECTED_FILENAME);
 
-        final List<ErrorReport> errorReports = instance.downloadResource(objectResource, fileStorageHandle);
+        final List<ErrorReport> errorReports = instance.downloadResource(objectResource, processingStorageHandle);
 
 
-        InOrder inOrder = Mockito.inOrder(objectResource, fileStorageHandle, responseHandlerFactory, httpFetcher);
+        InOrder inOrder = Mockito.inOrder(objectResource, processingStorageHandle, responseHandlerFactory, httpFetcher);
         // final String fileLocation = objectResource.getXlinkHref();
         inOrder.verify(objectResource).getXlinkHref();
         // final String filename = createFilename(fileLocation); => EXPECTED_FILENAME
-        // final OutputStream objectOut = fileStorageHandle.getOutputStream("resources", filename);
-        inOrder.verify(fileStorageHandle).getOutputStream("resources", EXPECTED_FILENAME);
+        // final OutputStream objectOut = processingStorageHandle.getOutputStream("resources", filename);
+        inOrder.verify(processingStorageHandle).getOutputStream("resources", EXPECTED_FILENAME);
         // final ByteArrayOutputStream checksumOut = new ByteArrayOutputStream();
         // final List<ErrorReport> firstAttemptErrors = attemptDownload(fileLocation, objectOut, checksumOut, false);
         inOrder.verify(responseHandlerFactory).getStreamCopyingResponseHandler(any(),
@@ -84,7 +84,7 @@ public class ObjectHarvesterResourceOperationsTest {
 
     @Test
     public void downloadResourceShouldSaveTheFileAndTheChecksumAfterSecondAttempt() throws IOException, NoSuchAlgorithmException {
-        final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
+        final FileStorageHandle processingStorageHandle = mock(FileStorageHandle.class);
         final ResponseHandlerFactory responseHandlerFactory = mock(ResponseHandlerFactory.class);
         final ObjectResource objectResource = getObjectResource(FULL_URL);
         final HttpFetcher httpFetcher = mock(HttpFetcher.class);
@@ -100,7 +100,7 @@ public class ObjectHarvesterResourceOperationsTest {
 
 
         final List<ErrorReport> errorReports = instance
-                .downloadResource(objectResource, fileStorageHandle);
+                .downloadResource(objectResource, processingStorageHandle);
 
         InOrder inOrder = Mockito.inOrder(httpFetcher, responseHandlerFactory, objectResource);
 
@@ -127,7 +127,7 @@ public class ObjectHarvesterResourceOperationsTest {
 
     @Test
     public void itShouldReturnAllTheErrorReportsOfBothFailedAttempts() throws IOException, NoSuchAlgorithmException {
-        final FileStorageHandle fileStorageHandle = mock(FileStorageHandle.class);
+        final FileStorageHandle processingStorageHandle = mock(FileStorageHandle.class);
         final ResponseHandlerFactory responseHandlerFactory = mock(ResponseHandlerFactory.class);
         final ObjectResource objectResource = getObjectResource(FULL_URL);
         final HttpFetcher httpFetcher = mock(HttpFetcher.class);
@@ -143,7 +143,7 @@ public class ObjectHarvesterResourceOperationsTest {
                 .thenReturn(Lists.newArrayList(new SAXException("ex 2")));
 
         final List<ErrorReport> errorReports = instance
-                .downloadResource(objectResource, fileStorageHandle);
+                .downloadResource(objectResource, processingStorageHandle);
 
         assertThat(errorReports.size(), is(2));
         assertThat(errorReports, containsInAnyOrder(allOf(

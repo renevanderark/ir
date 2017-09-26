@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import nl.kb.dare.config.FileStorageFactory;
+import nl.kb.dare.config.FileStorageGoal;
 import nl.kb.dare.config.MailerFactory;
+
+import java.util.Map;
 
 class Config extends Configuration {
     private DataSourceFactory database;
-    private FileStorageFactory fileStorageFactory;
     private MailerFactory mailerFactory;
 
     @JsonProperty
@@ -37,6 +39,9 @@ class Config extends Configuration {
     @JsonProperty
     private Boolean batchLoadSampleMode;
 
+    @JsonProperty("fileStorage")
+    private Map<FileStorageGoal, FileStorageFactory> fileStorageFactory;
+
 
     @JsonProperty("database")
     DataSourceFactory getDataSourceFactory() {
@@ -48,14 +53,8 @@ class Config extends Configuration {
         this.database = dataSourceFactory;
     }
 
-    @JsonProperty("fileStorage")
-    public FileStorageFactory getFileStorageFactory() {
+    public Map<FileStorageGoal, FileStorageFactory> getFileStorageFactory() {
         return fileStorageFactory;
-    }
-
-    @JsonProperty("fileStorage")
-    public void setFileStorageFactory(FileStorageFactory fileStorageFactory) {
-        this.fileStorageFactory = fileStorageFactory;
     }
 
     @JsonProperty("mailer")

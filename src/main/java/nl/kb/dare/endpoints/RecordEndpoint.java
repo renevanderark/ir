@@ -6,10 +6,8 @@ import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
 import nl.kb.dare.model.reporting.ErrorReportDao;
 import nl.kb.dare.model.reporting.StoredErrorReport;
-import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
 import nl.kb.dare.websocket.SocketNotifier;
-import nl.kb.filestorage.FileStorage;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -27,19 +25,14 @@ public class RecordEndpoint {
     private final KbAuthFilter filter;
     private final RecordDao recordDao;
     private final ErrorReportDao errorReportDao;
-    private final RepositoryDao repositoryDao;
-    private final FileStorage fileStorage;
     private final RecordReporter recordReporter;
     private final SocketNotifier socketNotifier;
 
-    public RecordEndpoint(KbAuthFilter filter, RecordDao recordDao,
-                          ErrorReportDao errorReportDao, RepositoryDao repositoryDao, FileStorage fileStorage,
+    public RecordEndpoint(KbAuthFilter filter, RecordDao recordDao, ErrorReportDao errorReportDao,
                           RecordReporter recordReporter, SocketNotifier socketNotifier) {
         this.filter = filter;
         this.recordDao = recordDao;
         this.errorReportDao = errorReportDao;
-        this.repositoryDao = repositoryDao;
-        this.fileStorage = fileStorage;
         this.recordReporter = recordReporter;
         this.socketNotifier = socketNotifier;
     }

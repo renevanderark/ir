@@ -9,6 +9,7 @@ import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import nl.kb.dare.config.FileStorageFactory;
+import nl.kb.dare.config.FileStorageGoal;
 import nl.kb.dare.databasetasks.LoadOracleSchemaTask;
 import nl.kb.dare.databasetasks.LoadRepositoriesTask;
 import nl.kb.dare.endpoints.AuthenticationEndpoint;
@@ -22,6 +23,7 @@ import nl.kb.dare.endpoints.StatusWebsocketServlet;
 import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
 import nl.kb.dare.identifierharvester.IdentifierHarvestErrorFlowHandler;
 import nl.kb.dare.identifierharvester.IdentifierHarvester;
+import nl.kb.dare.idgen.IdGenerator;
 import nl.kb.dare.idgen.uuid.UUIDGenerator;
 import nl.kb.dare.mail.Mailer;
 import nl.kb.dare.mail.mailer.StubbedMailer;
@@ -36,7 +38,6 @@ import nl.kb.dare.model.repository.RepositoryController;
 import nl.kb.dare.model.repository.RepositoryDao;
 import nl.kb.dare.model.repository.RepositoryValidator;
 import nl.kb.dare.model.statuscodes.ProcessStatus;
-import nl.kb.dare.idgen.IdGenerator;
 import nl.kb.dare.objectharvester.ObjectHarvestErrorFlowHandler;
 import nl.kb.dare.objectharvester.ObjectHarvester;
 import nl.kb.dare.objectharvester.ObjectHarvesterOperations;
@@ -57,6 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.Servlet;
 import javax.xml.transform.stream.StreamSource;
+import java.util.Map;
 
 public class App extends Application<Config> {
     private static final Logger LOG = LoggerFactory.getLogger(App.class);
@@ -101,11 +103,21 @@ public class App extends Application<Config> {
         final ExcelReportDao excelReportDao = db.onDemand(ExcelReportDao.class);
 
         // File storage access
-        final FileStorageFactory fileStorageFactory = config.getFileStorageFactory();
-        if (fileStorageFactory == null) {
+        final Map<FileStorageGoal, FileStorageFactory> fileStorageFactories = config.getFileStorageFactory();
+        if (fileStorageFactories == null) {
             throw new IllegalStateException("No file storage configuration provided");
         }
-        final FileStorage fileStorage = fileStorageFactory.getFileStorage();
+        if (fileStorageFactories.get(FileStorageGoal.PROCESSING) == null) {
+            throw new IllegalStateException("No file storage location provided for 'processing'");
+        }
+        if (fileStorageFactories.get(FileStorageGoal.DONE) == null) {
+            throw new IllegalStateException("No file storage location provided for 'done'");
+        }
+        if (fileStorageFactories.get(FileStorageGoal.REJECTED) == null) {
+            throw new IllegalStateException("No file storage location provided for 'rejected'");
+        }
+
+        final FileStorage processingStorage = fileStorageFactories.get(FileStorageGoal.PROCESSING).getFileStorage();
 
 
         // Handler for websocket broadcasts to the browser
@@ -156,7 +168,7 @@ public class App extends Application<Config> {
                 new ObjectHarvesterResourceOperations(httpFetcherForObjectHarvest, responseHandlerFactory);
         // Organises the operations of downloading a full publication object
         final ObjectHarvesterOperations objectHarvesterOperations = new ObjectHarvesterOperations(
-                fileStorage, httpFetcherForObjectHarvest, responseHandlerFactory, xsltTransformer,
+                processingStorage, httpFetcherForObjectHarvest, responseHandlerFactory, xsltTransformer,
                 objectHarvesterResourceOperations, new ManifestFinalizer());
         // Handles expected failure flow (exceed maximum consecutive download failures
         final ObjectHarvestErrorFlowHandler objectHarvestErrorFlowHandler = new ObjectHarvestErrorFlowHandler(
@@ -210,7 +222,7 @@ public class App extends Application<Config> {
         register(environment, new RepositoriesEndpoint(filter, repositoryDao, repositoryValidator, repositoryController));
 
         // Read operations for records (find, view, download)
-        register(environment, new RecordEndpoint(filter, recordDao, errorReportDao, repositoryDao, fileStorage, recordReporter,
+        register(environment, new RecordEndpoint(filter, recordDao, errorReportDao, recordReporter,
                 socketNotifier));
 
         // Operational controls for repository harvesters

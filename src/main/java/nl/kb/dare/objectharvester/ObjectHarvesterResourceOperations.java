@@ -45,12 +45,12 @@ public class ObjectHarvesterResourceOperations {
 
     List<ErrorReport> downloadResource(
             ObjectResource objectResource,
-            FileStorageHandle fileStorageHandle) throws IOException, NoSuchAlgorithmException {
+            FileStorageHandle processingStorageHandle) throws IOException, NoSuchAlgorithmException {
 
         final String fileLocation = objectResource.getXlinkHref();
         final String filename = createFilename.apply(fileLocation);
 
-        final OutputStream objectOut = fileStorageHandle.getOutputStream("resources", filename);
+        final OutputStream objectOut = processingStorageHandle.getOutputStream("resources", filename);
         final ChecksumOutputStream checksumOut = new ChecksumOutputStream("SHA-512");
         final ByteCountOutputStream byteCountOut = new ByteCountOutputStream();
 
