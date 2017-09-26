@@ -1,6 +1,7 @@
 package nl.kb.dare.objectharvester;
 
 import com.google.common.collect.Lists;
+import nl.kb.dare.config.FileStorageGoal;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.reporting.ErrorReport;
 import nl.kb.dare.model.repository.Repository;
@@ -55,6 +56,8 @@ public class ObjectHarvesterOperations {
     }
 
     private final FileStorage processingStorage;
+    private final FileStorage rejectedStorage;
+    private final FileStorage doneStorage;
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
     private final XsltTransformer xsltTransformer;
@@ -62,6 +65,8 @@ public class ObjectHarvesterOperations {
     private final ManifestFinalizer manifestFinalizer;
 
     public ObjectHarvesterOperations(FileStorage processingStorage,
+                                     FileStorage rejectedStorage,
+                                     FileStorage doneStorage,
                                      HttpFetcher httpFetcher,
                                      ResponseHandlerFactory responseHandlerFactory,
                                      XsltTransformer xsltTransformer,
@@ -69,6 +74,8 @@ public class ObjectHarvesterOperations {
                                      ManifestFinalizer manifestFinalizer) {
 
         this.processingStorage = processingStorage;
+        this.rejectedStorage = rejectedStorage;
+        this.doneStorage = doneStorage;
         this.httpFetcher = httpFetcher;
         this.responseHandlerFactory = responseHandlerFactory;
         this.xsltTransformer = xsltTransformer;
@@ -76,9 +83,23 @@ public class ObjectHarvesterOperations {
         this.manifestFinalizer = manifestFinalizer;
     }
 
-    Optional<FileStorageHandle> getProcessingStorageHandle(String superSet, Record oaiRecord, Consumer<ErrorReport> onError) {
+    private FileStorage getFileStorageForGoal(FileStorageGoal goal) {
+        switch (goal) {
+            case DONE:
+                return doneStorage;
+            case REJECTED:
+                return rejectedStorage;
+            case PROCESSING:
+            default:
+                return processingStorage;
+        }
+    }
+
+    Optional<FileStorageHandle> getFileStorageHandle(FileStorageGoal goal, String superSet, Record oaiRecord,
+                                                     Consumer<ErrorReport> onError) {
         try {
-            return Optional.of(processingStorage.create(String.format("%s/%s", superSet, oaiRecord.getIpName())));
+            return Optional.of(getFileStorageForGoal(goal)
+                    .create(String.format("%s/%s", superSet, oaiRecord.getIpName())));
         } catch (IOException e) {
             onError.accept(new ErrorReport(
                     new IOException("Failed to create storage location for record " + oaiRecord.getIpName(), e),

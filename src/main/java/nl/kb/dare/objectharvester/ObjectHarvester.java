@@ -2,6 +2,7 @@ package nl.kb.dare.objectharvester;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
+import nl.kb.dare.config.FileStorageGoal;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
@@ -91,8 +92,9 @@ public class ObjectHarvester {
 
     ProcessStatus harvestPublication(Record record, Repository repositoryConfig, Consumer<ErrorReport> onError) {
 
-        final Optional<FileStorageHandle> processingStorageHandle = objectHarvesterOperations.getProcessingStorageHandle(
-                repositoryConfig.getSet().replaceAll(":.*$", ""), record, onError);
+        final Optional<FileStorageHandle> processingStorageHandle = objectHarvesterOperations.getFileStorageHandle(
+                FileStorageGoal.PROCESSING, getSuperSetFromSetName(repositoryConfig), record, onError);
+
 
         if (!processingStorageHandle.isPresent()) {
             return ProcessStatus.FAILED;
@@ -101,25 +103,36 @@ public class ObjectHarvester {
         final FileStorageHandle handle = processingStorageHandle.get();
         final Optional<ObjectResource> metadataResource = objectHarvesterOperations.downloadMetadata(handle, record,
                 repositoryConfig, onError);
+
         if (!metadataResource.isPresent()) {
+            // TODO move to rejected storage
             return ProcessStatus.FAILED;
         }
 
         if (!objectHarvesterOperations.generateManifest(handle, onError)) {
+            // TODO move to rejected storage
             return ProcessStatus.FAILED;
         }
 
         final List<ObjectResource> objectResources = objectHarvesterOperations.collectResources(handle, onError);
         if (!objectHarvesterOperations.downloadResources(handle, objectResources, onError)) {
+            // TODO move to rejected storage
             return ProcessStatus.FAILED;
         }
 
         if (!objectHarvesterOperations
                 .writeFilenamesAndChecksumsToMetadata(handle, objectResources, metadataResource.get(), onError)) {
+            // TODO move to rejected storage
+
             return ProcessStatus.FAILED;
         }
 
+        // TODO move to done storage
         return ProcessStatus.PROCESSED;
+    }
+
+    private String getSuperSetFromSetName(Repository repositoryConfig) {
+        return repositoryConfig.getSet().replaceAll(":.*$", "");
     }
 
     private void startRecord(Record record) {

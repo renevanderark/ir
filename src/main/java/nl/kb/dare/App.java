@@ -118,7 +118,8 @@ public class App extends Application<Config> {
         }
 
         final FileStorage processingStorage = fileStorageFactories.get(FileStorageGoal.PROCESSING).getFileStorage();
-
+        final FileStorage doneStorage = fileStorageFactories.get(FileStorageGoal.DONE).getFileStorage();
+        final FileStorage rejectedStorage = fileStorageFactories.get(FileStorageGoal.REJECTED).getFileStorage();
 
         // Handler for websocket broadcasts to the browser
         final SocketNotifier socketNotifier = new SocketNotifier();
@@ -166,10 +167,13 @@ public class App extends Application<Config> {
         // handles downloads of resources
         final ObjectHarvesterResourceOperations objectHarvesterResourceOperations =
                 new ObjectHarvesterResourceOperations(httpFetcherForObjectHarvest, responseHandlerFactory);
+
         // Organises the operations of downloading a full publication object
         final ObjectHarvesterOperations objectHarvesterOperations = new ObjectHarvesterOperations(
-                processingStorage, httpFetcherForObjectHarvest, responseHandlerFactory, xsltTransformer,
+                processingStorage, rejectedStorage, doneStorage,
+                httpFetcherForObjectHarvest, responseHandlerFactory, xsltTransformer,
                 objectHarvesterResourceOperations, new ManifestFinalizer());
+
         // Handles expected failure flow (exceed maximum consecutive download failures
         final ObjectHarvestErrorFlowHandler objectHarvestErrorFlowHandler = new ObjectHarvestErrorFlowHandler(
                 repositoryController, repositoryDao, mailer);
