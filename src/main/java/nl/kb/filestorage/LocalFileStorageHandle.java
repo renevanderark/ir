@@ -25,6 +25,10 @@ class LocalFileStorageHandle implements FileStorageHandle {
     };
     private static final String NESTED_PATH_FMT = "%s/%s";
 
+    public String getFileDir() {
+        return fileDir;
+    }
+
     private final String fileDir;
 
     private LocalFileStorageHandle(String fileDir) {
@@ -92,6 +96,14 @@ class LocalFileStorageHandle implements FileStorageHandle {
         }
 
         zipOutputStream.close();
+    }
+
+    @Override
+    public void moveTo(FileStorageHandle other) throws IOException {
+        if (other != null) {
+            FileUtils.deleteDirectory(new File(other.getFileDir()));
+            FileUtils.moveDirectory(new File(this.fileDir), new File(other.getFileDir()));
+        }
     }
 
     private void zipFile(ZipOutputStream zipOutputStream, String name) throws IOException {

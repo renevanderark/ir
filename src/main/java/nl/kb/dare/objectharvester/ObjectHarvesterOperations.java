@@ -220,4 +220,15 @@ public class ObjectHarvesterOperations {
             return false;
         }
     }
+
+    void moveToStorage(FileStorageGoal goal, FileStorageHandle fromStorageHandle, String prefix, Record record) {
+        final FileStorage targetStorage = getFileStorageForGoal(goal);
+        final FileStorageHandle targetHandle = targetStorage
+                .obtainHandle(String.format("%s/%s", prefix, record.getIpName()));
+        try {
+            fromStorageHandle.moveTo(targetHandle);
+        } catch (IOException e) {
+            LOG.error("SEVERE: failed to access storage for {} record", goal, e);
+        }
+    }
 }

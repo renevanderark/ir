@@ -29,6 +29,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
+import static nl.kb.dare.config.FileStorageGoal.DONE;
+import static nl.kb.dare.config.FileStorageGoal.REJECTED;
 
 
 public class ObjectHarvester {
@@ -105,29 +107,29 @@ public class ObjectHarvester {
                 repositoryConfig, onError);
 
         if (!metadataResource.isPresent()) {
-            // TODO move to rejected storage
+            objectHarvesterOperations.moveToStorage(REJECTED, handle, getSuperSetFromSetName(repositoryConfig), record);
             return ProcessStatus.FAILED;
         }
 
         if (!objectHarvesterOperations.generateManifest(handle, onError)) {
-            // TODO move to rejected storage
+            objectHarvesterOperations.moveToStorage(REJECTED, handle, getSuperSetFromSetName(repositoryConfig), record);
             return ProcessStatus.FAILED;
         }
 
         final List<ObjectResource> objectResources = objectHarvesterOperations.collectResources(handle, onError);
         if (!objectHarvesterOperations.downloadResources(handle, objectResources, onError)) {
-            // TODO move to rejected storage
+            objectHarvesterOperations.moveToStorage(REJECTED, handle, getSuperSetFromSetName(repositoryConfig), record);
             return ProcessStatus.FAILED;
         }
 
         if (!objectHarvesterOperations
                 .writeFilenamesAndChecksumsToMetadata(handle, objectResources, metadataResource.get(), onError)) {
-            // TODO move to rejected storage
 
+            objectHarvesterOperations.moveToStorage(REJECTED, handle, getSuperSetFromSetName(repositoryConfig), record);
             return ProcessStatus.FAILED;
         }
 
-        // TODO move to done storage
+        objectHarvesterOperations.moveToStorage(DONE, handle, getSuperSetFromSetName(repositoryConfig), record);
         return ProcessStatus.PROCESSED;
     }
 

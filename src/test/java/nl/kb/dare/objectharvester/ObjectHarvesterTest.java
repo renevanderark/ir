@@ -100,6 +100,7 @@ public class ObjectHarvesterTest {
         final InOrder inOrder = inOrder(getRecordOperations, getRecordOperations);
         inOrder.verify(getRecordOperations).getFileStorageHandle(FileStorageGoal.PROCESSING, "set", oaiRecord, onError);
         inOrder.verify(getRecordOperations).downloadMetadata(processingStorageHandle, oaiRecord, repositoryConfig, onError);
+        inOrder.verify(getRecordOperations).moveToStorage(FileStorageGoal.REJECTED, processingStorageHandle, "set", oaiRecord);
         inOrder.verifyNoMoreInteractions();
 
         assertThat(result, is(ProcessStatus.FAILED));
@@ -134,6 +135,7 @@ public class ObjectHarvesterTest {
         inOrder.verify(getRecordOperations).getFileStorageHandle(FileStorageGoal.PROCESSING, "set", oaiRecord, onError);
         inOrder.verify(getRecordOperations).downloadMetadata(processingStorageHandle, oaiRecord, repositoryConfig, onError);
         inOrder.verify(getRecordOperations).generateManifest(processingStorageHandle, onError);
+        inOrder.verify(getRecordOperations).moveToStorage(FileStorageGoal.REJECTED, processingStorageHandle, "set", oaiRecord);
         inOrder.verifyNoMoreInteractions();
 
         assertThat(result, is(ProcessStatus.FAILED));
@@ -173,6 +175,7 @@ public class ObjectHarvesterTest {
         inOrder.verify(getRecordOperations).generateManifest(processingStorageHandle, onError);
         inOrder.verify(getRecordOperations).collectResources(processingStorageHandle, onError);
         inOrder.verify(getRecordOperations).downloadResources(processingStorageHandle, objectResources, onError);
+        inOrder.verify(getRecordOperations).moveToStorage(FileStorageGoal.REJECTED, processingStorageHandle, "set", oaiRecord);
         inOrder.verifyNoMoreInteractions();
 
         assertThat(result, is(ProcessStatus.FAILED));
@@ -217,6 +220,7 @@ public class ObjectHarvesterTest {
         inOrder.verify(getRecordOperations).downloadResources(processingStorageHandle, objectResources, onError);
         inOrder.verify(getRecordOperations).writeFilenamesAndChecksumsToMetadata(processingStorageHandle, objectResources,
                 metadataResource, onError);
+        inOrder.verify(getRecordOperations).moveToStorage(FileStorageGoal.REJECTED, processingStorageHandle, "set", oaiRecord);
         inOrder.verifyNoMoreInteractions();
 
         assertThat(result, is(ProcessStatus.FAILED));
@@ -266,6 +270,7 @@ public class ObjectHarvesterTest {
         inOrder.verify(getRecordOperations).downloadResources(processingStorageHandle, objectResources, onError);
         inOrder.verify(getRecordOperations).writeFilenamesAndChecksumsToMetadata(processingStorageHandle, objectResources,
                 metadataResource, onError);
+        inOrder.verify(getRecordOperations).moveToStorage(FileStorageGoal.DONE, processingStorageHandle, "set", oaiRecord);
         inOrder.verifyNoMoreInteractions();
 
         assertThat(result, is(ProcessStatus.PROCESSED));

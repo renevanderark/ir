@@ -22,4 +22,8 @@ public interface FileStorageHandle {
     void deleteFiles() throws IOException;
 
     void downloadZip(OutputStream output) throws IOException;
+
+    void moveTo(FileStorageHandle fileStorageHandle) throws IOException;
+
+    String getFileDir();
 }

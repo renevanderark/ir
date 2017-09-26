@@ -14,4 +14,11 @@ public class LocalFileStorage implements FileStorage {
         return LocalFileStorageHandle.getInstance(identifier, storageDir)
                 .create();
     }
+
+    @Override
+    public FileStorageHandle obtainHandle(String identifier) {
+        return LocalFileStorageHandle.getInstance(identifier, storageDir);
+    }
+
+
 }

@@ -14,4 +14,6 @@ public interface FileStorage {
      * @throws IOException
      */
     FileStorageHandle create(String identifier) throws IOException;
+
+    FileStorageHandle obtainHandle(String format);
 }
