@@ -58,17 +58,6 @@ class RecordStatus extends React.Component {
             )
             : null;
 
-        const downloadDiv = record.state > 10 && record.state < 1000 ? (
-            <div className="row">
-                <label className="col-md-6">Download als ZIP</label>
-                <div className="col-md-26">
-                    <a href={`/records/download/${record.ipName}`}>
-                        Downloaden <span className="glyphicon glyphicon-download-alt" />
-                    </a>
-                </div>
-            </div>
-        ) : null;
-
         const resetButton = processStatuses[record.state] === "failure" ? (
                 <ButtonWithModalWarning
                     className="btn btn-default" label="Terugzetten in wachtrij"
@@ -126,8 +115,6 @@ class RecordStatus extends React.Component {
                             {record.tsProcessed || "-"}
                         </div>
                     </div>
-                    {downloadDiv}
-
                 </Panel>
                 {errorReportPanel}
             </div>
