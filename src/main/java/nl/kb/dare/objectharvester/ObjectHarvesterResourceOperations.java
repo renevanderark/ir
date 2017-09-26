@@ -21,6 +21,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -28,10 +30,17 @@ import static java.util.stream.Collectors.toList;
 public class ObjectHarvesterResourceOperations {
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
+    private final Function<String, String> createFilename;
 
     public ObjectHarvesterResourceOperations(HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory) {
+        this(httpFetcher, responseHandlerFactory, fileLocation -> UUID.randomUUID().toString());
+    }
+
+    ObjectHarvesterResourceOperations(HttpFetcher httpFetcher, ResponseHandlerFactory responseHandlerFactory,
+                                      Function<String, String> createFilename) {
         this.httpFetcher = httpFetcher;
         this.responseHandlerFactory = responseHandlerFactory;
+        this.createFilename = createFilename;
     }
 
     List<ErrorReport> downloadResource(
@@ -39,7 +48,7 @@ public class ObjectHarvesterResourceOperations {
             FileStorageHandle fileStorageHandle) throws IOException, NoSuchAlgorithmException {
 
         final String fileLocation = objectResource.getXlinkHref();
-        final String filename = createFilename(fileLocation);
+        final String filename = createFilename.apply(fileLocation);
 
         final OutputStream objectOut = fileStorageHandle.getOutputStream("resources", filename);
         final ChecksumOutputStream checksumOut = new ChecksumOutputStream("SHA-512");
@@ -96,12 +105,6 @@ public class ObjectHarvesterResourceOperations {
         httpFetcher.execute(objectUrl, responseHandler);
 
         return ErrorReport.fromExceptionList(responseHandler.getExceptions());
-    }
-
-    static String createFilename(String objectFile) throws MalformedURLException, UnsupportedEncodingException {
-        final String decodedFilename = URLDecoder.decode(new URL(objectFile).getPath().replaceAll("/$", ""), StandardCharsets.UTF_8.name());
-
-        return FilenameUtils.getName(decodedFilename);
     }
 
     private String prepareUrl(String rawUrl, boolean plusToPercent) throws UnsupportedEncodingException {

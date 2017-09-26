@@ -2,7 +2,6 @@ package nl.kb.dare.objectharvester;
 
 import com.google.common.collect.Lists;
 import nl.kb.dare.model.reporting.ErrorReport;
-import nl.kb.dare.objectharvester.ObjectHarvesterResourceOperations;
 import nl.kb.filestorage.FileStorageHandle;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.HttpResponseHandler;
@@ -16,8 +15,6 @@ import org.mockito.Mockito;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
@@ -37,7 +34,7 @@ public class ObjectHarvesterResourceOperationsTest {
     private static final String BASE_URL = "http://example.com/path/";
     private static final String ORIG_ENCODED_FILENAME = "file%201.ext";
     private static final String FULL_URL = BASE_URL + ORIG_ENCODED_FILENAME;
-    private static final String EXPECTED_FILENAME = "file 1.ext";
+    private static final String EXPECTED_FILENAME = "expected-filename";
     private static final String TRANSFORMED_ENC_FILE_1 = "file+1.ext";
     private static final String TRANSFORMED_ENC_FILE_2 = "file%201.ext";
 
@@ -47,12 +44,13 @@ public class ObjectHarvesterResourceOperationsTest {
         final ResponseHandlerFactory responseHandlerFactory = mock(ResponseHandlerFactory.class);
         final ObjectResource objectResource = getObjectResource(FULL_URL);
         final HttpFetcher httpFetcher = mock(HttpFetcher.class);
-        final ObjectHarvesterResourceOperations instance = new ObjectHarvesterResourceOperations(httpFetcher, responseHandlerFactory);
         final HttpResponseHandler responseHandler = mock(HttpResponseHandler.class);
         when(responseHandlerFactory.getStreamCopyingResponseHandler(any(), any(ChecksumOutputStream.class),
                 any(ByteCountOutputStream.class))).thenReturn(responseHandler);
         when(responseHandler.getExceptions()).thenReturn(Lists.newArrayList());
 
+        final ObjectHarvesterResourceOperations instance = new ObjectHarvesterResourceOperations(httpFetcher,
+                responseHandlerFactory, fileLocation -> EXPECTED_FILENAME);
 
         final List<ErrorReport> errorReports = instance.downloadResource(objectResource, fileStorageHandle);
 
@@ -90,13 +88,15 @@ public class ObjectHarvesterResourceOperationsTest {
         final ResponseHandlerFactory responseHandlerFactory = mock(ResponseHandlerFactory.class);
         final ObjectResource objectResource = getObjectResource(FULL_URL);
         final HttpFetcher httpFetcher = mock(HttpFetcher.class);
-        final ObjectHarvesterResourceOperations instance = new ObjectHarvesterResourceOperations(httpFetcher, responseHandlerFactory);
         final HttpResponseHandler responseHandler = mock(HttpResponseHandler.class);
         when(responseHandlerFactory.getStreamCopyingResponseHandler(any(), any(), any()))
                 .thenReturn(responseHandler);
         when(responseHandler.getExceptions())
                 .thenReturn(Lists.newArrayList(mock(Exception.class)))
                 .thenReturn(Lists.newArrayList());
+
+        final ObjectHarvesterResourceOperations instance = new ObjectHarvesterResourceOperations(httpFetcher,
+                responseHandlerFactory, fileLocation -> EXPECTED_FILENAME);
 
 
         final List<ErrorReport> errorReports = instance
@@ -153,15 +153,6 @@ public class ObjectHarvesterResourceOperationsTest {
         )));
     }
 
-    @Test
-    public void createFilenameShouldStripAnyTrailingSlashes() throws MalformedURLException, UnsupportedEncodingException {
-        final String filename = ObjectHarvesterResourceOperations.createFilename("http://che.surfsharekit.nl:8080/fedora/get/smpid%3A64412/DS1/");
-
-        final String filename2 = ObjectHarvesterResourceOperations.createFilename("http://che.surfsharekit.nl:8080/fedora/get/smpid%3A64412/DS1.pdf");
-
-        assertThat(filename, is("DS1"));
-        assertThat(filename2, is("DS1.pdf"));
-    }
 
     private ObjectResource getObjectResource(String url) {
         final ObjectResource objectResource = mock(ObjectResource.class);
