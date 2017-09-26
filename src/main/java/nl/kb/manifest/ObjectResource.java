@@ -9,6 +9,8 @@ public class ObjectResource {
     private String checksumType;
     private String localFilename;
     private long size;
+    private String contentDisposition;
+    private String contentType;
 
     public String getId() {
         return id;
@@ -56,5 +58,21 @@ public class ObjectResource {
 
     public long getSize() {
         return size;
+    }
+
+    public void setContentDisposition(String contentDisposition) {
+        this.contentDisposition = contentDisposition;
+    }
+
+    public String getContentDisposition() {
+        return contentDisposition;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getContentType() {
+        return contentType;
     }
 }

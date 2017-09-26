@@ -53,14 +53,15 @@ public class ObjectHarvesterResourceOperations {
         final OutputStream objectOut = processingStorageHandle.getOutputStream("resources", filename);
         final ChecksumOutputStream checksumOut = new ChecksumOutputStream("SHA-512");
         final ByteCountOutputStream byteCountOut = new ByteCountOutputStream();
+        final ContentDispositionReader contentDispositionReader = new ContentDispositionReader();
 
         // First try to fetch the resource by encoding the url name one way (whitespace as '+')
         final String preparedUrlWithPluses = prepareUrl(fileLocation, false);
         final List<ErrorReport> firstAttemptErrors = attemptDownload(objectOut, checksumOut, byteCountOut,
-                preparedUrlWithPluses);
+                contentDispositionReader, preparedUrlWithPluses);
 
         if (firstAttemptErrors.isEmpty()) {
-            writeChecksumAndFilename(objectResource, checksumOut, byteCountOut, filename);
+            writeChecksumAndFilename(objectResource, checksumOut, byteCountOut, contentDispositionReader, filename);
             return Lists.newArrayList();
         }
 
@@ -71,10 +72,10 @@ public class ObjectHarvesterResourceOperations {
         }
 
         final List<ErrorReport> secondAttemptErrors = attemptDownload(objectOut, checksumOut, byteCountOut,
-                preparedUrlWithPercents);
+                contentDispositionReader, preparedUrlWithPercents);
 
         if (secondAttemptErrors.isEmpty()) {
-            writeChecksumAndFilename(objectResource, checksumOut, byteCountOut, filename);
+            writeChecksumAndFilename(objectResource, checksumOut, byteCountOut, contentDispositionReader, filename);
             return Lists.newArrayList();
         }
 
@@ -86,19 +87,23 @@ public class ObjectHarvesterResourceOperations {
     private void writeChecksumAndFilename(ObjectResource objectResource,
                                           ChecksumOutputStream checksumOut,
                                           ByteCountOutputStream byteCountOut,
+                                          ContentDispositionReader contentDispositionReader,
                                           String filename)  {
 
         objectResource.setChecksum(checksumOut.getChecksumString());
         objectResource.setChecksumType("SHA-512");
         objectResource.setLocalFilename(filename);
         objectResource.setSize(byteCountOut.getCurrentByteCount());
+        objectResource.setContentDisposition(contentDispositionReader.getContentDisposition());
+        objectResource.setContentType(contentDispositionReader.getContentType());
     }
 
     private List<ErrorReport> attemptDownload(OutputStream objectOut, OutputStream checksumOut,
                                               ByteCountOutputStream byteCountOut,
+                                              ContentDispositionReader contentDispositionReader,
                                               String preparedUrl) throws MalformedURLException {
         final HttpResponseHandler responseHandler = responseHandlerFactory
-                .getStreamCopyingResponseHandler(objectOut, checksumOut, byteCountOut);
+                .getStreamCopyingResponseHandler(objectOut, checksumOut, byteCountOut, contentDispositionReader);
 
         final URL objectUrl = new URL(preparedUrl);
 

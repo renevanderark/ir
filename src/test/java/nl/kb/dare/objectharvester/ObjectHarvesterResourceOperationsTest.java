@@ -46,7 +46,7 @@ public class ObjectHarvesterResourceOperationsTest {
         final HttpFetcher httpFetcher = mock(HttpFetcher.class);
         final HttpResponseHandler responseHandler = mock(HttpResponseHandler.class);
         when(responseHandlerFactory.getStreamCopyingResponseHandler(any(), any(ChecksumOutputStream.class),
-                any(ByteCountOutputStream.class))).thenReturn(responseHandler);
+                any(ByteCountOutputStream.class), any(ContentDispositionReader.class))).thenReturn(responseHandler);
         when(responseHandler.getExceptions()).thenReturn(Lists.newArrayList());
 
         final ObjectHarvesterResourceOperations instance = new ObjectHarvesterResourceOperations(httpFetcher,
@@ -64,7 +64,7 @@ public class ObjectHarvesterResourceOperationsTest {
         // final ByteArrayOutputStream checksumOut = new ByteArrayOutputStream();
         // final List<ErrorReport> firstAttemptErrors = attemptDownload(fileLocation, objectOut, checksumOut, false);
         inOrder.verify(responseHandlerFactory).getStreamCopyingResponseHandler(any(),
-                any(ChecksumOutputStream.class), any(ByteCountOutputStream.class));
+                any(ChecksumOutputStream.class), any(ByteCountOutputStream.class), any(ContentDispositionReader.class));
         inOrder.verify(httpFetcher).execute(
                 argThat(allOf(
                         hasProperty("host", is("example.com")),
@@ -89,7 +89,7 @@ public class ObjectHarvesterResourceOperationsTest {
         final ObjectResource objectResource = getObjectResource(FULL_URL);
         final HttpFetcher httpFetcher = mock(HttpFetcher.class);
         final HttpResponseHandler responseHandler = mock(HttpResponseHandler.class);
-        when(responseHandlerFactory.getStreamCopyingResponseHandler(any(), any(), any()))
+        when(responseHandlerFactory.getStreamCopyingResponseHandler(any(), any(), any(), any()))
                 .thenReturn(responseHandler);
         when(responseHandler.getExceptions())
                 .thenReturn(Lists.newArrayList(mock(Exception.class)))
@@ -107,7 +107,7 @@ public class ObjectHarvesterResourceOperationsTest {
         // final List<ErrorReport> firstAttemptErrors = attemptDownload(fileLocation, objectOut, checksumOut, false);
         inOrder.verify(httpFetcher).execute(any(), any());
         // final List<ErrorReport> secondAttemptErrors = attemptDownload(fileLocation, objectOut, checksumOut, true);
-        inOrder.verify(responseHandlerFactory).getStreamCopyingResponseHandler(any(), any(), any());
+        inOrder.verify(responseHandlerFactory).getStreamCopyingResponseHandler(any(), any(), any(), any());
         inOrder.verify(httpFetcher).execute(
                 argThat(allOf(
                         hasProperty("host", is("example.com")),
@@ -134,7 +134,7 @@ public class ObjectHarvesterResourceOperationsTest {
         final ObjectHarvesterResourceOperations instance = new ObjectHarvesterResourceOperations(httpFetcher, responseHandlerFactory);
         final HttpResponseHandler responseHandler = mock(HttpResponseHandler.class);
 
-        when(responseHandlerFactory.getStreamCopyingResponseHandler(any(), any(), any()))
+        when(responseHandlerFactory.getStreamCopyingResponseHandler(any(), any(), any(), any()))
                 .thenReturn(responseHandler);
 
 
