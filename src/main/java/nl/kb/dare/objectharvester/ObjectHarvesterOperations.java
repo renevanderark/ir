@@ -17,6 +17,7 @@ import nl.kb.manifest.ObjectResource;
 import nl.kb.stream.ByteCountOutputStream;
 import nl.kb.stream.ChecksumOutputStream;
 import nl.kb.xslt.XsltTransformer;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -33,6 +34,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -229,6 +231,20 @@ public class ObjectHarvesterOperations {
             fromStorageHandle.moveTo(targetHandle);
         } catch (IOException e) {
             LOG.error("SEVERE: failed to access storage for {} record", goal, e);
+        }
+    }
+
+    boolean generateManifestChecksum(FileStorageHandle handle, Consumer<ErrorReport> onError) {
+        try {
+            final InputStream inputStream = handle.getFile("manifest.xml");
+            final ChecksumOutputStream checksumOutputStream = new ChecksumOutputStream("SHA-512");
+            IOUtils.copy(inputStream, checksumOutputStream);
+            IOUtils.write(checksumOutputStream.getChecksumString(),
+                    handle.getOutputStream("manifest.xml.sha512.checksum"), Charset.defaultCharset());
+            return true;
+        } catch (IOException | NoSuchAlgorithmException e) {
+            onError.accept(new ErrorReport(e, ErrorStatus.IO_EXCEPTION));
+            return false;
         }
     }
 }

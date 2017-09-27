@@ -254,6 +254,8 @@ public class ObjectHarvesterTest {
         when(getRecordOperations.getFileStorageHandle(FileStorageGoal.DONE, "set", oaiRecord, onError))
                 .thenReturn(Optional.of(mock(FileStorageHandle.class)));
 
+        when(getRecordOperations.generateManifestChecksum(processingStorageHandle, onError)).thenReturn(true);
+
         when(getRecordOperations.downloadMetadata(any(), any(), any(), any())).thenReturn(Optional.of(metadataResource));
         when(getRecordOperations.generateManifest(processingStorageHandle, onError)).thenReturn(true);
         when(getRecordOperations.collectResources(processingStorageHandle, onError)).thenReturn(objectResources);
@@ -270,6 +272,7 @@ public class ObjectHarvesterTest {
         inOrder.verify(getRecordOperations).downloadResources(processingStorageHandle, objectResources, onError);
         inOrder.verify(getRecordOperations).writeFilenamesAndChecksumsToMetadata(processingStorageHandle, objectResources,
                 metadataResource, onError);
+        inOrder.verify(getRecordOperations).generateManifestChecksum(processingStorageHandle, onError);
         inOrder.verify(getRecordOperations).moveToStorage(FileStorageGoal.DONE, processingStorageHandle, "set", oaiRecord);
         inOrder.verifyNoMoreInteractions();
 

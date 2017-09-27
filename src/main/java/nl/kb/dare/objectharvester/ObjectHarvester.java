@@ -129,6 +129,12 @@ public class ObjectHarvester {
             return ProcessStatus.FAILED;
         }
 
+        if (!objectHarvesterOperations.generateManifestChecksum(handle, onError)) {
+
+            objectHarvesterOperations.moveToStorage(REJECTED, handle, getSuperSetFromSetName(repositoryConfig), record);
+            return ProcessStatus.FAILED;
+        }
+
         objectHarvesterOperations.moveToStorage(DONE, handle, getSuperSetFromSetName(repositoryConfig), record);
         return ProcessStatus.PROCESSED;
     }
