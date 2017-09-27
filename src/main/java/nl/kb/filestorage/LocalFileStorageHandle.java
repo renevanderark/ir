@@ -1,7 +1,6 @@
 package nl.kb.filestorage;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,8 +11,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 class LocalFileStorageHandle implements FileStorageHandle {
     private static final int MAX_ENTRIES = 10_000;
@@ -78,16 +75,4 @@ class LocalFileStorageHandle implements FileStorageHandle {
         }
     }
 
-    private void zipFile(ZipOutputStream zipOutputStream, String name) throws IOException {
-
-        try {
-            final InputStream is = getFile(name);
-            final ZipEntry metadataEntry = new ZipEntry(name);
-            zipOutputStream.putNextEntry(metadataEntry);
-            IOUtils.copy(is, zipOutputStream);
-            is.close();
-        } catch (FileNotFoundException e) {
-            return;
-        }
-    }
 }
