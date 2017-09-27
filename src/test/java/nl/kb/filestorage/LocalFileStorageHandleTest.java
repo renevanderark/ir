@@ -44,24 +44,6 @@ public class LocalFileStorageHandleTest {
     }
 
     @Test
-    public void clearShouldRecursivelyDeleteContents() throws IOException {
-
-        instance.create();
-
-        final String filePath = LocalFileStorageHandle.getFilePath(IDENTIFIER, BASE_PATH);
-
-        final String testSubdirPath = String.format("%s/%s", filePath, "testing");
-        final String testFilePath = String.format("%s/%s", testSubdirPath, "test1");
-        new File(testSubdirPath).mkdirs();
-        FileUtils.touch(new File(testFilePath));
-
-        instance.clear();
-
-        assertThat(new File(testFilePath).exists(), is(false));
-        assertThat(new File(testSubdirPath).exists(), is(false));
-    }
-
-    @Test
     public void getOutputStreamPointsToTheRequestedFile() throws IOException {
         final OutputStream outputStream = instance.create().getOutputStream("test.foo");
         final PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(outputStream, Charset.forName(StandardCharsets.UTF_8.name())));

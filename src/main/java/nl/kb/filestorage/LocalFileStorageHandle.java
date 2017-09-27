@@ -54,12 +54,6 @@ class LocalFileStorageHandle implements FileStorageHandle {
     }
 
     @Override
-    public FileStorageHandle clear() throws IOException {
-        FileUtils.cleanDirectory(new File(fileDir));
-        return this;
-    }
-
-    @Override
     public OutputStream getOutputStream(String filename) throws IOException {
         return new FileOutputStream(new File(String.format(NESTED_PATH_FMT, fileDir, filename)));
     }
@@ -78,9 +72,9 @@ class LocalFileStorageHandle implements FileStorageHandle {
 
     @Override
     public void moveTo(FileStorageHandle other) throws IOException {
-        if (other != null) {
-            FileUtils.deleteDirectory(new File(other.getFileDir()));
-            FileUtils.moveDirectory(new File(this.fileDir), new File(other.getFileDir()));
+        if (other != null && other instanceof LocalFileStorageHandle) {
+            FileUtils.moveDirectory(new File(this.fileDir), new File(
+                    ((LocalFileStorageHandle)other).getFileDir()));
         }
     }
 
