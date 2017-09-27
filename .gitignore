@@ -8,3 +8,4 @@ src/main/scripts/node/node_modules
 restart-database.sh
 *.yaml
 dependency-reduced-pom.xml
+doc
