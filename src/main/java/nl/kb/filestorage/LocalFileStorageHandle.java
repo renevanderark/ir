@@ -22,7 +22,7 @@ class LocalFileStorageHandle implements FileStorageHandle {
     };
     private static final String NESTED_PATH_FMT = "%s/%s";
 
-    public String getFileDir() {
+    private String getFileDir() {
         return fileDir;
     }
 
