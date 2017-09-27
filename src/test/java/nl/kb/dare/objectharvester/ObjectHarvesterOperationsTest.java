@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static nl.kb.dare.objectharvester.ObjectHarvesterOperations.MANIFEST_INITIAL_XML;
+import static nl.kb.dare.objectharvester.ObjectHarvesterOperations.MANIFEST_XML;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasProperty;
@@ -449,9 +451,9 @@ public class ObjectHarvesterOperationsTest {
         final List<ErrorReport> errorReports = Lists.newArrayList();
         final InputStream manifest =ObjectHarvesterOperationsTest.class.getResourceAsStream("/oai/manifest.xml");
         final FileStorageHandle handle = mock(FileStorageHandle.class);
-        when(handle.getFile("manifest.initial.xml")).thenReturn(manifest);
+        when(handle.getFile(MANIFEST_INITIAL_XML)).thenReturn(manifest);
         final ByteArrayOutputStream sip = new ByteArrayOutputStream();
-        when(handle.getOutputStream("manifest.xml")).thenReturn(sip);
+        when(handle.getOutputStream(MANIFEST_XML)).thenReturn(sip);
         final ManifestFinalizer manifestFinalizer = mock(ManifestFinalizer.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(new ObjectResource());
         final ObjectResource metadataResource = new ObjectResource();
@@ -467,8 +469,8 @@ public class ObjectHarvesterOperationsTest {
 
         final InOrder inOrder = inOrder(handle, manifestFinalizer);
 
-        inOrder.verify(handle).getFile("manifest.initial.xml");
-        inOrder.verify(handle).getOutputStream("manifest.xml");
+        inOrder.verify(handle).getFile(MANIFEST_INITIAL_XML);
+        inOrder.verify(handle).getOutputStream(MANIFEST_XML);
         inOrder.verify(manifestFinalizer).writeResourcesToManifest(
                 argThat(is(metadataResource)),
                 argThat(is(objectResources)),
@@ -487,9 +489,9 @@ public class ObjectHarvesterOperationsTest {
         final List<ErrorReport> errorReports = Lists.newArrayList();
         final InputStream manifest =ObjectHarvesterOperationsTest.class.getResourceAsStream("/oai/manifest.xml");
         final FileStorageHandle handle = mock(FileStorageHandle.class);
-        when(handle.getFile("manifest.initial.xml")).thenReturn(manifest);
+        when(handle.getFile(MANIFEST_INITIAL_XML)).thenReturn(manifest);
         final ByteArrayOutputStream sip = new ByteArrayOutputStream();
-        when(handle.getOutputStream("manifest.xml")).thenReturn(sip);
+        when(handle.getOutputStream(MANIFEST_XML)).thenReturn(sip);
         final ManifestFinalizer manifestFinalizer = mock(ManifestFinalizer.class);
         final ObjectResource metadataResource = mock(ObjectResource.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(new ObjectResource());
@@ -517,9 +519,9 @@ public class ObjectHarvesterOperationsTest {
         final List<ErrorReport> errorReports = Lists.newArrayList();
         final InputStream manifest =ObjectHarvesterOperationsTest.class.getResourceAsStream("/oai/manifest.xml");
         final FileStorageHandle handle = mock(FileStorageHandle.class);
-        when(handle.getFile("manifest.initial.xml")).thenReturn(manifest);
+        when(handle.getFile(MANIFEST_INITIAL_XML)).thenReturn(manifest);
         final ByteArrayOutputStream sip = new ByteArrayOutputStream();
-        when(handle.getOutputStream("manifest.xml")).thenReturn(sip);
+        when(handle.getOutputStream(MANIFEST_XML)).thenReturn(sip);
         final ManifestFinalizer manifestFinalizer = mock(ManifestFinalizer.class);
         final ObjectResource metadataResource = mock(ObjectResource.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(new ObjectResource());

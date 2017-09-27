@@ -46,8 +46,9 @@ public class ObjectHarvesterOperations {
 
     private static final SAXParser saxParser;
     private static final String METADATA_XML = "metadata.xml";
-    private static final String MANIFEST_INITIAL_XML = "manifest.initial.xml";
-    private static final String MANIFEST_XML = "manifest.xml";
+    static final String MANIFEST_INITIAL_XML = "manifest.initial.xml";
+    static final String MANIFEST_XML = "procesdata.xml";
+    private static final String MANIFEST_XML_SHA512_CHECKSUM = "procesdata.xml.sha512.checksum";
 
     static {
         try {
@@ -236,11 +237,11 @@ public class ObjectHarvesterOperations {
 
     boolean generateManifestChecksum(FileStorageHandle handle, Consumer<ErrorReport> onError) {
         try {
-            final InputStream inputStream = handle.getFile("manifest.xml");
+            final InputStream inputStream = handle.getFile(MANIFEST_XML);
             final ChecksumOutputStream checksumOutputStream = new ChecksumOutputStream("SHA-512");
             IOUtils.copy(inputStream, checksumOutputStream);
             IOUtils.write(checksumOutputStream.getChecksumString(),
-                    handle.getOutputStream("manifest.xml.sha512.checksum"), Charset.defaultCharset());
+                    handle.getOutputStream(MANIFEST_XML_SHA512_CHECKSUM), Charset.defaultCharset());
             return true;
         } catch (IOException | NoSuchAlgorithmException e) {
             onError.accept(new ErrorReport(e, ErrorStatus.IO_EXCEPTION));

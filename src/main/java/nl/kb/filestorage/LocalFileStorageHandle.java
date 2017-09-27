@@ -77,28 +77,6 @@ class LocalFileStorageHandle implements FileStorageHandle {
     }
 
     @Override
-    public void deleteFiles() throws IOException {
-        FileUtils.deleteDirectory(new File(fileDir));
-    }
-
-    @Override
-    public void downloadZip(OutputStream output) throws IOException {
-        final ZipOutputStream zipOutputStream = new ZipOutputStream(output);
-
-        zipFile(zipOutputStream, "metadata.xml");
-        zipFile(zipOutputStream, "manifest.xml");
-
-        final File resourceDir = new File(fileDir + "/resources");
-        if (resourceDir.exists() && resourceDir.isDirectory()) {
-            for (File file : FileUtils.listFiles(resourceDir, null, false)) {
-                zipFile(zipOutputStream, String.format("resources/%s", file.getName()));
-            }
-        }
-
-        zipOutputStream.close();
-    }
-
-    @Override
     public void moveTo(FileStorageHandle other) throws IOException {
         if (other != null) {
             FileUtils.deleteDirectory(new File(other.getFileDir()));
