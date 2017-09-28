@@ -70,8 +70,12 @@ class LocalFileStorageHandle implements FileStorageHandle {
     @Override
     public void moveTo(FileStorageHandle other) throws IOException {
         if (other != null && other instanceof LocalFileStorageHandle) {
-            FileUtils.moveDirectory(new File(this.fileDir), new File(
-                    ((LocalFileStorageHandle)other).getFileDir()));
+            final File destDir = new File(
+                    ((LocalFileStorageHandle) other).getFileDir());
+            if (destDir.exists()) {
+                FileUtils.deleteDirectory(destDir);
+            }
+            FileUtils.moveDirectory(new File(this.fileDir), destDir);
         }
     }
 
