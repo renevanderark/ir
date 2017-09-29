@@ -1,9 +1,0 @@
-{
-  "name": "Testing infinite",
-  "set": "testinfinite",
-  "url": "http://localhost:18081/oai-infinite",
-  "metadataPrefix": "nl_didl_combined",
-  "enabled": false,
-  "dateStamp": null,
-  "schedule": 2
-}

@@ -1,9 +1,0 @@
-{
-  "name": "Testing failure",
-  "set": "testfail",
-  "url": "http://localhost:18081/oai-fail",
-  "metadataPrefix": "nl_didl_combined",
-  "enabled": false,
-  "dateStamp": null,
-  "schedule": 2
-}

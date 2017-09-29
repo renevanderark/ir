@@ -1,9 +1,0 @@
-{
-  "name": "Testing",
-  "set": "test",
-  "url": "http://localhost:18081/oai",
-  "metadataPrefix": "nl_didl_combined",
-  "enabled": false,
-  "dateStamp": null,
-  "schedule": 2
-}

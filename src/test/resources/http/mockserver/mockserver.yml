@@ -9,10 +9,8 @@ server:
   requestLog:
     appenders:
       - type: console
-        logFormat: "- %-5p  %m [%c{60}]%n"
 
 logging:
   appenders:
     - type: console
-      logFormat: "- %-5p  %m [%c{60}]%n"
   level: ERROR
