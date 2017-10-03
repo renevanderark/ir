@@ -10,6 +10,8 @@ import nl.kb.manifest.ObjectResource;
 import nl.kb.stream.ByteCountOutputStream;
 import nl.kb.stream.ChecksumOutputStream;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,6 +30,8 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
 public class ObjectHarvesterResourceOperations {
+    private static final Logger LOG = LoggerFactory.getLogger(ObjectHarvesterResourceOperations.class);
+
     private final HttpFetcher httpFetcher;
     private final ResponseHandlerFactory responseHandlerFactory;
     private final Function<String, String> createFilename;
@@ -55,12 +59,21 @@ public class ObjectHarvesterResourceOperations {
         final ByteCountOutputStream byteCountOut = new ByteCountOutputStream();
         final ContentDispositionReader contentDispositionReader = new ContentDispositionReader();
 
-        // First try to fetch the resource by encoding the url name one way (whitespace as '+')
-        final String preparedUrlWithPluses = prepareUrl(fileLocation, false);
+        // First try to fetch the resource with the URL as is
         final List<ErrorReport> firstAttemptErrors = attemptDownload(objectOut, checksumOut, byteCountOut,
-                contentDispositionReader, preparedUrlWithPluses);
+                contentDispositionReader, fileLocation);
 
         if (firstAttemptErrors.isEmpty()) {
+            writeChecksumAndFilename(objectResource, checksumOut, byteCountOut, contentDispositionReader, filename);
+            return Lists.newArrayList();
+        }
+
+        // Secondly try to fetch the resource by encoding the url name one way (whitespace as '+')
+        final String preparedUrlWithPluses = prepareUrl(fileLocation, false);
+        final List<ErrorReport> secondAttemptErrors = attemptDownload(objectOut, checksumOut, byteCountOut,
+                contentDispositionReader, preparedUrlWithPluses);
+
+        if (secondAttemptErrors.isEmpty()) {
             writeChecksumAndFilename(objectResource, checksumOut, byteCountOut, contentDispositionReader, filename);
             return Lists.newArrayList();
         }
@@ -68,19 +81,19 @@ public class ObjectHarvesterResourceOperations {
         // Then try to fetch the resource by encoding the url name another way (whitespace as '%20')
         final String preparedUrlWithPercents = prepareUrl(fileLocation, true);
         if (preparedUrlWithPercents.equals(preparedUrlWithPluses)) {
-            return firstAttemptErrors;
+            return secondAttemptErrors;
         }
 
-        final List<ErrorReport> secondAttemptErrors = attemptDownload(objectOut, checksumOut, byteCountOut,
+        final List<ErrorReport> thirdAttemptErrors = attemptDownload(objectOut, checksumOut, byteCountOut,
                 contentDispositionReader, preparedUrlWithPercents);
 
-        if (secondAttemptErrors.isEmpty()) {
+        if (thirdAttemptErrors.isEmpty()) {
             writeChecksumAndFilename(objectResource, checksumOut, byteCountOut, contentDispositionReader, filename);
             return Lists.newArrayList();
         }
 
-        return Stream
-                .concat(firstAttemptErrors.stream(), secondAttemptErrors.stream())
+        return Stream.concat(firstAttemptErrors.stream(), Stream
+                .concat(secondAttemptErrors.stream(), thirdAttemptErrors.stream()))
                 .collect(toList());
     }
 
@@ -102,6 +115,8 @@ public class ObjectHarvesterResourceOperations {
                                               ByteCountOutputStream byteCountOut,
                                               ContentDispositionReader contentDispositionReader,
                                               String preparedUrl) throws MalformedURLException {
+
+        LOG.debug("Attempting download: {}", preparedUrl);
         final HttpResponseHandler responseHandler = responseHandlerFactory
                 .getStreamCopyingResponseHandler(objectOut, checksumOut, byteCountOut, contentDispositionReader);
 

@@ -65,12 +65,10 @@ public class ObjectHarvesterResourceOperationsTest {
         // final List<ErrorReport> firstAttemptErrors = attemptDownload(fileLocation, objectOut, checksumOut, false);
         inOrder.verify(responseHandlerFactory).getStreamCopyingResponseHandler(any(),
                 any(ChecksumOutputStream.class), any(ByteCountOutputStream.class), any(ContentDispositionReader.class));
-        inOrder.verify(httpFetcher).execute(
-                argThat(allOf(
-                        hasProperty("host", is("example.com")),
-                        hasProperty("file", is("/path/" + TRANSFORMED_ENC_FILE_1))
-                )),
-                argThat(is(responseHandler))
+        inOrder.verify(httpFetcher).execute(argThat(allOf(
+                hasProperty("host", is("example.com")),
+                hasProperty("file", is("/path/file%201.ext"))
+                )), argThat(is(responseHandler))
         );
         // if (firstAttemptErrors.isEmpty()) {
         // .. writeChecksum(objectResource, checksumOut);
@@ -111,6 +109,50 @@ public class ObjectHarvesterResourceOperationsTest {
         inOrder.verify(httpFetcher).execute(
                 argThat(allOf(
                         hasProperty("host", is("example.com")),
+                        hasProperty("file", is("/path/" + TRANSFORMED_ENC_FILE_1))
+                )),
+                argThat(is(responseHandler))
+        );
+        // if (secondAttemptErrors.isEmpty()) {
+        // ..  writeChecksum(objectResource, checksumOut);
+        inOrder.verify(objectResource).setChecksum(argThat(is(instanceOf(String.class))));
+        inOrder.verify(objectResource).setChecksumType(argThat(is("SHA-512")));
+        inOrder.verify(objectResource).setLocalFilename(EXPECTED_FILENAME);
+        // ..  return Lists.newArrayList();
+        assertThat(errorReports.isEmpty(), is(true));
+        // }
+    }
+
+    @Test
+    public void downloadResourceShouldSaveTheFileAndTheChecksumAfterThirdAttempt() throws IOException, NoSuchAlgorithmException {
+        final FileStorageHandle processingStorageHandle = mock(FileStorageHandle.class);
+        final ResponseHandlerFactory responseHandlerFactory = mock(ResponseHandlerFactory.class);
+        final ObjectResource objectResource = getObjectResource(FULL_URL);
+        final HttpFetcher httpFetcher = mock(HttpFetcher.class);
+        final HttpResponseHandler responseHandler = mock(HttpResponseHandler.class);
+        when(responseHandlerFactory.getStreamCopyingResponseHandler(any(), any(), any(), any()))
+                .thenReturn(responseHandler);
+        when(responseHandler.getExceptions())
+                .thenReturn(Lists.newArrayList(mock(Exception.class)))
+                .thenReturn(Lists.newArrayList(mock(Exception.class)))
+                .thenReturn(Lists.newArrayList());
+
+        final ObjectHarvesterResourceOperations instance = new ObjectHarvesterResourceOperations(httpFetcher,
+                responseHandlerFactory, fileLocation -> EXPECTED_FILENAME);
+
+
+        final List<ErrorReport> errorReports = instance
+                .downloadResource(objectResource, processingStorageHandle);
+
+        InOrder inOrder = Mockito.inOrder(httpFetcher, responseHandlerFactory, objectResource);
+
+        // final List<ErrorReport> firstAttemptErrors = attemptDownload(fileLocation, objectOut, checksumOut, false);
+        inOrder.verify(httpFetcher).execute(any(), any());
+        // final List<ErrorReport> secondAttemptErrors = attemptDownload(fileLocation, objectOut, checksumOut, true);
+        inOrder.verify(responseHandlerFactory).getStreamCopyingResponseHandler(any(), any(), any(), any());
+        inOrder.verify(httpFetcher).execute(
+                argThat(allOf(
+                        hasProperty("host", is("example.com")),
                         hasProperty("file", is("/path/" + TRANSFORMED_ENC_FILE_2))
                 )),
                 argThat(is(responseHandler))
@@ -124,6 +166,7 @@ public class ObjectHarvesterResourceOperationsTest {
         assertThat(errorReports.isEmpty(), is(true));
         // }
     }
+
 
     @Test
     public void itShouldReturnAllTheErrorReportsOfBothFailedAttempts() throws IOException, NoSuchAlgorithmException {
@@ -140,16 +183,19 @@ public class ObjectHarvesterResourceOperationsTest {
 
         when(responseHandler.getExceptions())
                 .thenReturn(Lists.newArrayList(new IOException("ex 1")))
-                .thenReturn(Lists.newArrayList(new SAXException("ex 2")));
+                .thenReturn(Lists.newArrayList(new SAXException("ex 2")))
+                .thenReturn(Lists.newArrayList(new IOException("ex 3")));
 
         final List<ErrorReport> errorReports = instance
                 .downloadResource(objectResource, processingStorageHandle);
 
-        assertThat(errorReports.size(), is(2));
+        assertThat(errorReports.size(), is(3));
         assertThat(errorReports, containsInAnyOrder(allOf(
                 hasProperty("exception", instanceOf(IOException.class))
         ), allOf(
                 hasProperty("exception", instanceOf(SAXException.class))
+        ), allOf(
+                hasProperty("exception", instanceOf(IOException.class))
         )));
     }
 
@@ -159,6 +205,7 @@ public class ObjectHarvesterResourceOperationsTest {
         when(objectResource.getXlinkHref()).thenReturn(url);
         return objectResource;
     }
+
 
 
 }
