@@ -7,6 +7,7 @@ public class ObjectResource {
     private String downloadUrl;
     private String checksum;
     private String checksumType;
+    private String checksumDate; // = download date as well
     private String localFilename;
     private long size;
     private String contentDisposition;
@@ -76,4 +77,11 @@ public class ObjectResource {
         return contentType;
     }
 
+    public String getChecksumDate() {
+        return checksumDate;
+    }
+
+    public void setChecksumDate(String checksumDate) {
+        this.checksumDate = checksumDate;
+    }
 }

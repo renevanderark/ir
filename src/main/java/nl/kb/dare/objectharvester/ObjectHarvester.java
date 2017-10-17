@@ -115,7 +115,7 @@ public class ObjectHarvester {
         }
 
         if (!objectHarvesterOperations.generateManifest(handle, metadataResource.get().getDownloadUrl(),
-                harvesterVersion, onError)) {
+                metadataResource.get().getChecksumDate(), harvesterVersion, onError)) {
             objectHarvesterOperations.moveToStorage(REJECTED, handle, getSuperSetFromSetName(repositoryConfig), record);
             return ProcessStatus.FAILED;
         }

@@ -1,6 +1,5 @@
 package nl.kb.dare.objectharvester;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import nl.kb.dare.config.FileStorageGoal;
 import nl.kb.dare.model.HarvesterVersion;
@@ -39,7 +38,11 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -144,6 +147,7 @@ public class ObjectHarvesterOperations {
             objectResource.setChecksum(checksumOut.getChecksumString());
             objectResource.setId("metadata");
             objectResource.setChecksumType("SHA-512");
+            objectResource.setChecksumDate(ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
             objectResource.setSize(byteCountOut.getCurrentByteCount());
             return responseHandler.getExceptions().isEmpty()
                     ? Optional.of(objectResource)
@@ -154,17 +158,27 @@ public class ObjectHarvesterOperations {
         }
     }
 
-    boolean generateManifest(FileStorageHandle handle, String oaiUrl, HarvesterVersion harvesterVersion,
+    private Map<String, String> getManifestParameterMap(String... tuples) {
+        final HashMap<String, String> result = new HashMap<>();
+        for (int i = 0; i < tuples.length; i += 2) {
+            assert (tuples.length > i + 1);
+            result.put(tuples[i], tuples[i + 1]);
+        }
+        return result;
+    }
+
+    boolean generateManifest(FileStorageHandle handle, String oaiUrl, String downloadDate, HarvesterVersion harvesterVersion,
                              Consumer<ErrorReport> onError) {
         try {
             final InputStream metadata = handle.getFile(METADATA_XML);
             final OutputStream out = handle.getOutputStream(MANIFEST_INITIAL_XML);
             final Writer outputStreamWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8.name());
 
-            xsltTransformer.transform(metadata, new StreamResult(outputStreamWriter), ImmutableMap.of(
+            xsltTransformer.transform(metadata, new StreamResult(outputStreamWriter), getManifestParameterMap(
                     "harvester-name", harvesterVersion.getName(),
                     "harvester-version", harvesterVersion.getVersion(),
                     "oai-url", oaiUrl,
+                    "download-date", downloadDate,
                     "sha512-tool-name", System.getProperty("java.vm.name"),
                     "sha512-tool-version", System.getProperty("java.version")
                 )

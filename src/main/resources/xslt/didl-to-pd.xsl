@@ -12,6 +12,7 @@
     <xsl:param name="harvester-name"/>
     <xsl:param name="harvester-version"/>
     <xsl:param name="oai-url" />
+    <xsl:param name="download-date" />
     <xsl:param name="sha512-tool-name"/>
     <xsl:param name="sha512-tool-version"/>
 
@@ -20,7 +21,7 @@
             <harvester>
                 <naam><xsl:value-of select="$harvester-name" /></naam>
                 <versie><xsl:value-of select="$harvester-version" /></versie>
-                <downloadDate><!-- fill in with finalize manifest --></downloadDate>
+                <downloadDate><xsl:value-of select="$download-date" /></downloadDate>
                 <baseURL><xsl:value-of select="$oai-url" /></baseURL>
                 <sha512tool>
                     <naam><xsl:value-of select="$sha512-tool-name" /></naam>

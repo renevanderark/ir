@@ -250,7 +250,7 @@ public class ObjectHarvesterOperationsTest {
         when(processingStorageHandle.getFile("metadata.xml")).thenReturn(in);
         when(processingStorageHandle.getOutputStream("manifest.initial.xml")).thenReturn(out);
 
-        final boolean result = instance.generateManifest(processingStorageHandle, oaiUrl, new HarvesterVersion("name", "ver"),
+        final boolean result = instance.generateManifest(processingStorageHandle, oaiUrl, "checksum-date", new HarvesterVersion("name", "ver"),
                 (errorReport) -> {});
 
         final InOrder inOrder = inOrder(processingStorageHandle, xsltTransformer);
@@ -280,7 +280,7 @@ public class ObjectHarvesterOperationsTest {
         when(processingStorageHandle.getOutputStream("manifest.initial.xml")).thenThrow(IOException.class);
 
 
-        final boolean result = instance.generateManifest(processingStorageHandle, oaiUrl, mock(HarvesterVersion.class), onError);
+        final boolean result = instance.generateManifest(processingStorageHandle, oaiUrl, "checksum-date", mock(HarvesterVersion.class), onError);
 
         assertThat(result, is(false));
         assertThat(reports.get(0), hasProperty("exception", is(instanceOf(IOException.class))));
@@ -302,7 +302,7 @@ public class ObjectHarvesterOperationsTest {
         when(processingStorageHandle.getFile("metadata.xml")).thenReturn(in);
         when(processingStorageHandle.getOutputStream("manifest.initial.xml")).thenReturn(out);
         doThrow(TransformerException.class).when(xsltTransformer).transform(any(), any(), any());
-        final boolean result = instance.generateManifest(processingStorageHandle, oaiUrl, new HarvesterVersion("name", "ver"), onError);
+        final boolean result = instance.generateManifest(processingStorageHandle, oaiUrl, "checksum-date", new HarvesterVersion("name", "ver"), onError);
 
         assertThat(result, is(false));
         assertThat(reports.get(0), hasProperty("exception", is(instanceOf(TransformerException.class))));
