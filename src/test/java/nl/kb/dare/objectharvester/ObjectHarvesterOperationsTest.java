@@ -32,6 +32,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -243,11 +244,12 @@ public class ObjectHarvesterOperationsTest {
         final ObjectHarvesterOperations instance = new ObjectHarvesterOperations(mock(FileStorage.class),
                 rejectedStorage, doneStorage, mock(HttpFetcher.class), mock(ResponseHandlerFactory.class), xsltTransformer,
                 mock(ObjectHarvesterResourceOperations.class), mock(ManifestFinalizer.class));
+        final String oaiUrl = "oaiUrl";
 
         when(processingStorageHandle.getFile("metadata.xml")).thenReturn(in);
         when(processingStorageHandle.getOutputStream("manifest.initial.xml")).thenReturn(out);
 
-        final boolean result = instance.generateManifest(processingStorageHandle, (errorReport) -> {});
+        final boolean result = instance.generateManifest(processingStorageHandle, oaiUrl, (errorReport) -> {});
 
         final InOrder inOrder = inOrder(processingStorageHandle, xsltTransformer);
         inOrder.verify(processingStorageHandle).getFile("metadata.xml");
@@ -255,7 +257,7 @@ public class ObjectHarvesterOperationsTest {
         inOrder.verify(xsltTransformer).transform(argThat(is(in)), argThat(allOf(
                 is(instanceOf(StreamResult.class)),
                 hasProperty("writer", is(instanceOf(OutputStreamWriter.class))
-        ))));
+        ))), argThat(is(instanceOf(Map.class))));
 
         assertThat(result, is(true));
     }
@@ -267,7 +269,7 @@ public class ObjectHarvesterOperationsTest {
         final FileStorageHandle processingStorageHandle = mock(FileStorageHandle.class);
         final XsltTransformer xsltTransformer = mock(XsltTransformer.class);
         final InputStream in = mock(InputStream.class);
-        final OutputStream out = mock(OutputStream.class);
+        final String oaiUrl = "oaiUrl";
         final ObjectHarvesterOperations instance = new ObjectHarvesterOperations(mock(FileStorage.class),
                 rejectedStorage, doneStorage, mock(HttpFetcher.class), mock(ResponseHandlerFactory.class), xsltTransformer,
                 mock(ObjectHarvesterResourceOperations.class), mock(ManifestFinalizer.class));
@@ -275,7 +277,8 @@ public class ObjectHarvesterOperationsTest {
         when(processingStorageHandle.getFile("metadata.xml")).thenReturn(in);
         when(processingStorageHandle.getOutputStream("manifest.initial.xml")).thenThrow(IOException.class);
 
-        final boolean result = instance.generateManifest(processingStorageHandle, onError);
+
+        final boolean result = instance.generateManifest(processingStorageHandle, oaiUrl, onError);
 
         assertThat(result, is(false));
         assertThat(reports.get(0), hasProperty("exception", is(instanceOf(IOException.class))));
@@ -289,14 +292,15 @@ public class ObjectHarvesterOperationsTest {
         final XsltTransformer xsltTransformer = mock(XsltTransformer.class);
         final InputStream in = mock(InputStream.class);
         final OutputStream out = mock(OutputStream.class);
+        final String oaiUrl = "oaiUrl";
         final ObjectHarvesterOperations instance = new ObjectHarvesterOperations(mock(FileStorage.class),
                 rejectedStorage, doneStorage, mock(HttpFetcher.class), mock(ResponseHandlerFactory.class), xsltTransformer,
                 mock(ObjectHarvesterResourceOperations.class), mock(ManifestFinalizer.class));
 
         when(processingStorageHandle.getFile("metadata.xml")).thenReturn(in);
         when(processingStorageHandle.getOutputStream("manifest.initial.xml")).thenReturn(out);
-        doThrow(TransformerException.class).when(xsltTransformer).transform(any(), any());
-        final boolean result = instance.generateManifest(processingStorageHandle, onError);
+        doThrow(TransformerException.class).when(xsltTransformer).transform(any(), any(), any());
+        final boolean result = instance.generateManifest(processingStorageHandle, oaiUrl, onError);
 
         assertThat(result, is(false));
         assertThat(reports.get(0), hasProperty("exception", is(instanceOf(TransformerException.class))));
@@ -313,9 +317,9 @@ public class ObjectHarvesterOperationsTest {
 
         final List<ObjectResource> objectResources = instance.collectResources(handle, (errorReport) -> {});
 
-        assertThat(objectResources.get(0).getXlinkHref(), is("https://openaccess.leidenuniv.nl/bitstream/1887/20432/3/Stellingen%205.pdf"));
-        assertThat(objectResources.get(1).getXlinkHref(), is("https://openaccess.leidenuniv.nl/bitstream/1887/20432/4/back.pdf"));
-        assertThat(objectResources.get(2).getXlinkHref(), is("https://openaccess.leidenuniv.nl/bitstream/1887/20432/5/samenvatting.pdf"));
+        assertThat(objectResources.get(0).getDownloadUrl(), is("https://openaccess.leidenuniv.nl/bitstream/1887/20432/3/Stellingen%205.pdf"));
+        assertThat(objectResources.get(1).getDownloadUrl(), is("https://openaccess.leidenuniv.nl/bitstream/1887/20432/4/back.pdf"));
+        assertThat(objectResources.get(2).getDownloadUrl(), is("https://openaccess.leidenuniv.nl/bitstream/1887/20432/5/samenvatting.pdf"));
         assertThat(objectResources.get(0).getId(), is("FILE_0001"));
         assertThat(objectResources.get(1).getId(), is("FILE_0002"));
         assertThat(objectResources.get(2).getId(), is("FILE_0003"));

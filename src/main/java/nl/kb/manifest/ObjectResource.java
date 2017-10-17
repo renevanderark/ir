@@ -4,7 +4,7 @@ package nl.kb.manifest;
 public class ObjectResource {
 
     private String id;
-    private String xlinkHref;
+    private String downloadUrl;
     private String checksum;
     private String checksumType;
     private String localFilename;
@@ -20,12 +20,12 @@ public class ObjectResource {
         this.id = id;
     }
 
-    public String getXlinkHref() {
-        return xlinkHref;
+    public String getDownloadUrl() {
+        return downloadUrl;
     }
 
-    public void setXlinkHref(String xlinkHref) {
-        this.xlinkHref = xlinkHref;
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
     }
 
     public void setChecksum(String checksum) {
@@ -75,4 +75,5 @@ public class ObjectResource {
     public String getContentType() {
         return contentType;
     }
+
 }

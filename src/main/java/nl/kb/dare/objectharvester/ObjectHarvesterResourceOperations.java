@@ -51,7 +51,7 @@ public class ObjectHarvesterResourceOperations {
             ObjectResource objectResource,
             FileStorageHandle processingStorageHandle) throws IOException, NoSuchAlgorithmException {
 
-        final String fileLocation = objectResource.getXlinkHref();
+        final String fileLocation = objectResource.getDownloadUrl();
         final String filename = createFilename.apply(fileLocation);
 
         final OutputStream objectOut = processingStorageHandle.getOutputStream("resources", filename);

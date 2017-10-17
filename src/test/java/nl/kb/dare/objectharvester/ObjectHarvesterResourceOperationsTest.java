@@ -56,8 +56,8 @@ public class ObjectHarvesterResourceOperationsTest {
 
 
         InOrder inOrder = Mockito.inOrder(objectResource, processingStorageHandle, responseHandlerFactory, httpFetcher);
-        // final String fileLocation = objectResource.getXlinkHref();
-        inOrder.verify(objectResource).getXlinkHref();
+        // final String fileLocation = objectResource.getDownloadUrl();
+        inOrder.verify(objectResource).getDownloadUrl();
         // final String filename = createFilename(fileLocation); => EXPECTED_FILENAME
         // final OutputStream objectOut = processingStorageHandle.getOutputStream("resources", filename);
         inOrder.verify(processingStorageHandle).getOutputStream("resources", EXPECTED_FILENAME);
@@ -202,7 +202,7 @@ public class ObjectHarvesterResourceOperationsTest {
 
     private ObjectResource getObjectResource(String url) {
         final ObjectResource objectResource = mock(ObjectResource.class);
-        when(objectResource.getXlinkHref()).thenReturn(url);
+        when(objectResource.getDownloadUrl()).thenReturn(url);
         return objectResource;
     }
 

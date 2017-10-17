@@ -1,5 +1,6 @@
 package nl.kb.dare.objectharvester;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import nl.kb.dare.config.FileStorageGoal;
 import nl.kb.dare.model.preproces.Record;
@@ -49,6 +50,9 @@ public class ObjectHarvesterOperations {
     static final String MANIFEST_INITIAL_XML = "manifest.initial.xml";
     static final String MANIFEST_XML = "procesdata.xml";
     private static final String MANIFEST_XML_SHA512_CHECKSUM = "procesdata.xml.sha512.checksum";
+
+    private static final String HARVESTER_NAME = "Objectharvester IR";
+    public static final String HARVESTER_VERSION = "1.0-SNAPSHOT";
 
     static {
         try {
@@ -135,6 +139,7 @@ public class ObjectHarvesterOperations {
 
             final ObjectResource objectResource = new ObjectResource();
             objectResource.setLocalFilename(METADATA_XML);
+            objectResource.setDownloadUrl(urlStr);
             objectResource.setChecksum(checksumOut.getChecksumString());
             objectResource.setId("metadata");
             objectResource.setChecksumType("SHA-512");
@@ -148,13 +153,20 @@ public class ObjectHarvesterOperations {
         }
     }
 
-    boolean generateManifest(FileStorageHandle handle, Consumer<ErrorReport> onError) {
+    boolean generateManifest(FileStorageHandle handle, String oaiUrl, Consumer<ErrorReport> onError) {
         try {
             final InputStream metadata = handle.getFile(METADATA_XML);
             final OutputStream out = handle.getOutputStream(MANIFEST_INITIAL_XML);
             final Writer outputStreamWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8.name());
 
-            xsltTransformer.transform(metadata, new StreamResult(outputStreamWriter));
+            xsltTransformer.transform(metadata, new StreamResult(outputStreamWriter), ImmutableMap.of(
+                    "harvester-name", HARVESTER_NAME,
+                    "harvester-version", HARVESTER_VERSION,
+                    "oai-url", oaiUrl,
+                    "sha512-tool-name", System.getProperty("java.vm.name"),
+                    "sha512-tool-version", System.getProperty("java.version")
+                )
+            );
 
             return true;
         } catch (IOException e) {

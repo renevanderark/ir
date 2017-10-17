@@ -27,7 +27,7 @@ public class ManifestXmlHandler extends DefaultHandler {
                 currentResource.setSize(Long.parseLong(size));
             }
         } else if (qName.equals("mets:FLocat")) {
-            currentResource.setXlinkHref(attributes.getValue("xlink:href"));
+            currentResource.setDownloadUrl(attributes.getValue("xlink:href"));
         }
     }
 
