@@ -228,6 +228,7 @@ public class ObjectHarvesterTest {
         when(getRecordOperations.collectResources(any(), any())).thenReturn(objectResources);
         when(getRecordOperations.downloadMetadata(any(), any(), any(), any())).thenReturn(Optional.of(metadataResource));
         when(getRecordOperations.downloadResources(any(), any(), any())).thenReturn(true);
+        when(getRecordOperations.addFileExtensions(any(), any(), any())).thenReturn(true);
         when(getRecordOperations.writeFilenamesAndChecksumsToMetadata(any(), any(), any(), any())).thenReturn(false);
 
         final ProcessStatus result = instance.harvestPublication(oaiRecord, repositoryConfig, onError);
@@ -238,6 +239,8 @@ public class ObjectHarvesterTest {
         inOrder.verify(getRecordOperations).generateManifest(processingStorageHandle, oaiURL, downloadDate, harvesterVersion, onError);
         inOrder.verify(getRecordOperations).collectResources(processingStorageHandle, onError);
         inOrder.verify(getRecordOperations).downloadResources(processingStorageHandle, objectResources, onError);
+        inOrder.verify(getRecordOperations).addFileExtensions(processingStorageHandle, objectResources, onError);
+
         inOrder.verify(getRecordOperations).writeFilenamesAndChecksumsToMetadata(processingStorageHandle, objectResources,
                 metadataResource, onError);
         inOrder.verify(getRecordOperations).moveToStorage(FileStorageGoal.REJECTED, processingStorageHandle, "set", oaiRecord);
@@ -285,6 +288,7 @@ public class ObjectHarvesterTest {
         when(getRecordOperations.generateManifest(processingStorageHandle, oaiURL, downloadDate, harvesterVersion, onError)).thenReturn(true);
         when(getRecordOperations.collectResources(processingStorageHandle, onError)).thenReturn(objectResources);
         when(getRecordOperations.downloadResources(any(), any(), any())).thenReturn(true);
+        when(getRecordOperations.addFileExtensions(any(), any(), any())).thenReturn(true);
         when(getRecordOperations.writeFilenamesAndChecksumsToMetadata(any(), any(), any(), any())).thenReturn(true);
 
         final ProcessStatus result = instance.harvestPublication(oaiRecord, repositoryConfig, onError);
@@ -295,6 +299,7 @@ public class ObjectHarvesterTest {
         inOrder.verify(getRecordOperations).generateManifest(processingStorageHandle, oaiURL, downloadDate, harvesterVersion, onError);
         inOrder.verify(getRecordOperations).collectResources(processingStorageHandle, onError);
         inOrder.verify(getRecordOperations).downloadResources(processingStorageHandle, objectResources, onError);
+        inOrder.verify(getRecordOperations).addFileExtensions(processingStorageHandle, objectResources, onError);
         inOrder.verify(getRecordOperations).writeFilenamesAndChecksumsToMetadata(processingStorageHandle, objectResources,
                 metadataResource, onError);
         inOrder.verify(getRecordOperations).generateManifestChecksum(processingStorageHandle, onError);

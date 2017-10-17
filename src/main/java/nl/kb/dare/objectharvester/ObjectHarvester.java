@@ -126,6 +126,11 @@ public class ObjectHarvester {
             return ProcessStatus.FAILED;
         }
 
+        if (!objectHarvesterOperations.addFileExtensions(handle, objectResources, onError)) {
+            objectHarvesterOperations.moveToStorage(REJECTED, handle, getSuperSetFromSetName(repositoryConfig), record);
+            return ProcessStatus.FAILED;
+        }
+
         if (!objectHarvesterOperations
                 .writeFilenamesAndChecksumsToMetadata(handle, objectResources, metadataResource.get(), onError)) {
 

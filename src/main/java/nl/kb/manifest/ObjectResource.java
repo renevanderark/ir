@@ -11,6 +11,8 @@ public class ObjectResource {
     private long size;
     private String contentDisposition;
     private String contentType;
+    private String derivedFilename;
+    private String derivedExtension;
 
     public String getId() {
         return id;
@@ -75,4 +77,21 @@ public class ObjectResource {
     public void setChecksumDate(String checksumDate) {
         this.checksumDate = checksumDate;
     }
+
+    public void setDerivedFilename(String derivedFilename) {
+        this.derivedFilename = derivedFilename;
+    }
+
+    public String getDerivedFilename() {
+        return derivedFilename;
+    }
+
+    public void setDerivedExtension(String derivedExtension) {
+        this.derivedExtension = derivedExtension;
+    }
+
+    public String getDerivedExtension() {
+        return derivedExtension;
+    }
+
 }

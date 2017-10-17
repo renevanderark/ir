@@ -6,7 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Map;
 
-public class ContentDispositionReader extends ByteArrayOutputStream implements HeaderConsumer {
+public class DownloadHeaderFieldReader extends ByteArrayOutputStream implements HeaderConsumer {
     private static final String CONTENT_DISPOSITION = "Content-Disposition";
     private static final String CONTENT_TYPE = "Content-Type";
 

@@ -79,4 +79,12 @@ class LocalFileStorageHandle implements FileStorageHandle {
         }
     }
 
+    @Override
+    public void renameFile(String source, String target) throws IOException {
+        FileUtils.moveFile(
+            new File(String.format(NESTED_PATH_FMT, fileDir, source)),
+            new File(String.format(NESTED_PATH_FMT, fileDir, target))
+        );
+    }
+
 }

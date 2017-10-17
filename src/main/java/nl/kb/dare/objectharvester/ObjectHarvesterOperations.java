@@ -251,6 +251,24 @@ public class ObjectHarvesterOperations {
         }
     }
 
+    boolean addFileExtensions(FileStorageHandle handle, List<ObjectResource> objectResources, Consumer<ErrorReport> onError) {
+        try {
+            for (ObjectResource objectResource : objectResources) {
+                if (objectResource.getDerivedExtension() != null && !objectResource.getDerivedExtension().isEmpty()) {
+                    final String targetName = String.format("%s.%s", objectResource.getLocalFilename(),
+                            objectResource.getDerivedExtension());
+                    handle.renameFile(
+                            String.format("resources/%s", objectResource.getLocalFilename()),
+                            String.format("resources/%s", targetName));
+                    objectResource.setLocalFilename(targetName);
+                }
+            }
+            return true;
+        } catch (IOException e) {
+            onError.accept(new ErrorReport(e, ErrorStatus.IO_EXCEPTION));
+            return false;
+        }
+    }
     void moveToStorage(FileStorageGoal goal, FileStorageHandle fromStorageHandle, String prefix, Record record) {
         final FileStorage targetStorage = getFileStorageForGoal(goal);
         final FileStorageHandle targetHandle = targetStorage
@@ -275,4 +293,6 @@ public class ObjectHarvesterOperations {
             return false;
         }
     }
+
+
 }

@@ -63,11 +63,13 @@ public class ManifestFinalizer {
 
     private void writeResourceFile(Document document, Node fileNode, ObjectResource resource) {
         setAttribute(document, fileNode, "name", resource.getLocalFilename());
+        getFirstChildByLocalName(fileNode, "extensie").ifPresent(node -> node.setTextContent(resource.getDerivedExtension()));
         getFirstChildByLocalName(fileNode, "sha512").ifPresent(node -> node.setTextContent(resource.getChecksum()));
         getFirstChildByLocalName(fileNode, "sha512Date").ifPresent(node -> node.setTextContent(resource.getChecksumDate()));
         getFirstChildByLocalName(fileNode, "fileSize").ifPresent(node -> node.setTextContent(Long.toString(resource.getSize())));
         getFirstChildByLocalName(fileNode, "contentDisposition").ifPresent(node -> node.setTextContent(resource.getContentDisposition()));
         getFirstChildByLocalName(fileNode, "contentType").ifPresent(node -> node.setTextContent(resource.getContentType()));
+        getFirstChildByLocalName(fileNode, "fileNaamAfgeleid").ifPresent(node -> node.setTextContent(resource.getDerivedFilename()));
     }
 
     private void writeResourceFile(List<ObjectResource> objectResources, Document document, Node fileNode, String fileId) throws IOException {

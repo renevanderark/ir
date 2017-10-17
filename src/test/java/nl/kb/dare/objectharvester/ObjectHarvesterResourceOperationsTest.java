@@ -46,7 +46,7 @@ public class ObjectHarvesterResourceOperationsTest {
         final HttpFetcher httpFetcher = mock(HttpFetcher.class);
         final HttpResponseHandler responseHandler = mock(HttpResponseHandler.class);
         when(responseHandlerFactory.getStreamCopyingResponseHandler(any(), any(ChecksumOutputStream.class),
-                any(ByteCountOutputStream.class), any(ContentDispositionReader.class))).thenReturn(responseHandler);
+                any(ByteCountOutputStream.class), any(DownloadHeaderFieldReader.class))).thenReturn(responseHandler);
         when(responseHandler.getExceptions()).thenReturn(Lists.newArrayList());
 
         final ObjectHarvesterResourceOperations instance = new ObjectHarvesterResourceOperations(httpFetcher,
@@ -64,7 +64,7 @@ public class ObjectHarvesterResourceOperationsTest {
         // final ByteArrayOutputStream checksumOut = new ByteArrayOutputStream();
         // final List<ErrorReport> firstAttemptErrors = attemptDownload(fileLocation, objectOut, checksumOut, false);
         inOrder.verify(responseHandlerFactory).getStreamCopyingResponseHandler(any(),
-                any(ChecksumOutputStream.class), any(ByteCountOutputStream.class), any(ContentDispositionReader.class));
+                any(ChecksumOutputStream.class), any(ByteCountOutputStream.class), any(DownloadHeaderFieldReader.class));
         inOrder.verify(httpFetcher).execute(argThat(allOf(
                 hasProperty("host", is("example.com")),
                 hasProperty("file", is("/path/file%201.ext"))

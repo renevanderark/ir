@@ -59,7 +59,7 @@ public class ObjectHarvesterResourceOperations {
         final OutputStream objectOut = processingStorageHandle.getOutputStream("resources", filename);
         final ChecksumOutputStream checksumOut = new ChecksumOutputStream("SHA-512");
         final ByteCountOutputStream byteCountOut = new ByteCountOutputStream();
-        final ContentDispositionReader contentDispositionReader = new ContentDispositionReader();
+        final DownloadHeaderFieldReader contentDispositionReader = new DownloadHeaderFieldReader();
 
         // First try to fetch the resource with the URL as is
         final List<ErrorReport> firstAttemptErrors = attemptDownload(objectOut, checksumOut, byteCountOut,
@@ -102,20 +102,43 @@ public class ObjectHarvesterResourceOperations {
     private void writeChecksumAndFilename(ObjectResource objectResource,
                                           ChecksumOutputStream checksumOut,
                                           ByteCountOutputStream byteCountOut,
-                                          ContentDispositionReader contentDispositionReader,
+                                          DownloadHeaderFieldReader contentDispositionReader,
                                           String filename)  {
 
         objectResource.setChecksum(checksumOut.getChecksumString());
         objectResource.setChecksumDate(ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        final String derivedFilename = guessFilename(
+                objectResource.getDownloadUrl(), contentDispositionReader.getContentDisposition());
+        final int extIndex = derivedFilename.lastIndexOf(".");
+        final String derivedExtension = extIndex > -1 ? derivedFilename
+                .substring(extIndex)
+                .replaceAll("\\.", "") : "";
+        objectResource.setDerivedFilename(derivedFilename);
+        objectResource.setDerivedExtension(derivedExtension);
         objectResource.setLocalFilename(filename);
         objectResource.setSize(byteCountOut.getCurrentByteCount());
         objectResource.setContentDisposition(contentDispositionReader.getContentDisposition());
         objectResource.setContentType(contentDispositionReader.getContentType());
     }
 
+    private String guessFilename(String downloadUrl, String contentDisposition) {
+        if (contentDisposition != null && !contentDisposition.isEmpty()) {
+            return ContentDispositionParser.parseContentDisposition(contentDisposition);
+        } else {
+            try {
+                final String decodedFilename = URLDecoder.decode(new URL(downloadUrl).getPath()
+                        .replaceAll("/$", ""), "UTF-8");
+                return FilenameUtils.getName(decodedFilename);
+            } catch (MalformedURLException | UnsupportedEncodingException e) {
+                return "";
+            }
+
+        }
+    }
+
     private List<ErrorReport> attemptDownload(OutputStream objectOut, OutputStream checksumOut,
                                               ByteCountOutputStream byteCountOut,
-                                              ContentDispositionReader contentDispositionReader,
+                                              DownloadHeaderFieldReader contentDispositionReader,
                                               String preparedUrl) throws MalformedURLException {
 
         LOG.debug("Attempting download: {}", preparedUrl);

@@ -90,7 +90,6 @@ public class App extends Application<Config> {
         // Fault tolerant HTTP GET clients
         final HttpFetcher httpFetcherForIdentifierHarvest = new LenientHttpFetcher(true);
         final HttpFetcher httpFetcherForObjectHarvest = new LenientHttpFetcher(false);
-        final HttpFetcher httpFetcherForNumberGenerator = new LenientHttpFetcher(false);
 
         // Handler factory for responses from httpFetcher
         final ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory();

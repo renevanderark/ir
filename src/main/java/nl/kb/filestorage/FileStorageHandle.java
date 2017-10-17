@@ -17,4 +17,6 @@ public interface FileStorageHandle {
     InputStream getFile(String filename) throws FileNotFoundException;
 
     void moveTo(FileStorageHandle fileStorageHandle) throws IOException;
+
+    void renameFile(String source, String target) throws IOException;
 }
