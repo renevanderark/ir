@@ -17,6 +17,8 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +58,11 @@ public class ManifestFinalizer {
                 } else {
                     writeResourceFile(objectResources, document, fileNode, fileId.get());
                 }
+            }
+            final Optional<Node> harvesterNode = getFirstChildByLocalName(document.getDocumentElement(), "harvester");
+            if (harvesterNode.isPresent()) {
+                final Optional<Node> sipCreationDate = getFirstChildByLocalName(harvesterNode.get(), "SIPcreationDate");
+                sipCreationDate.ifPresent(node -> node.setTextContent(ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)));
             }
             transformer.transform(new DOMSource(document), new StreamResult(manifest));
         }
