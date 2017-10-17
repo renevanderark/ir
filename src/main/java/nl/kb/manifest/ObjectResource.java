@@ -6,7 +6,6 @@ public class ObjectResource {
     private String id;
     private String downloadUrl;
     private String checksum;
-    private String checksumType;
     private String checksumDate; // = download date as well
     private String localFilename;
     private long size;
@@ -33,16 +32,8 @@ public class ObjectResource {
         this.checksum = checksum;
     }
 
-    public void setChecksumType(String checksumType) {
-        this.checksumType = checksumType;
-    }
-
     public String getChecksum() {
         return checksum;
-    }
-
-    public String getChecksumType() {
-        return checksumType;
     }
 
     public void setLocalFilename(String localFilename) {

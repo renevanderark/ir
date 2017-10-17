@@ -33,7 +33,7 @@
             </harvester>
 
             <fileinfo type="metadata">
-                <file name="metadata.xml">
+                <file name="metadata.xml" ID="metadata">
                     <sha512><!-- fill in with finalize manifest --></sha512>
                     <sha512Date><!-- fill in with finalize manifest --></sha512Date>
                     <fileSize><!-- fill in with finalize manifest --></fileSize>

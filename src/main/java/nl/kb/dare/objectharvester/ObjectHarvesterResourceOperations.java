@@ -22,6 +22,8 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
@@ -104,7 +106,7 @@ public class ObjectHarvesterResourceOperations {
                                           String filename)  {
 
         objectResource.setChecksum(checksumOut.getChecksumString());
-        objectResource.setChecksumType("SHA-512");
+        objectResource.setChecksumDate(ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
         objectResource.setLocalFilename(filename);
         objectResource.setSize(byteCountOut.getCurrentByteCount());
         objectResource.setContentDisposition(contentDispositionReader.getContentDisposition());

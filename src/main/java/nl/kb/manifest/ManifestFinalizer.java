@@ -58,7 +58,6 @@ public class ManifestFinalizer {
                 }
                 if (fileId.get().equals("metadata")) {
                     setAttribute(document, fileNode, "CHECKSUM", metadataResource.getChecksum());
-                    setAttribute(document, fileNode, "CHECKSUMTYPE", metadataResource.getChecksumType());
                     setAttribute(document, fileNode, "SIZE", Long.toString(metadataResource.getSize()));
 
                 } else {
@@ -76,7 +75,6 @@ public class ManifestFinalizer {
         }
 
         setAttribute(document, fileNode, "CHECKSUM", currentResource.get().getChecksum());
-        setAttribute(document, fileNode, "CHECKSUMTYPE", currentResource.get().getChecksumType());
         setAttribute(document, fileNode, "SIZE", Long.toString(currentResource.get().getSize()));
         setAttribute(document, fileNode, "contentDispositionHeaderValue",
                 currentResource.get().getContentDisposition());

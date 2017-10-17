@@ -146,7 +146,6 @@ public class ObjectHarvesterOperations {
             objectResource.setDownloadUrl(urlStr);
             objectResource.setChecksum(checksumOut.getChecksumString());
             objectResource.setId("metadata");
-            objectResource.setChecksumType("SHA-512");
             objectResource.setChecksumDate(ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
             objectResource.setSize(byteCountOut.getCurrentByteCount());
             return responseHandler.getExceptions().isEmpty()

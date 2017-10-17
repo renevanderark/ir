@@ -67,11 +67,9 @@ public class ManifestFinalizerTest {
             final Node fileNode = fileNodes.item(i);
             fileUrls.add(getFLocatNode(fileNode).getAttributes().getNamedItemNS(XLINK_NS, "href").getNodeValue());
             checksums.add(fileNode.getAttributes().getNamedItem("CHECKSUM").getNodeValue());
-            checksumTypes.add(fileNode.getAttributes().getNamedItem("CHECKSUMTYPE").getNodeValue());
         }
 
         assertThat(checksums, contains("check-md", "check-1", "check-2", "check-3"));
-        assertThat(checksumTypes, contains("type-md", "type-1", "type-2", "type-3"));
         assertThat(fileUrls, contains(
                 "file://./metadata.xml",
                 "file://./resources/test%201.html",
@@ -85,7 +83,6 @@ public class ManifestFinalizerTest {
         final ObjectResource objectResource = new ObjectResource();
         objectResource.setId(id);
         objectResource.setChecksum(checksum);
-        objectResource.setChecksumType(checksumType);
         objectResource.setLocalFilename(filename);
         return objectResource;
     }
