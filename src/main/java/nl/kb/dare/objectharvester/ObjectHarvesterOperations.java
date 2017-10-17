@@ -3,6 +3,7 @@ package nl.kb.dare.objectharvester;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import nl.kb.dare.config.FileStorageGoal;
+import nl.kb.dare.model.HarvesterVersion;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.reporting.ErrorReport;
 import nl.kb.dare.model.repository.Repository;
@@ -153,15 +154,16 @@ public class ObjectHarvesterOperations {
         }
     }
 
-    boolean generateManifest(FileStorageHandle handle, String oaiUrl, Consumer<ErrorReport> onError) {
+    boolean generateManifest(FileStorageHandle handle, String oaiUrl, HarvesterVersion harvesterVersion,
+                             Consumer<ErrorReport> onError) {
         try {
             final InputStream metadata = handle.getFile(METADATA_XML);
             final OutputStream out = handle.getOutputStream(MANIFEST_INITIAL_XML);
             final Writer outputStreamWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8.name());
 
             xsltTransformer.transform(metadata, new StreamResult(outputStreamWriter), ImmutableMap.of(
-                    "harvester-name", HARVESTER_NAME,
-                    "harvester-version", HARVESTER_VERSION,
+                    "harvester-name", harvesterVersion.getName(),
+                    "harvester-version", harvesterVersion.getVersion(),
                     "oai-url", oaiUrl,
                     "sha512-tool-name", System.getProperty("java.vm.name"),
                     "sha512-tool-version", System.getProperty("java.version")

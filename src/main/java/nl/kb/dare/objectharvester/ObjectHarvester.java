@@ -3,6 +3,7 @@ package nl.kb.dare.objectharvester;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import nl.kb.dare.config.FileStorageGoal;
+import nl.kb.dare.model.HarvesterVersion;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
@@ -45,6 +46,7 @@ public class ObjectHarvester {
     private final ErrorReporter errorReporter;
     private final SocketNotifier socketNotifier;
     private final Integer maxSequentialDownloadFailures;
+    private final HarvesterVersion harvesterVersion;
     private ObjectHarvestErrorFlowHandler objectHarvestErrorFlowHandler;
 
 
@@ -59,6 +61,7 @@ public class ObjectHarvester {
         this.socketNotifier = builder.socketNotifier;
         this.maxSequentialDownloadFailures = builder.maxSequentialDownloadFailures;
         this.objectHarvestErrorFlowHandler = builder.objectHarvestErrorFlowHandler;
+        this.harvesterVersion = builder.harvesterVersion;
     }
 
     public List<Thread> harvestNextPublications(Integer maxParallelDownloads, AtomicInteger runningWorkers) {
@@ -111,7 +114,8 @@ public class ObjectHarvester {
             return ProcessStatus.FAILED;
         }
 
-        if (!objectHarvesterOperations.generateManifest(handle, metadataResource.get().getDownloadUrl(), onError)) {
+        if (!objectHarvesterOperations.generateManifest(handle, metadataResource.get().getDownloadUrl(),
+                harvesterVersion, onError)) {
             objectHarvesterOperations.moveToStorage(REJECTED, handle, getSuperSetFromSetName(repositoryConfig), record);
             return ProcessStatus.FAILED;
         }
@@ -222,6 +226,7 @@ public class ObjectHarvester {
         private SocketNotifier socketNotifier;
         private Integer maxSequentialDownloadFailures;
         private ObjectHarvestErrorFlowHandler objectHarvestErrorFlowHandler;
+        private HarvesterVersion harvesterVersion;
 
         public Builder setRepositoryDao(RepositoryDao repositoryDao) {
             this.repositoryDao = repositoryDao;
@@ -268,6 +273,10 @@ public class ObjectHarvester {
             return this;
         }
 
+        public Builder setHarvesterVersion(HarvesterVersion harvesterVersion) {
+            this.harvesterVersion = harvesterVersion;
+            return this;
+        }
 
         public ObjectHarvester create() {
             return new ObjectHarvester(this);

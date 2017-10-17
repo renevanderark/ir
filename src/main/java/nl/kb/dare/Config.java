@@ -6,6 +6,7 @@ import io.dropwizard.db.DataSourceFactory;
 import nl.kb.dare.config.FileStorageFactory;
 import nl.kb.dare.config.FileStorageGoal;
 import nl.kb.dare.config.MailerFactory;
+import nl.kb.dare.model.HarvesterVersion;
 
 import java.util.Map;
 
@@ -41,6 +42,9 @@ class Config extends Configuration {
 
     @JsonProperty("fileStorage")
     private Map<FileStorageGoal, FileStorageFactory> fileStorageFactory;
+
+    @JsonProperty("versionInfo")
+    private HarvesterVersion harvesterVersion;
 
 
     @JsonProperty("database")
@@ -104,5 +108,9 @@ class Config extends Configuration {
 
     public void setBatchLoadSampleMode(Boolean batchLoadSampleMode) {
         this.batchLoadSampleMode = batchLoadSampleMode;
+    }
+
+    public HarvesterVersion getHarvesterVersion() {
+        return harvesterVersion;
     }
 }

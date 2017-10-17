@@ -189,6 +189,7 @@ public class App extends Application<Config> {
                 .setSocketNotifier(socketNotifier)
                 .setMaxSequentialDownloadFailures(config.getMaxConsecutiveDownloadFailures())
                 .setObjectHarvestErrorFlowHandler(objectHarvestErrorFlowHandler)
+                .setHarvesterVersion(config.getHarvesterVersion())
                 .create();
 
         // Initialize wrapped services (injected in endpoints)

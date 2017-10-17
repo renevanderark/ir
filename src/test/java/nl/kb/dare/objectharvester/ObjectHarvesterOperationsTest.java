@@ -2,6 +2,7 @@ package nl.kb.dare.objectharvester;
 
 import com.google.common.collect.Lists;
 import nl.kb.dare.config.FileStorageGoal;
+import nl.kb.dare.model.HarvesterVersion;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.reporting.ErrorReport;
 import nl.kb.dare.model.repository.Repository;
@@ -249,7 +250,8 @@ public class ObjectHarvesterOperationsTest {
         when(processingStorageHandle.getFile("metadata.xml")).thenReturn(in);
         when(processingStorageHandle.getOutputStream("manifest.initial.xml")).thenReturn(out);
 
-        final boolean result = instance.generateManifest(processingStorageHandle, oaiUrl, (errorReport) -> {});
+        final boolean result = instance.generateManifest(processingStorageHandle, oaiUrl, new HarvesterVersion("name", "ver"),
+                (errorReport) -> {});
 
         final InOrder inOrder = inOrder(processingStorageHandle, xsltTransformer);
         inOrder.verify(processingStorageHandle).getFile("metadata.xml");
@@ -278,7 +280,7 @@ public class ObjectHarvesterOperationsTest {
         when(processingStorageHandle.getOutputStream("manifest.initial.xml")).thenThrow(IOException.class);
 
 
-        final boolean result = instance.generateManifest(processingStorageHandle, oaiUrl, onError);
+        final boolean result = instance.generateManifest(processingStorageHandle, oaiUrl, mock(HarvesterVersion.class), onError);
 
         assertThat(result, is(false));
         assertThat(reports.get(0), hasProperty("exception", is(instanceOf(IOException.class))));
@@ -300,7 +302,7 @@ public class ObjectHarvesterOperationsTest {
         when(processingStorageHandle.getFile("metadata.xml")).thenReturn(in);
         when(processingStorageHandle.getOutputStream("manifest.initial.xml")).thenReturn(out);
         doThrow(TransformerException.class).when(xsltTransformer).transform(any(), any(), any());
-        final boolean result = instance.generateManifest(processingStorageHandle, oaiUrl, onError);
+        final boolean result = instance.generateManifest(processingStorageHandle, oaiUrl, new HarvesterVersion("name", "ver"), onError);
 
         assertThat(result, is(false));
         assertThat(reports.get(0), hasProperty("exception", is(instanceOf(TransformerException.class))));
