@@ -17,8 +17,6 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,28 +36,23 @@ public class ManifestFinalizer {
         }
     }
 
-    public static final String METS_NS = "http://www.loc.gov/METS/";
-    public static final String XLINK_NS = "http://www.w3.org/1999/xlink";
 
     public void writeResourcesToManifest(ObjectResource metadataResource, List<ObjectResource> objectResources, Reader metadata, Writer manifest)
             throws IOException, SAXException, TransformerException {
 
         synchronized (docBuilder) {
             final Document document = docBuilder.parse(new InputSource(metadata));
-            final NodeList fileNodes = document.getElementsByTagNameNS(METS_NS, "file");
+            final NodeList fileNodes = document.getElementsByTagName("file");
             final Transformer transformer = transformerFactory.newTransformer();
 
             for (int i = 0; i < fileNodes.getLength(); i++) {
                 final Node fileNode = fileNodes.item(i);
-
                 final Optional<String> fileId = getAttribute(fileNode, "ID");
                 if (!fileId.isPresent()) {
-                    throw new IOException("ID attribute not set for file node in metadata.xml");
+                    throw new IOException("ID attribute not set for file node in manifest.initial.xml");
                 }
                 if (fileId.get().equals("metadata")) {
-                    setAttribute(document, fileNode, "CHECKSUM", metadataResource.getChecksum());
-                    setAttribute(document, fileNode, "SIZE", Long.toString(metadataResource.getSize()));
-
+                    writeResourceFile(document, fileNode, metadataResource);
                 } else {
                     writeResourceFile(objectResources, document, fileNode, fileId.get());
                 }
@@ -68,37 +61,21 @@ public class ManifestFinalizer {
         }
     }
 
+    private void writeResourceFile(Document document, Node fileNode, ObjectResource resource) {
+        setAttribute(document, fileNode, "name", resource.getLocalFilename());
+        getFirstChildByLocalName(fileNode, "sha512").ifPresent(node -> node.setTextContent(resource.getChecksum()));
+        getFirstChildByLocalName(fileNode, "sha512Date").ifPresent(node -> node.setTextContent(resource.getChecksumDate()));
+        getFirstChildByLocalName(fileNode, "fileSize").ifPresent(node -> node.setTextContent(Long.toString(resource.getSize())));
+        getFirstChildByLocalName(fileNode, "contentDisposition").ifPresent(node -> node.setTextContent(resource.getContentDisposition()));
+        getFirstChildByLocalName(fileNode, "contentType").ifPresent(node -> node.setTextContent(resource.getContentType()));
+    }
+
     private void writeResourceFile(List<ObjectResource> objectResources, Document document, Node fileNode, String fileId) throws IOException {
         final Optional<ObjectResource> currentResource = findObjectResourceForFileId(objectResources, fileId);
         if (!currentResource.isPresent()) {
             throw new IOException("Expected file resource is not present for metadata.xml: " + fileId);
         }
-
-        setAttribute(document, fileNode, "CHECKSUM", currentResource.get().getChecksum());
-        setAttribute(document, fileNode, "SIZE", Long.toString(currentResource.get().getSize()));
-        setAttribute(document, fileNode, "contentDispositionHeaderValue",
-                currentResource.get().getContentDisposition());
-        setAttribute(document, fileNode, "contentTypeHeaderValue",
-                currentResource.get().getContentType());
-        setXlinkHref(fileNode, currentResource.get());
-    }
-
-    private void setXlinkHref(Node fileNode, ObjectResource currentResource) throws IOException {
-        final Optional<Node> fLocatNode = getFirstChildByLocalName(fileNode, "FLocat");
-        if (!fLocatNode.isPresent()) {
-            throw new IOException("File node does not have an FLocat child in metadata.xml");
-        }
-
-        final Node xlinkHrefAttribute = fLocatNode.get().getAttributes().getNamedItemNS(XLINK_NS, "href");
-        if (xlinkHrefAttribute == null) {
-            throw new IOException("FLocat node does not have xlink:href attribute in metadata.xml");
-        }
-
-        xlinkHrefAttribute.setNodeValue(
-                "file://./resources/" +
-                        URLEncoder.encode(currentResource.getLocalFilename(), StandardCharsets.UTF_8.name())
-                                .replaceAll("\\+", "%20")
-        );
+        writeResourceFile(document, fileNode, currentResource.get());
     }
 
     private Optional<ObjectResource> findObjectResourceForFileId(List<ObjectResource> objectResources, String fileId) {

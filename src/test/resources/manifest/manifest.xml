@@ -1,19 +1,59 @@
 <?xml version="1.0"?>
-<mets:mets xmlns:mets="http://www.loc.gov/METS/" xmlns="http://i.still.have.a.lot.to.do/ok" xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  <mets:fileSec USE="storage/preservation">
-    <mets:fileGrp>
-        <mets:file ID="metadata" MIMETYPE="text/xml">
-            <mets:FLocat LOCTYPE="URL" xlink:href="file://./metadata.xml"/>
-        </mets:file>
-      <mets:file ID="FILE_0001" MIMETYPE="application/pdf">
-        <mets:FLocat LOCTYPE="URL" xlink:href="https://openaccess.leidenuniv.nl/bitstream/1887/20432/3/Stellingen%205.pdf"/>
-      </mets:file>
-      <mets:file ID="FILE_0002" MIMETYPE="application/pdf">
-        <mets:FLocat LOCTYPE="URL" xlink:href="https://openaccess.leidenuniv.nl/bitstream/1887/20432/4/back.pdf"/>
-      </mets:file>
-      <mets:file ID="FILE_0003" MIMETYPE="application/pdf">
-        <mets:FLocat LOCTYPE="URL" xlink:href="https://openaccess.leidenuniv.nl/bitstream/1887/20432/5/samenvatting.pdf"/>
-      </mets:file>
-    </mets:fileGrp>
-  </mets:fileSec>
-</mets:mets>
+<procesdata module="1">
+  <harvester>
+    <naam>Objectharvester Institutionele Repositories</naam>
+    <versie>1.0-SNAPSHOT</versie>
+    <downloadDate>2017-10-17T11:15:31.046+02:00</downloadDate>
+    <baseURL>http://oai.gharvester.dans.knaw.nl/?verb=GetRecord&amp;metadataPrefix=nl_didl_combined&amp;identifier=uva:oai:dare.uva.nl:publications/7977dd26-0dcf-4efb-a7c3-d34243cbd5e9</baseURL>
+    <sha512tool>
+      <naam>Java HotSpot(TM) 64-Bit Server VM</naam>
+      <versie>1.8.0_131</versie>
+    </sha512tool>
+    <SIPcreationDate/>
+  </harvester>
+  <fileinfo type="metadata">
+    <file name="metadata.xml" ID="metadata">
+      <sha512/>
+      <sha512Date/>
+      <fileSize/>
+    </file>
+  </fileinfo>
+  <fileinfo type="object">
+    <file ID="FILE_0001">
+      <extensie/>
+      <contentDisposition/>
+      <contentType/>
+      <fileNaamAfgeleid/>
+      <accessRights>http://purl.org/eprint/accessRights/OpenAccess</accessRights>
+      <downloadURL>https://openaccess.leidenuniv.nl/bitstream/1887/20432/3/Stellingen%205.pdf</downloadURL>
+      <sha512/>
+      <sha512Date/>
+      <fileSize/>
+      <mimeType bron="didl">application/pdf</mimeType>
+    </file>
+    <file ID="FILE_0002">
+      <extensie/>
+      <contentDisposition/>
+      <contentType/>
+      <fileNaamAfgeleid/>
+      <accessRights>http://purl.org/eprint/accessRights/OpenAccess</accessRights>
+      <downloadURL>https://openaccess.leidenuniv.nl/bitstream/1887/20432/4/back.pdf</downloadURL>
+      <sha512/>
+      <sha512Date/>
+      <fileSize/>
+      <mimeType bron="didl">application/pdf</mimeType>
+    </file>
+    <file ID="FILE_0003">
+      <extensie/>
+      <contentDisposition/>
+      <contentType/>
+      <fileNaamAfgeleid/>
+      <accessRights>http://purl.org/eprint/accessRights/OpenAccess</accessRights>
+      <downloadURL>https://openaccess.leidenuniv.nl/bitstream/1887/20432/5/samenvatting.pdf</downloadURL>
+      <sha512/>
+      <sha512Date/>
+      <fileSize/>
+      <mimeType bron="didl">application/pdf</mimeType>
+    </file>
+  </fileinfo>
+</procesdata>

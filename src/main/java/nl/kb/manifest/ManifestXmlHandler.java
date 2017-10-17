@@ -28,6 +28,7 @@ public class ManifestXmlHandler extends DefaultHandler {
         if (qName.equals("file")) {
             currentResource = new ObjectResource();
             currentResource.setId(attributes.getValue("ID"));
+            currentResource.setLocalFilename(attributes.getValue("name"));
         } else if (readNodes.contains(qName)) {
             inReadNode = true;
         }
