@@ -52,11 +52,8 @@ public class ObjectHarvesterOperations {
     private static final SAXParser saxParser;
     private static final String METADATA_XML = "metadata.xml";
     static final String MANIFEST_INITIAL_XML = "manifest.initial.xml";
-    static final String MANIFEST_XML = "procesdata.xml";
-    private static final String MANIFEST_XML_SHA512_CHECKSUM = "procesdata.xml.sha512.checksum";
-
-    private static final String HARVESTER_NAME = "Objectharvester IR";
-    public static final String HARVESTER_VERSION = "1.0-SNAPSHOT";
+    static final String MANIFEST_XML = "pd-1.xml";
+    private static final String MANIFEST_XML_SHA512_CHECKSUM = "pd-1.xml.sha512.checksum";
 
     static {
         try {
