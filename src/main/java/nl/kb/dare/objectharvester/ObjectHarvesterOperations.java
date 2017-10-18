@@ -2,7 +2,7 @@ package nl.kb.dare.objectharvester;
 
 import com.google.common.collect.Lists;
 import nl.kb.dare.config.FileStorageGoal;
-import nl.kb.dare.model.HarvesterVersion;
+import nl.kb.dare.model.VersionInfo;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.reporting.ErrorReport;
 import nl.kb.dare.model.repository.Repository;
@@ -19,6 +19,10 @@ import nl.kb.stream.ByteCountOutputStream;
 import nl.kb.stream.ChecksumOutputStream;
 import nl.kb.xslt.XsltTransformer;
 import org.apache.commons.io.IOUtils;
+import org.apache.tika.detect.DefaultDetector;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -48,6 +52,8 @@ import java.util.function.Consumer;
 
 public class ObjectHarvesterOperations {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectHarvesterOperations.class);
+
+    private static final DefaultDetector tikaDetector = new DefaultDetector();
 
     private static final SAXParser saxParser;
     private static final String METADATA_XML = "metadata.xml";
@@ -163,7 +169,7 @@ public class ObjectHarvesterOperations {
         return result;
     }
 
-    boolean generateManifest(FileStorageHandle handle, String oaiUrl, String downloadDate, HarvesterVersion harvesterVersion,
+    boolean generateManifest(FileStorageHandle handle, String oaiUrl, String downloadDate, VersionInfo harvesterVersion,
                              Consumer<ErrorReport> onError) {
         try {
             final InputStream metadata = handle.getFile(METADATA_XML);
@@ -171,8 +177,10 @@ public class ObjectHarvesterOperations {
             final Writer outputStreamWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8.name());
 
             xsltTransformer.transform(metadata, new StreamResult(outputStreamWriter), getManifestParameterMap(
-                    "harvester-name", harvesterVersion.getName(),
-                    "harvester-version", harvesterVersion.getVersion(),
+                    "harvester-name", harvesterVersion.getHarvesterName(),
+                    "harvester-version", harvesterVersion.getHarvesterVersion(),
+                    "tika-name", harvesterVersion.getTikaName(),
+                    "tika-version", harvesterVersion.getTikaVersion(),
                     "oai-url", oaiUrl,
                     "download-date", downloadDate,
                     "sha512-tool-name", System.getProperty("java.vm.name"),
@@ -266,6 +274,26 @@ public class ObjectHarvesterOperations {
             return false;
         }
     }
+
+    boolean tikaDetect(FileStorageHandle handle, List<ObjectResource> objectResources, Consumer<ErrorReport> onError) {
+        try {
+            for (ObjectResource objectResource : objectResources) {
+                final TikaInputStream tStream = TikaInputStream
+                        .get(handle.getFile(String.format("resources/%s", objectResource.getLocalFilename())));
+                final Metadata tMetadata = new Metadata();
+                tMetadata.set(Metadata.RESOURCE_NAME_KEY, objectResource.getLocalFilename());
+                final MediaType mimeType = tikaDetector.detect(tStream, tMetadata);
+                objectResource.setTikaMimeType(mimeType);
+                objectResource.setTikaFileDate(ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+            }
+            return true;
+        } catch (IOException e) {
+            onError.accept(new ErrorReport(e, ErrorStatus.IO_EXCEPTION));
+            return false;
+        }
+    }
+
+
     void moveToStorage(FileStorageGoal goal, FileStorageHandle fromStorageHandle, String prefix, Record record) {
         final FileStorage targetStorage = getFileStorageForGoal(goal);
         final FileStorageHandle targetHandle = targetStorage

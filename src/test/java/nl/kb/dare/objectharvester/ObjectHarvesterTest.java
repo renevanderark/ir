@@ -2,7 +2,7 @@ package nl.kb.dare.objectharvester;
 
 import com.google.common.collect.Lists;
 import nl.kb.dare.config.FileStorageGoal;
-import nl.kb.dare.model.HarvesterVersion;
+import nl.kb.dare.model.VersionInfo;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
@@ -112,7 +112,7 @@ public class ObjectHarvesterTest {
         final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle processingStorageHandle = mock(FileStorageHandle.class);
-        final HarvesterVersion harvesterVersion = new HarvesterVersion("name", "ver");
+        final VersionInfo harvesterVersion = new VersionInfo("name", "ver");
 
         final ObjectHarvester instance = new ObjectHarvester.Builder()
                 .setRepositoryDao(repositoryDao)
@@ -159,7 +159,7 @@ public class ObjectHarvesterTest {
         final String oaiURL = "oaiURL";
         final String downloadDate = "checksum-date";
         final List<ObjectResource> objectResources = Lists.newArrayList(metadataResource);
-        final HarvesterVersion harvesterVersion = new HarvesterVersion("name", "ver");
+        final VersionInfo harvesterVersion = new VersionInfo("name", "ver");
 
         final ObjectHarvester instance = new ObjectHarvester.Builder()
                 .setRepositoryDao(repositoryDao)
@@ -203,7 +203,7 @@ public class ObjectHarvesterTest {
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle processingStorageHandle = mock(FileStorageHandle.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
-        final HarvesterVersion harvesterVersion = new HarvesterVersion("name", "ver");
+        final VersionInfo harvesterVersion = new VersionInfo("name", "ver");
         final ObjectHarvester instance = new ObjectHarvester.Builder()
                 .setRepositoryDao(repositoryDao)
                 .setRecordDao(recordDao)
@@ -229,6 +229,7 @@ public class ObjectHarvesterTest {
         when(getRecordOperations.downloadMetadata(any(), any(), any(), any())).thenReturn(Optional.of(metadataResource));
         when(getRecordOperations.downloadResources(any(), any(), any())).thenReturn(true);
         when(getRecordOperations.addFileExtensions(any(), any(), any())).thenReturn(true);
+        when(getRecordOperations.tikaDetect(any(), any(), any())).thenReturn(true);
         when(getRecordOperations.writeFilenamesAndChecksumsToMetadata(any(), any(), any(), any())).thenReturn(false);
 
         final ProcessStatus result = instance.harvestPublication(oaiRecord, repositoryConfig, onError);
@@ -240,7 +241,7 @@ public class ObjectHarvesterTest {
         inOrder.verify(getRecordOperations).collectResources(processingStorageHandle, onError);
         inOrder.verify(getRecordOperations).downloadResources(processingStorageHandle, objectResources, onError);
         inOrder.verify(getRecordOperations).addFileExtensions(processingStorageHandle, objectResources, onError);
-
+        inOrder.verify(getRecordOperations).tikaDetect(processingStorageHandle, objectResources, onError);
         inOrder.verify(getRecordOperations).writeFilenamesAndChecksumsToMetadata(processingStorageHandle, objectResources,
                 metadataResource, onError);
         inOrder.verify(getRecordOperations).moveToStorage(FileStorageGoal.REJECTED, processingStorageHandle, "set", oaiRecord);
@@ -258,7 +259,7 @@ public class ObjectHarvesterTest {
         final String downloadDate = "checksum-date";
         final ObjectResource metadataResource = mock(ObjectResource.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
-        final HarvesterVersion harvesterVersion = new HarvesterVersion("name", "ver");
+        final VersionInfo harvesterVersion = new VersionInfo("name", "ver");
         final ObjectHarvester instance = new ObjectHarvester.Builder()
                 .setRepositoryDao(repositoryDao)
                 .setRecordDao(recordDao)
@@ -289,6 +290,7 @@ public class ObjectHarvesterTest {
         when(getRecordOperations.collectResources(processingStorageHandle, onError)).thenReturn(objectResources);
         when(getRecordOperations.downloadResources(any(), any(), any())).thenReturn(true);
         when(getRecordOperations.addFileExtensions(any(), any(), any())).thenReturn(true);
+        when(getRecordOperations.tikaDetect(any(), any(), any())).thenReturn(true);
         when(getRecordOperations.writeFilenamesAndChecksumsToMetadata(any(), any(), any(), any())).thenReturn(true);
 
         final ProcessStatus result = instance.harvestPublication(oaiRecord, repositoryConfig, onError);
@@ -300,6 +302,8 @@ public class ObjectHarvesterTest {
         inOrder.verify(getRecordOperations).collectResources(processingStorageHandle, onError);
         inOrder.verify(getRecordOperations).downloadResources(processingStorageHandle, objectResources, onError);
         inOrder.verify(getRecordOperations).addFileExtensions(processingStorageHandle, objectResources, onError);
+        inOrder.verify(getRecordOperations).tikaDetect(processingStorageHandle, objectResources, onError);
+
         inOrder.verify(getRecordOperations).writeFilenamesAndChecksumsToMetadata(processingStorageHandle, objectResources,
                 metadataResource, onError);
         inOrder.verify(getRecordOperations).generateManifestChecksum(processingStorageHandle, onError);

@@ -1,5 +1,7 @@
 package nl.kb.manifest;
 
+import org.apache.tika.mime.MediaType;
+
 // Represents a file node in Manifest, used to download and ship files with
 public class ObjectResource {
 
@@ -13,6 +15,8 @@ public class ObjectResource {
     private String contentType;
     private String derivedFilename;
     private String derivedExtension;
+    private MediaType tikaMimeType;
+    private String tikaFileDate;
 
     public String getId() {
         return id;
@@ -94,4 +98,19 @@ public class ObjectResource {
         return derivedExtension;
     }
 
+    public void setTikaMimeType(MediaType tikaMimeType) {
+        this.tikaMimeType = tikaMimeType;
+    }
+
+    public MediaType getTikaMimeType() {
+        return tikaMimeType;
+    }
+
+    public void setTikaFileDate(String tikaFileDate) {
+        this.tikaFileDate = tikaFileDate;
+    }
+
+    public String getTikaFileDate() {
+        return tikaFileDate;
+    }
 }

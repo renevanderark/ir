@@ -15,8 +15,11 @@
     <xsl:param name="download-date" />
     <xsl:param name="sha512-tool-name"/>
     <xsl:param name="sha512-tool-version"/>
+    <xsl:param name="tika-version"/>
+    <xsl:param name="tika-name"/>
 
     <xsl:template match="/">
+
         <procesdata module="1">
             <harvester>
                 <naam><xsl:value-of select="$harvester-name" /></naam>
@@ -30,6 +33,10 @@
                 <SIPcreationDate>
                     <!-- fill in with finalize manifest -->
                 </SIPcreationDate>
+                <tika>
+                    <naam><xsl:value-of select="$tika-name" /></naam> <!--Preproces-->
+                    <versie><xsl:value-of select="$tika-version" /></versie> <!--Preproces-->
+                </tika>
             </harvester>
 
             <fileinfo type="metadata">
@@ -61,6 +68,8 @@
                 <sha512Date><!-- fill in with finalize manifest --></sha512Date>
                 <fileSize><!-- fill in with finalize manifest --></fileSize>
                 <mimeType bron="didl"><xsl:value-of select="../../../didl:Component/didl:Resource/@mimeType" /></mimeType>
+                <mimeType bron="tika"><!-- fill in with finalize manifest --></mimeType>
+                <tikaFileDate><!-- fill in with finalize manifest --></tikaFileDate>
             </file>
     </xsl:template>
 

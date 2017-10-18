@@ -43,6 +43,7 @@
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.scm.provider>svn</sonar.scm.provider>
+        <tika.version>1.16</tika.version>
     </properties>
 
     <dependencies>
@@ -114,6 +115,17 @@
             <artifactId>poi-ooxml</artifactId>
             <version>3.16</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>${tika.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-parsers</artifactId>
+            <version>${tika.version}</version>
+        </dependency>
+
 
         <!-- [TESTING] -->
         <!-- Mockito mocking framework -->

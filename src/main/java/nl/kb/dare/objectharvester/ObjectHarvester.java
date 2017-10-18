@@ -3,7 +3,7 @@ package nl.kb.dare.objectharvester;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import nl.kb.dare.config.FileStorageGoal;
-import nl.kb.dare.model.HarvesterVersion;
+import nl.kb.dare.model.VersionInfo;
 import nl.kb.dare.model.preproces.Record;
 import nl.kb.dare.model.preproces.RecordDao;
 import nl.kb.dare.model.preproces.RecordReporter;
@@ -46,7 +46,7 @@ public class ObjectHarvester {
     private final ErrorReporter errorReporter;
     private final SocketNotifier socketNotifier;
     private final Integer maxSequentialDownloadFailures;
-    private final HarvesterVersion harvesterVersion;
+    private final VersionInfo harvesterVersion;
     private ObjectHarvestErrorFlowHandler objectHarvestErrorFlowHandler;
 
 
@@ -127,6 +127,11 @@ public class ObjectHarvester {
         }
 
         if (!objectHarvesterOperations.addFileExtensions(handle, objectResources, onError)) {
+            objectHarvesterOperations.moveToStorage(REJECTED, handle, getSuperSetFromSetName(repositoryConfig), record);
+            return ProcessStatus.FAILED;
+        }
+
+        if (!objectHarvesterOperations.tikaDetect(handle, objectResources, onError)) {
             objectHarvesterOperations.moveToStorage(REJECTED, handle, getSuperSetFromSetName(repositoryConfig), record);
             return ProcessStatus.FAILED;
         }
@@ -231,7 +236,7 @@ public class ObjectHarvester {
         private SocketNotifier socketNotifier;
         private Integer maxSequentialDownloadFailures;
         private ObjectHarvestErrorFlowHandler objectHarvestErrorFlowHandler;
-        private HarvesterVersion harvesterVersion;
+        private VersionInfo harvesterVersion;
 
         public Builder setRepositoryDao(RepositoryDao repositoryDao) {
             this.repositoryDao = repositoryDao;
@@ -278,7 +283,7 @@ public class ObjectHarvester {
             return this;
         }
 
-        public Builder setHarvesterVersion(HarvesterVersion harvesterVersion) {
+        public Builder setHarvesterVersion(VersionInfo harvesterVersion) {
             this.harvesterVersion = harvesterVersion;
             return this;
         }

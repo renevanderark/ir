@@ -77,6 +77,9 @@ public class ManifestFinalizer {
         getFirstChildByLocalName(fileNode, "contentDisposition").ifPresent(node -> node.setTextContent(resource.getContentDisposition()));
         getFirstChildByLocalName(fileNode, "contentType").ifPresent(node -> node.setTextContent(resource.getContentType()));
         getFirstChildByLocalName(fileNode, "fileNaamAfgeleid").ifPresent(node -> node.setTextContent(resource.getDerivedFilename()));
+        getFirstChildByLocalNameAndAttribute(fileNode, "mimeType", "bron", "tika")
+                .ifPresent(node -> node.setTextContent(resource.getTikaMimeType().toString()));
+        getFirstChildByLocalName(fileNode, "tikaFileDate").ifPresent(node -> node.setTextContent(resource.getTikaFileDate()));
     }
 
     private void writeResourceFile(List<ObjectResource> objectResources, Document document, Node fileNode, String fileId) throws IOException {
@@ -94,7 +97,9 @@ public class ManifestFinalizer {
     }
 
     private Optional<String> getAttribute(Node node, String name) {
-        final Node namedItem = node.getAttributes().getNamedItem(name);
+        final NamedNodeMap attributes = node.getAttributes();
+        if (attributes == null) { return Optional.empty(); }
+        final Node namedItem = attributes.getNamedItem(name);
         if (namedItem == null) { return Optional.empty(); }
 
         final String nodeValue = namedItem.getNodeValue();
@@ -114,6 +119,21 @@ public class ManifestFinalizer {
         for (int i = 0; i < childNodes.getLength(); i++) {
             final Node item = childNodes.item(i);
             if (item.getLocalName() != null && item.getLocalName().equalsIgnoreCase(localName)) {
+                return Optional.of(item);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private Optional<Node> getFirstChildByLocalNameAndAttribute(Node parent, String localName, String attrName, String attrValue) {
+        final NodeList childNodes = parent.getChildNodes();
+
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            final Node item = childNodes.item(i);
+            final Optional<String> attribute = getAttribute(item, attrName);
+            if (item.getLocalName() != null && item.getLocalName().equalsIgnoreCase(localName) &&
+                    attribute.isPresent() && attribute.get().equals(attrValue)) {
                 return Optional.of(item);
             }
         }
