@@ -163,7 +163,7 @@ public class ObjectHarvesterOperations {
         return result;
     }
 
-    boolean generateManifest(FileStorageHandle handle, String oaiUrl, String downloadDate, HarvesterVersion harvesterVersion,
+    boolean generateManifest(FileStorageHandle handle, String oaiUrl, String oaiSet, String downloadDate, HarvesterVersion harvesterVersion,
                              Consumer<ErrorReport> onError) {
         try {
             final InputStream metadata = handle.getFile(METADATA_XML);
@@ -174,6 +174,7 @@ public class ObjectHarvesterOperations {
                     "harvester-name", harvesterVersion.getName(),
                     "harvester-version", harvesterVersion.getVersion(),
                     "oai-url", oaiUrl,
+                    "set-name", oaiSet,
                     "download-date", downloadDate,
                     "sha512-tool-name", System.getProperty("java.vm.name"),
                     "sha512-tool-version", System.getProperty("java.version")
@@ -272,6 +273,7 @@ public class ObjectHarvesterOperations {
                 .obtainHandle(String.format("%s/%s", prefix, record.getIpName()));
         try {
             fromStorageHandle.moveTo(targetHandle);
+            targetHandle.sigDone();
         } catch (IOException e) {
             LOG.error("SEVERE: failed to access storage for {} record", goal, e);
         }

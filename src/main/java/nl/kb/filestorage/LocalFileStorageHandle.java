@@ -87,4 +87,9 @@ class LocalFileStorageHandle implements FileStorageHandle {
         );
     }
 
+    @Override
+    public void sigDone() throws IOException {
+        FileUtils.touch(new File(String.format(NESTED_PATH_FMT, fileDir, "done")));
+    }
+
 }

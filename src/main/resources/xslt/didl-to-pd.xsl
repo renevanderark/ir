@@ -15,6 +15,7 @@
     <xsl:param name="download-date" />
     <xsl:param name="sha512-tool-name"/>
     <xsl:param name="sha512-tool-version"/>
+    <xsl:param name="set-name"/>
 
     <xsl:template match="/">
         <procesdata module="1">
@@ -23,6 +24,7 @@
                 <versie><xsl:value-of select="$harvester-version" /></versie>
                 <downloadDate><xsl:value-of select="$download-date" /></downloadDate>
                 <baseURL><xsl:value-of select="$oai-url" /></baseURL>
+                <setNaam><xsl:value-of select="$set-name" /></setNaam>
                 <sha512tool>
                     <naam><xsl:value-of select="$sha512-tool-name" /></naam>
                     <versie><xsl:value-of select="$sha512-tool-version" /></versie>

@@ -19,4 +19,6 @@ public interface FileStorageHandle {
     void moveTo(FileStorageHandle fileStorageHandle) throws IOException;
 
     void renameFile(String source, String target) throws IOException;
+
+    void sigDone() throws IOException;
 }
