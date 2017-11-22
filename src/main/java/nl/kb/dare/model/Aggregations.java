@@ -37,6 +37,8 @@ public class Aggregations {
     }
 
     private static Integer getRowInt(Map<String, Object> row, String repositoryId) {
-        return ((BigDecimal) row.get(repositoryId)).intValue();
+        final Object rowInt = row.get(repositoryId);
+        if (rowInt == null) { return 0; }
+        return ((BigDecimal) rowInt).intValue();
     }
 }

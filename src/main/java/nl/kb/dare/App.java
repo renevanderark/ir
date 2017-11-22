@@ -20,6 +20,7 @@ import nl.kb.dare.endpoints.RecordStatusEndpoint;
 import nl.kb.dare.endpoints.RepositoriesEndpoint;
 import nl.kb.dare.endpoints.RootEndpoint;
 import nl.kb.dare.endpoints.StatusWebsocketServlet;
+import nl.kb.dare.endpoints.VersionEndpoint;
 import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
 import nl.kb.dare.identifierharvester.IdentifierHarvestErrorFlowHandler;
 import nl.kb.dare.identifierharvester.IdentifierHarvester;
@@ -238,6 +239,8 @@ public class App extends Application<Config> {
         // Record status endpoint
         register(environment, new RecordStatusEndpoint(filter, recordReporter, errorReporter, excelReportDao,
             new ExcelReportBuilder()));
+
+        register(environment, new VersionEndpoint(config.getHarvesterVersion(), db));
 
         // HTML + javascript app
         register(environment, new RootEndpoint(config.getKbAutLocation(), config.getHostName()));

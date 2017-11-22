@@ -6,7 +6,7 @@
 
     <groupId>nl.kb</groupId>
     <artifactId>dare-ir</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.2</version>
 
     <prerequisites>
         <maven>3.0</maven>
@@ -28,6 +28,20 @@
             <url>http://www.datanucleus.org/downloads/maven2/</url>
         </repository>
     </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>ARTI-JAVA-P100-releases</name>
+            <url>http://arti-java-p100/libs-release-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>ARTI-JAVA-P100-snapshots</name>
+            <url>http://arti-java-p100/libs-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 
 
     <properties>
