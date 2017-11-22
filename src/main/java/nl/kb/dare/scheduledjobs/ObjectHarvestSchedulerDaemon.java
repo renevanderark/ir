@@ -4,12 +4,16 @@ import com.google.common.util.concurrent.AbstractScheduledService;
 import nl.kb.dare.objectharvester.ObjectHarvester;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.websocket.socketupdate.ObjectHarvesterRunstateUpdate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ObjectHarvestSchedulerDaemon extends AbstractScheduledService {
+    private static final Logger LOG = LoggerFactory.getLogger(ObjectHarvestSchedulerDaemon.class);
+
     private static AtomicInteger runningWorkers = new AtomicInteger(0);
 
     private final SocketNotifier socketNotifier;
@@ -42,20 +46,24 @@ public class ObjectHarvestSchedulerDaemon extends AbstractScheduledService {
 
     @Override
     protected void runOneIteration() throws Exception {
-        if (runState == RunState.DISABLED || runState == RunState.DISABLING) {
-            checkRunState();
-            return;
-        }
-
-        final List<Thread> workers = objectHarvester.harvestNextPublications(maxParallelDownloads, runningWorkers);
-
-        if (runState == RunState.DISABLING) {
-            for (Thread worker : workers) {
-                worker.join();
+        try {
+            if (runState == RunState.DISABLED || runState == RunState.DISABLING) {
+                checkRunState();
+                return;
             }
-        }
 
-        checkRunState();
+            final List<Thread> workers = objectHarvester.harvestNextPublications(maxParallelDownloads, runningWorkers);
+
+            if (runState == RunState.DISABLING) {
+                for (Thread worker : workers) {
+                    worker.join();
+                }
+            }
+
+            checkRunState();
+        } catch (Exception e) {
+            LOG.error("Failed to fetch pending records from database", e);
+        }
     }
 
     private void checkRunState() {

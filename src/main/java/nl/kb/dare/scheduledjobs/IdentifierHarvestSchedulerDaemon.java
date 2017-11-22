@@ -6,6 +6,8 @@ import nl.kb.dare.identifierharvester.IdentifierHarvester;
 import nl.kb.dare.model.RunState;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.dare.websocket.socketupdate.HarvesterStatusUpdate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,6 +15,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class IdentifierHarvestSchedulerDaemon extends AbstractScheduledService {
+    private static final Logger LOG = LoggerFactory.getLogger(IdentifierHarvestSchedulerDaemon.class);
+
     private static final Map<Integer, IdentifierHarvester> harvesters = Collections.synchronizedMap(new HashMap<>());
     private final SocketNotifier socketNotifier;
     private final IdentifierHarvestErrorFlowHandler errorFlowHandler;
@@ -75,15 +79,19 @@ public class IdentifierHarvestSchedulerDaemon extends AbstractScheduledService {
 
     @Override
     protected void runOneIteration() throws Exception {
-        final int slots = (int) (maxParallel - harvesters.entrySet().stream()
-                .filter(harvesterEntry -> harvesterEntry.getValue().getRunState() == RunState.RUNNING)
-                .count());
+        try {
+            final int slots = (int) (maxParallel - harvesters.entrySet().stream()
+                    .filter(harvesterEntry -> harvesterEntry.getValue().getRunState() == RunState.RUNNING)
+                    .count());
 
-        harvesters.entrySet().stream()
-                .filter(harvesterEntry -> harvesterEntry.getValue().getRunState() == RunState.QUEUED)
-                .limit(slots)
-                .map(Map.Entry::getValue)
-                .forEach(harvester -> new Thread(harvester).start());
+            harvesters.entrySet().stream()
+                    .filter(harvesterEntry -> harvesterEntry.getValue().getRunState() == RunState.QUEUED)
+                    .limit(slots)
+                    .map(Map.Entry::getValue)
+                    .forEach(harvester -> new Thread(harvester).start());
+        } catch (Exception e) {
+            LOG.error("Failed to start identifier harvesters", e);
+        }
     }
 
     public HarvesterStatusUpdate getStatusUpdate() {
