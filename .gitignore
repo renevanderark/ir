@@ -9,3 +9,4 @@ restart-database.sh
 *.yaml
 dependency-reduced-pom.xml
 doc
+src/main/resources/version.txt

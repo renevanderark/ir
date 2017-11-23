@@ -111,6 +111,7 @@ class Config extends Configuration {
     }
 
     public HarvesterVersion getHarvesterVersion() {
-        return harvesterVersion;
+
+        return new HarvesterVersion();
     }
 }

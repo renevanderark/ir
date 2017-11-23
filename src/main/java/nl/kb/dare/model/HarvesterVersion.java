@@ -1,22 +1,27 @@
 package nl.kb.dare.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.nio.charset.Charset;
 
 public class HarvesterVersion {
+    private static final Logger LOG = LoggerFactory.getLogger(HarvesterVersion.class);
+
     @JsonProperty
-    private String name;
+    private final String name = "Objectharvester Institutionele Repositories";
     @JsonProperty
     private String version;
-
-    public HarvesterVersion() {
-
+    {
+        try {
+            version = IOUtils.toString(HarvesterVersion.class.getResourceAsStream("/version.txt")
+                    , Charset.defaultCharset());
+        } catch (Exception e) {
+            version = "version-under-development";
+        }
     }
-
-    public HarvesterVersion(String name, String version) {
-        this.name = name;
-        this.version = version;
-    }
-
     public String getName() {
         return name;
     }

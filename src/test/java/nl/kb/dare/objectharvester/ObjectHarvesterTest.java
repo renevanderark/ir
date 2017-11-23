@@ -112,7 +112,7 @@ public class ObjectHarvesterTest {
         final ObjectHarvesterOperations getRecordOperations = mock(ObjectHarvesterOperations.class);
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle processingStorageHandle = mock(FileStorageHandle.class);
-        final HarvesterVersion harvesterVersion = new HarvesterVersion("name", "ver");
+        final HarvesterVersion harvesterVersion = new HarvesterVersion();
 
         final ObjectHarvester instance = new ObjectHarvester.Builder()
                 .setRepositoryDao(repositoryDao)
@@ -163,7 +163,7 @@ public class ObjectHarvesterTest {
 
         final String downloadDate = "checksum-date";
         final List<ObjectResource> objectResources = Lists.newArrayList(metadataResource);
-        final HarvesterVersion harvesterVersion = new HarvesterVersion("name", "ver");
+        final HarvesterVersion harvesterVersion = new HarvesterVersion();
 
         final ObjectHarvester instance = new ObjectHarvester.Builder()
                 .setRepositoryDao(repositoryDao)
@@ -207,7 +207,7 @@ public class ObjectHarvesterTest {
         final Record oaiRecord = mock(Record.class);
         final FileStorageHandle processingStorageHandle = mock(FileStorageHandle.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
-        final HarvesterVersion harvesterVersion = new HarvesterVersion("name", "ver");
+        final HarvesterVersion harvesterVersion = new HarvesterVersion();
         final ObjectHarvester instance = new ObjectHarvester.Builder()
                 .setRepositoryDao(repositoryDao)
                 .setRecordDao(recordDao)
@@ -266,7 +266,7 @@ public class ObjectHarvesterTest {
         final String downloadDate = "checksum-date";
         final ObjectResource metadataResource = mock(ObjectResource.class);
         final List<ObjectResource> objectResources = Lists.newArrayList(mock(ObjectResource.class));
-        final HarvesterVersion harvesterVersion = new HarvesterVersion("name", "ver");
+        final HarvesterVersion harvesterVersion = new HarvesterVersion();
         final ObjectHarvester instance = new ObjectHarvester.Builder()
                 .setRepositoryDao(repositoryDao)
                 .setRecordDao(recordDao)
