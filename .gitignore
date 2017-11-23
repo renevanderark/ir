@@ -10,3 +10,4 @@ restart-database.sh
 dependency-reduced-pom.xml
 doc
 src/main/resources/version.txt
+load-repositories.sh
