@@ -265,9 +265,11 @@ public class App extends Application<Config> {
         )));
 
 
-        // Database task endpoints
-        environment.admin().addTask(new LoadOracleSchemaTask(db));
-        environment.admin().addTask(new LoadRepositoriesTask(repositoryDao));
+        if (config.getExposeAdminTasks() != null && config.getExposeAdminTasks()) {
+            // Database task endpoints
+            environment.admin().addTask(new LoadOracleSchemaTask(db));
+            environment.admin().addTask(new LoadRepositoriesTask(repositoryDao));
+        }
     }
 
 

@@ -30,7 +30,7 @@ public class LoadRepositoriesTask extends Task {
                 buildRepo(dateStamp, "Delft", "tud:A-set"),
                 buildRepo(dateStamp, "Leiden", "ul:hdl_1887_4539"),
                 buildRepo(dateStamp, "Maastricht", "um:publications:withFiles"),
-                buildRepo(dateStamp, "Twente", "ut:66756C6C746578743D7075626C6963"),
+                buildRepo(dateStamp, "Twente", "ut:publications:all"),
                 buildRepo(dateStamp, "UvA", "uva:publications:withFiles"),
                 buildRepo(dateStamp, "Tilburg", "uvt:publications:withFiles"),
                 buildRepo(dateStamp, "VU", "vu:publications:withFiles"),

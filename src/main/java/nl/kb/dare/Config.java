@@ -46,6 +46,9 @@ class Config extends Configuration {
     @JsonProperty("versionInfo")
     private HarvesterVersion harvesterVersion;
 
+    @JsonProperty("exposeAdminTasks")
+    private Boolean exposeAdminTasks = false;
+
 
     @JsonProperty("database")
     DataSourceFactory getDataSourceFactory() {
@@ -113,5 +116,9 @@ class Config extends Configuration {
     public HarvesterVersion getHarvesterVersion() {
 
         return new HarvesterVersion();
+    }
+
+    public Boolean getExposeAdminTasks() {
+        return exposeAdminTasks;
     }
 }
