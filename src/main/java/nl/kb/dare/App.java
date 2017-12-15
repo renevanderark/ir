@@ -46,10 +46,12 @@ import nl.kb.dare.objectharvester.ObjectHarvesterResourceOperations;
 import nl.kb.dare.scheduledjobs.DailyIdentifierHarvestScheduler;
 import nl.kb.dare.scheduledjobs.IdentifierHarvestSchedulerDaemon;
 import nl.kb.dare.scheduledjobs.ObjectHarvestSchedulerDaemon;
+import nl.kb.dare.scheduledjobs.StalledDownloadCleaner;
 import nl.kb.dare.websocket.SocketNotifier;
 import nl.kb.filestorage.FileStorage;
 import nl.kb.http.HttpFetcher;
 import nl.kb.http.LenientHttpFetcher;
+import nl.kb.http.Monitable;
 import nl.kb.http.responsehandlers.ResponseHandlerFactory;
 import nl.kb.manifest.ManifestFinalizer;
 import nl.kb.xslt.PipedXsltTransformer;
@@ -211,6 +213,7 @@ public class App extends Application<Config> {
             recordDao.fetchAllByProcessStatus(ProcessStatus.PROCESSING.getCode()).forEachRemaining(record -> {
                 record.setState(ProcessStatus.PENDING);
                 recordDao.updateState(record);
+                errorReportDao.deleteForRecordId(record.getId());
             });
         } catch (Exception e) {
             LOG.warn("Failed to fix data on boot, probably caused by missing schema", e);
@@ -234,7 +237,7 @@ public class App extends Application<Config> {
         register(environment, new HarvesterEndpoint(filter, repositoryDao, identifierHarvesterDaemon));
 
         // Operational controls for record fetcher
-        register(environment, new ObjectHarvesterEndpoint(filter, objectHarvesterDaemon));
+        register(environment, new ObjectHarvesterEndpoint(filter, objectHarvesterDaemon, (Monitable)httpFetcherForObjectHarvest));
 
         // Record status endpoint
         register(environment, new RecordStatusEndpoint(filter, recordReporter, errorReporter, excelReportDao,
@@ -264,6 +267,11 @@ public class App extends Application<Config> {
                 identifierHarvesterDaemon
         )));
 
+        // Process that kills stalled downloads
+        environment.lifecycle().manage(new ManagedPeriodicTask(new StalledDownloadCleaner(
+                (Monitable) httpFetcherForObjectHarvest,
+                config.getMaximumDownloadStallTimeMs())
+        ));
 
         if (config.getExposeAdminTasks() != null && config.getExposeAdminTasks()) {
             // Database task endpoints

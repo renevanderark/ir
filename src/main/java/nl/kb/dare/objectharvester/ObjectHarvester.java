@@ -97,6 +97,7 @@ public class ObjectHarvester {
 
     ProcessStatus harvestPublication(Record record, Repository repositoryConfig, Consumer<ErrorReport> onError) {
 
+        LOG.debug("Obtain handle - {}", record.getOaiIdentifier());
         final Optional<FileStorageHandle> processingStorageHandle = objectHarvesterOperations.getFileStorageHandle(
                 FileStorageGoal.PROCESSING, getSuperSetFromSetName(repositoryConfig), record, onError);
 
@@ -105,6 +106,7 @@ public class ObjectHarvester {
             return ProcessStatus.FAILED;
         }
 
+        LOG.debug("Download metadata - {}", record.getOaiIdentifier());
         final FileStorageHandle handle = processingStorageHandle.get();
         final Optional<ObjectResource> metadataResource = objectHarvesterOperations.downloadMetadata(handle, record,
                 repositoryConfig, onError);
@@ -114,23 +116,28 @@ public class ObjectHarvester {
             return ProcessStatus.FAILED;
         }
 
+        LOG.debug("Generate manifest - {}", record.getOaiIdentifier());
         if (!objectHarvesterOperations.generateManifest(handle, metadataResource.get().getDownloadUrl(),
                 repositoryConfig.getSet(), metadataResource.get().getChecksumDate(), harvesterVersion, onError)) {
             objectHarvesterOperations.moveToStorage(REJECTED, handle, getSuperSetFromSetName(repositoryConfig), record);
             return ProcessStatus.FAILED;
         }
 
+
+        LOG.debug("Download resources - {}", record.getOaiIdentifier());
         final List<ObjectResource> objectResources = objectHarvesterOperations.collectResources(handle, onError);
         if (!objectHarvesterOperations.downloadResources(handle, objectResources, onError)) {
             objectHarvesterOperations.moveToStorage(REJECTED, handle, getSuperSetFromSetName(repositoryConfig), record);
             return ProcessStatus.FAILED;
         }
 
+        LOG.debug("Add file extensions - {}", record.getOaiIdentifier());
         if (!objectHarvesterOperations.addFileExtensions(handle, objectResources, onError)) {
             objectHarvesterOperations.moveToStorage(REJECTED, handle, getSuperSetFromSetName(repositoryConfig), record);
             return ProcessStatus.FAILED;
         }
 
+        LOG.debug("Write checksums - {}", record.getOaiIdentifier());
         if (!objectHarvesterOperations
                 .writeFilenamesAndChecksumsToMetadata(handle, objectResources, metadataResource.get(), onError)) {
 
@@ -138,12 +145,14 @@ public class ObjectHarvester {
             return ProcessStatus.FAILED;
         }
 
+        LOG.debug("Write manifest checksums - {}", record.getOaiIdentifier());
         if (!objectHarvesterOperations.generateManifestChecksum(handle, onError)) {
 
             objectHarvesterOperations.moveToStorage(REJECTED, handle, getSuperSetFromSetName(repositoryConfig), record);
             return ProcessStatus.FAILED;
         }
 
+        LOG.debug("Write to done storage - {}", record.getOaiIdentifier());
         objectHarvesterOperations.moveToStorage(DONE, handle, getSuperSetFromSetName(repositoryConfig), record);
         return ProcessStatus.PROCESSED;
     }

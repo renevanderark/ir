@@ -3,6 +3,7 @@ package nl.kb.dare.endpoints;
 import nl.kb.dare.endpoints.kbaut.KbAuthFilter;
 import nl.kb.dare.scheduledjobs.ObjectHarvestSchedulerDaemon;
 import nl.kb.dare.websocket.socketupdate.ObjectHarvesterRunstateUpdate;
+import nl.kb.http.Monitable;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -16,11 +17,13 @@ import javax.ws.rs.core.Response;
 public class ObjectHarvesterEndpoint {
     private final KbAuthFilter filter;
     private final ObjectHarvestSchedulerDaemon objectHarvestSchedulerDaemon;
+    private final Monitable httpFetcher;
 
-    public ObjectHarvesterEndpoint(KbAuthFilter filter, ObjectHarvestSchedulerDaemon objectHarvestSchedulerDaemon) {
+    public ObjectHarvesterEndpoint(KbAuthFilter filter, ObjectHarvestSchedulerDaemon objectHarvestSchedulerDaemon, Monitable httpFetcher) {
         this.filter = filter;
 
         this.objectHarvestSchedulerDaemon = objectHarvestSchedulerDaemon;
+        this.httpFetcher = httpFetcher;
     }
 
     @PUT
@@ -38,7 +41,6 @@ public class ObjectHarvesterEndpoint {
     @Path("/disable")
     @Produces(MediaType.APPLICATION_JSON)
     public Response disable(@HeaderParam("Authorization") String auth) {
-
         return filter.getFilterResponse(auth).orElseGet(() -> {
             objectHarvestSchedulerDaemon.disable();
             return Response.ok("{}").build();
@@ -52,5 +54,13 @@ public class ObjectHarvesterEndpoint {
 
         return filter.getFilterResponse(auth).orElseGet(() ->
                 Response.ok((new ObjectHarvesterRunstateUpdate(objectHarvestSchedulerDaemon.getRunState()))).build());
+    }
+
+    @GET
+    @Path("/open-connections")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getOpenConnections(@HeaderParam("Authorization") String auth) {
+        return filter.getFilterResponse(auth).orElseGet(() ->
+                Response.ok(httpFetcher.getOpenConnections()).build());
     }
 }

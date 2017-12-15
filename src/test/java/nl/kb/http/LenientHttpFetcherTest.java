@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -72,6 +73,26 @@ public class LenientHttpFetcherTest {
         instance.execute(new URL(String.format("%s/timeout/no-data", MOCK_URL)), responseHandler);
 
         verify(responseHandler).onRequestError(any());
+    }
+
+
+    @Test
+    public void disconnectStalledConnectionsShouldDisconnectAllOpenConnectionsBasedOnStallTime() throws InterruptedException {
+        final LenientHttpFetcher instance = new LenientHttpFetcher(false);
+        final HttpResponseHandler responseHandler = mock(HttpResponseHandler.class);
+
+        final Thread requestThread = new Thread(() -> {
+            try {
+                instance.execute(new URL(String.format("%s/timeout/no-data", MOCK_URL)), responseHandler);
+            } catch (MalformedURLException ignored) {
+                // url is not malformed
+            }
+        });
+        requestThread.start();
+        Thread.sleep(150);
+        instance.disconnectStalledConnections(100);
+        requestThread.join();
+        verify(responseHandler, atLeast(1)).onRequestError(any());
     }
 
     @Test

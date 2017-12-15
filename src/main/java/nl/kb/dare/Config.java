@@ -49,6 +49,9 @@ class Config extends Configuration {
     @JsonProperty("exposeAdminTasks")
     private Boolean exposeAdminTasks = false;
 
+    @JsonProperty("maximumDownloadStallTimeMs")
+    private Integer maximumDownloadStallTimeMs = 1000 * 60 * 60;
+
 
     @JsonProperty("database")
     DataSourceFactory getDataSourceFactory() {
@@ -71,7 +74,6 @@ class Config extends Configuration {
     public void setMailerFactory(MailerFactory mailerFactory) {
         this.mailerFactory = mailerFactory;
     }
-
 
     public String getHostName() {
         return hostName;
@@ -120,5 +122,9 @@ class Config extends Configuration {
 
     public Boolean getExposeAdminTasks() {
         return exposeAdminTasks;
+    }
+
+    public Integer getMaximumDownloadStallTimeMs() {
+        return maximumDownloadStallTimeMs;
     }
 }
